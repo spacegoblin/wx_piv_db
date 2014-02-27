@@ -2,6 +2,8 @@ from record import loadFromDb
 import getpass
 
 
+raise('Refactor out this as we will use Postgres roles for user mgt.')
+
 class MyUser(object):
     "I copied this into a new module"
     def __init__(self, user, pwd):
@@ -68,8 +70,8 @@ class MyUser(object):
     
 if __name__=='__main__':
     from record import WhichDb_v3
-    WhichDb_v3('Postgress', 'test_01', 'admin', 'camilla')
-    t = MyUser('admin', 'camilla')
+    WhichDb_v3('Postgress', 'test_01', 'admin', '123')
+    t = MyUser('admin', '123')
     print t()
     print t.role
     

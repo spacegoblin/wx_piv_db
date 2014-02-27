@@ -281,18 +281,13 @@ class DbSelectionFrm(wx.Frame):
         busy = wx.BusyInfo("Establishing database connection...")
         odbc_dsn = self.lst_dbname[self.cb2.GetSelection()] #self.t1.GetValue()
         py_driver = self.connectionList[self.cb.GetSelection()]
-# if py_driver=='Postgress':
-# odbc_dsn = 'Postgress'
-# if py_driver=='Sqlite':
-# odbc_dsn = '''C:\\home\\databases\\cms.sq3'''
+
         pwd = self.txt_pwd.GetValue()
         user = self.txt_usr.GetValue()
         const.gui_version = __version__.version
         const.user = user
-        if py_driver=='Access':
-            const.password = 'rccl'
-        else:
-            const.password = pwd
+
+        const.password = pwd
 # initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
 # print 'init made'
         try:
@@ -315,22 +310,37 @@ parameters for errors.''',
             self.Destroy()
             return False
         
-        verifyUser = MyUser(user, pwd)
-        #print verifyUser
-        if verifyUser():
-            if verifyUser.role=='ALL':
-                const.RESTRICTED_USER = True
-            else:
-                const.RESTRICTED_USER = False
+    #-- Refactored out
+    
+#         verifyUser = MyUser(user, pwd)
+#         #print verifyUser
+#         if verifyUser():
+#             if verifyUser.role=='ALL':
+#                 const.RESTRICTED_USER = True
+#             else:
+#                 const.RESTRICTED_USER = False
+#             self.OnInit2()
+#         else:
+#             dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
+#                                """Your database connection was refused. (Double pwd settings not met).""",
+#                                wx.OK | wx.ICON_ERROR)
+#             dlg.ShowModal()
+#             dlg.Destroy()
+#             self.Destroy()
+            
+    #-- Refactored to
+
+        try:
+            const.RESTRICTED_USER = True
             self.OnInit2()
-        else:
+        except:
             dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
                                """Your database connection was refused. (Double pwd settings not met).""",
                                wx.OK | wx.ICON_ERROR)
             dlg.ShowModal()
             dlg.Destroy()
             self.Destroy()
-        
+                    
         self.Close()
         
     def OnInit2(self):
@@ -956,13 +966,13 @@ def main(argv):
     #from wx_forms_jde import VendorForm #=> these were not working due to error in setup for sqlalchemy import
     #from wx_forms_message_v2 import MessageForm #=> these were not working due to error in setup for sqlalchemy import
     
-    from ahutils.user import MyUser
+    #from ahutils.user import MyUser
     
    # from rclutils.rcl_cn import session_rcl
    # from rclutils.rcl_model import GuiDbVersion #=> these were not working due to error in setup for sqlalchemy import
     
     #global const, loadFromDb, WhichDb_v3, MyUser, Frm, GenericMsgDlg, session_rcl, GuiDbVersion
-    global const, loadFromDb, WhichDb_v3, MyUser, Frm, GenericMsgDlg #, GuiDbVersion
+    global const, loadFromDb, WhichDb_v3, Frm, GenericMsgDlg #, GuiDbVersion MyUser,
 
     app = App(False)
     #app = App(True, 'C:\\Users\\111625\\Desktop\\temp\\redirect_wx_rccl.txt')
