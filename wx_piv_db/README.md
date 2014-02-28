@@ -14,6 +14,18 @@ For windows install the following files using respective the installers.
 + wxPython (the GUI) http://www.wxpython.org/download.php#msw
 + psycopg (to connect to database) http://www.stickpeople.com/projects/python/win-psycopg/
 + A NumPy Stack http://continuum.io/downloads
+
 + matplotlib (drawing and plotting) http://matplotlib.org/downloads.html
+
+Setting up easy_install
+
++ Install https://pypi.python.org/pypi/setuptools#windows by issuing command 
+
+python ez_setup.py
+
+After you have easy_install installed you can install dateutil by issuing the comand (in cmd.exe)
+
+
+Python27/Scripts/easy_install dateutil
 
 You should now be able to find all installed software in site-packages
