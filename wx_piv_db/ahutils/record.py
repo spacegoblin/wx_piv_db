@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 """The record module is the ORM module for my home grown ORM solution. The main
