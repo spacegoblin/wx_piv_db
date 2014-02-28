@@ -1,1 +1,2 @@
-#init for package
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
