@@ -40,7 +40,8 @@ import urlparse
 import urllib
 from ConfigParser import ConfigParser
 
-import six
+#import six
+
 import matplotlib
 matplotlib.use('wxagg')
 import pylab
