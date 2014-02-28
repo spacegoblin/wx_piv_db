@@ -564,6 +564,7 @@ class MDIPFrame(wx.MDIParentFrame):
         "loads the menu, step one."
         
         #first load a local record set 
+        
         sql = """SELECT tbl_views.*, tbl_users.username
 FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
 INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
@@ -648,7 +649,6 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         default_dir = 'C:\home\downloads'
         default_file = '*.csv'
         wildcard = "csv files (*.csv)|*.csv|" \
-                    "ube files (*.ube)|*.ube|" \
                     "All files (*.*)|*.*"
 
         dialogue = wx.FileDialog(None, "Select file", default_dir,
