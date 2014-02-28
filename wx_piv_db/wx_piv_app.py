@@ -154,7 +154,7 @@ def initDatabaseSelection(py_driver, odbc_dsn='Postgress', user=None, password=N
     if py_driver:
         const.py_driver = py_driver
         const.odbc_dsn = odbc_dsn
-    #print "initDatabaseSelection", py_driver, odbc_dsn, user, password
+
     Db = WhichDb_v3(const.py_driver, const.odbc_dsn, const.user, password)
     globals()['Db'] = Db
     return Db

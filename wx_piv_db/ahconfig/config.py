@@ -38,8 +38,7 @@ const.db_lst_dsn='lse_fin_db'
 #const.db_lst_dsn='new_db'
  
 const.gui_user='ahetland'
-#const.gui_pwd=decrypt('camilla', 'rccl')
-#const.gui_pwd=('isabelle')
+
 
 if __name__=='__main__':
     import sys
