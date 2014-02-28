@@ -19,7 +19,7 @@ For windows install the following files using respective the installers.
 
 + NumPy (numerical engine 64 bit) http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
 
-+MxDateTime  http://www.egenix.com/products/python/mxBase/
++ MxDateTime  http://www.egenix.com/products/python/mxBase/ scroll down to select the msi installer
 
 + matplotlib (drawing and plotting) http://matplotlib.org/downloads.html
 
