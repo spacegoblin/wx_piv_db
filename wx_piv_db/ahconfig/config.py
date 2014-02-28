@@ -20,7 +20,6 @@ import const
 #     const.gui_user=cfg.get('user', 'user')
 #     
 
-
     
 # const.db_lst_dsn=cfg.get('active_database', 'db_lst_dsn')
 # 
