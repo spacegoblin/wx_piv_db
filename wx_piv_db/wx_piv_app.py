@@ -49,12 +49,9 @@ print os.getcwd()
 
 import wx_forms
 import ahutils
-#from wx_forms_message_v2 import MessageForm
-#from wx_forms_jde import VendorForm
 
 
 import psycopg2
-#import psycopg2 as psycopg
 
 from psycopg2 import extras, extensions
 
@@ -65,11 +62,9 @@ from psycopg2 import extras, extensions
 # from sqlalchemy import orm
 # #===============================================================================
 
-#import startup
-#from startup import startup_model, cabin_pivot
 
 import wx.lib.mixins.inspection
-#test
+
 #------------------------
 import exceptions
 
@@ -84,7 +79,6 @@ import sqlite3
 #from xconfig import const
 #from rclutils.user import MyUser
 
-#import rccl_ico
 import ahgui.ssc_logo_3 as ssc_logo_2
 
 import threading
@@ -288,9 +282,7 @@ class DbSelectionFrm(wx.Frame):
         const.gui_version = __version__.version
         const.user = user
 
-        #const.password = pwd
-# initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
-# print 'init made'
+
         try:
             initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
             self.emergencyExit = True
@@ -570,6 +562,8 @@ class MDIPFrame(wx.MDIParentFrame):
     
     def loadMenu(self):
         "loads the menu, step one."
+        
+        #first load a local record set 
         sql = """SELECT tbl_views.*, tbl_users.username
 FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
 INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
