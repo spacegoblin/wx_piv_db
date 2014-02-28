@@ -26,6 +26,6 @@ python ez_setup.py
 After you have easy_install installed you can install dateutil by issuing the comand (in cmd.exe)
 
 
-Python27/Scripts/easy_install dateutil
+Python27/Scripts/easy_install python-dateutil
 
 You should now be able to find all installed software in site-packages
