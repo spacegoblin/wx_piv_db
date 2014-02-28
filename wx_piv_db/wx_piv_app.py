@@ -146,9 +146,10 @@ class ShowSqlDataThread(threading.Thread):
 ####
 
 def initDatabaseSelection(py_driver, odbc_dsn='Postgress', user=None, password=None):
-    if py_driver:
+    try:
         const.py_driver = py_driver
         const.odbc_dsn = odbc_dsn
+    except:pass
 
     Db = WhichDb_v3(const.py_driver, const.odbc_dsn, const.user, password)
     globals()['Db'] = Db
@@ -280,8 +281,11 @@ class DbSelectionFrm(wx.Frame):
 
         pwd = self.txt_pwd.GetValue()
         user = self.txt_usr.GetValue()
-        const.gui_version = __version__.version
-        const.user = user
+        try:
+            const.gui_version = __version__.version
+            const.user = user
+        except: pass
+        
 
 
         try:
