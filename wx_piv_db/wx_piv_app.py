@@ -155,7 +155,7 @@ def initDatabaseSelection(py_driver, odbc_dsn='Postgress', user=None, password=N
         const.py_driver = py_driver
         const.odbc_dsn = odbc_dsn
     #print "initDatabaseSelection", py_driver, odbc_dsn, user, password
-    Db = WhichDb_v3(const.py_driver, const.odbc_dsn, const.user, const.password)
+    Db = WhichDb_v3(const.py_driver, const.odbc_dsn, const.user, password)
     globals()['Db'] = Db
     return Db
 
@@ -251,11 +251,12 @@ class DbSelectionFrm(wx.Frame):
         self.txt_usr.SetValue(const.gui_user)
         wx.StaticText(panel, -1, 'Password', (LEFT_POS_A, ROW_BLINE+90))
         self.txt_pwd = wx.TextCtrl(panel, -1, "password", pos=(LEFT_POS_B, ROW_BLINE+90), size=(125, -1),style=wx.TE_PASSWORD)
-        self.txt_pwd.SetValue(const.gui_pwd)
+        try:
+            self.txt_pwd.SetValue(const.gui_pwd)
+        except: pass
+        
         self.button = wx.Button(panel, wx.NewId(), "Open database", pos=(LEFT_POS_B, ROW_BLINE+120))
         self.Bind(wx.EVT_BUTTON, self.OnSelectDb, self.button)
-        
-
         
         self.Centre(wx.BOTH)
         
@@ -287,7 +288,7 @@ class DbSelectionFrm(wx.Frame):
         const.gui_version = __version__.version
         const.user = user
 
-        const.password = pwd
+        #const.password = pwd
 # initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
 # print 'init made'
         try:
