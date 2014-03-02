@@ -16,7 +16,7 @@ const.random_str = randomString()
 from ahutils import db
 db.setQuote('Postgress')
 
-DB = db.This_Db(const.db_lst_dsn, 'ahetland', 'isabelle')
+DB = db.This_Db(const.db_lst_dsn, 'ahetland', )
 
 
 
