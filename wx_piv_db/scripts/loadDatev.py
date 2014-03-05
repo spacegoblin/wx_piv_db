@@ -19,8 +19,6 @@ db.setQuote('Postgress')
 pwd = raw_input ("Enter password: ")
 
 DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd)
-DB = db.This_Db(const.db_lst_dsn, 'ahetland', )
-
 
 
 raise

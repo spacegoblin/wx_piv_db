@@ -17,10 +17,7 @@ For windows install the following files using respective the installers.
 
 + psycopg (to connect to database) http://www.stickpeople.com/projects/python/win-psycopg/
 
-
 + NumPy (numerical engine) http://sourceforge.net/projects/numpy/files/NumPy/
-
-+ NumPy (numerical engine 64 bit) http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
 
 + MxDateTime  http://www.egenix.com/products/python/mxBase/ scroll down to select the msi installer
 
