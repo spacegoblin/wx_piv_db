@@ -19,6 +19,7 @@ db.setQuote('Postgress')
 pwd = raw_input ("Enter password: ")
 
 DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd)
+DB = db.This_Db(const.db_lst_dsn, 'ahetland', )
 
 
 
@@ -95,4 +96,6 @@ if __name__ == '__main__':
     
     PATH='Z:/Reporting/2014/02-Feb/v01/imp.csv'
 
+    run(PATH)
+    raise
     run(PATH)
