@@ -21,8 +21,6 @@ pwd = raw_input ("Enter password: ")
 DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd)
 
 
-raise
-
 CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1']
         #   0         1            2      3          4              5           6          7             8               9          10          11          12          13        14       15    16
         
@@ -59,7 +57,7 @@ def run(FILE):
                 dict_['datum'] = helper( row[2] )
                 dict_['bu'] = row[3]
                 dict_['gegenkonto'] = row[4]
-                print row[5]
+
                 dict_['buchungstext'] = unicode(row[5], errors='ignore')  #.decode('utf-8').encode('utf-8')
                 dict_['ust'] = row[6]
                 dict_['belegfeld1'] = row[7]
@@ -92,8 +90,7 @@ def run(FILE):
 
 if __name__ == '__main__':
     
-    PATH='Z:/Reporting/2014/02-Feb/v01/imp.csv'
+    PATH='Z:/Reporting/2014/02-Feb/LSE/v02/imp.csv'
 
     run(PATH)
-    raise
-    run(PATH)
+
