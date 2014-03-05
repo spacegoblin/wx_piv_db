@@ -20,6 +20,7 @@ DB = db.This_Db(const.db_lst_dsn, 'ahetland', )
 
 
 
+
 CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1']
         #   0         1            2      3          4              5           6          7             8               9          10          11          12          13        14       15    16
         
