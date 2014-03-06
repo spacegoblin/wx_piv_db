@@ -7,6 +7,7 @@ import datetime
 import sys
 if '..//' not in sys.path:
     sys.path.append('..//')
+    print sys.path
     
 from ahutils.utils import randomString
 from ahconfig import const
@@ -86,11 +87,15 @@ def run(FILE):
         print 'line %d: %s' % (reader.line_num, e)
         raise
     
+    finally:
+        print "DONE! %d records inserted" % i
 
 
 if __name__ == '__main__':
     
-    PATH='Z:/Reporting/2014/02-Feb/LSE/v02/imp.csv'
+   # Z:\Reporting\2014\01-Jan\LSE\v03nachtrag
+   
+    PATH='Z:/Reporting/2014/01-Jan/LSE/v03nachtrag/imp.csv'
 
     run(PATH)
 
