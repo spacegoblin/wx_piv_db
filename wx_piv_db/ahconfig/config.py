@@ -37,6 +37,7 @@ const.db_lst_dsn='lse_fin_db'
 #const.db_lst_dsn='new_db'
  
 const.gui_user='ahetland'
+const.pwd=''
 
 
 if __name__=='__main__':
