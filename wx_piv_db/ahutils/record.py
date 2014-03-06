@@ -1856,8 +1856,6 @@ def loadFromFileCsv(file, basetable='No db table - csv'):
     return lst
 
 def setDbConst():
-    const.user='ahetland'
-    const.password='camilla'
 
     Db=WhichDb_v3('Postgress', 'dev_db', const.gui_user, const.gui_pwd)
     
