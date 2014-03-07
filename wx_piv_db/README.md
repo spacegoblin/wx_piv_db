@@ -38,3 +38,8 @@ install pyparsing
 C:\Python27\Scripts\easy_install python-dateutil
 
 You should now be able to find all installed software in site-packages
+
+Installing the ODBC driver
+--------------------------
+
+We have postgres version 9.1 installed so take this one http://www.postgresql.org/ftp/odbc/versions/msi/
