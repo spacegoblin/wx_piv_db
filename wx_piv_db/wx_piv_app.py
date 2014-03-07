@@ -397,7 +397,7 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
         
     def OnMakeFrm(self, event):
         
-        from rclutils.record import loadFromFile
+        from ahutils.record import loadFromFile
         #def loadFromFile(file, sheet='Sheet1', basetable='No db table - xls'):
         
         basetable = self.ctrTbl.GetValue().strip()
@@ -422,7 +422,7 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
             event.Skip()
                     
     def OnLoadCsv(self, event):
-        from rclutils.record import loadFromFileCsv
+        from ahutils.record import loadFromFileCsv
         basetable = self.ctrTbl.GetValue().strip()
 
         if not self.path:
