@@ -854,16 +854,7 @@ called from OnInit2 above after db has been selected."""
 # except:
 # print "No module in scripts named %s.py" % name
     
-    def initVerifyUser(self, user):
-        raise
-        """This is under development. Idea is that you set the user
-when selecting db and that you call method when you
-want to get the roles for this role.
-Maybe this can be done by calling initVerifyUser
-and setting an attr VerifyUser as the return value."""
-        return userRolse
-        def userRolse(view):
-            return 1
+
     
     def OnExit(self):
         print "Exiting from App class"
@@ -889,18 +880,8 @@ def main(argv):
         
     from ahutils.record import loadFromDb, WhichDb_v3
     
-    #from wx_forms_v02 import Frm, GenericMsgDlg
     from wx_forms import Frm, GenericMsgDlg
     
-    #from wx_forms_jde import VendorForm #=> these were not working due to error in setup for sqlalchemy import
-    #from wx_forms_message_v2 import MessageForm #=> these were not working due to error in setup for sqlalchemy import
-    
-    #from ahutils.user import MyUser
-    
-   # from rclutils.rcl_cn import session_rcl
-   # from rclutils.rcl_model import GuiDbVersion #=> these were not working due to error in setup for sqlalchemy import
-    
-    #global const, loadFromDb, WhichDb_v3, MyUser, Frm, GenericMsgDlg, session_rcl, GuiDbVersion
     global const, loadFromDb, WhichDb_v3, Frm, GenericMsgDlg #, GuiDbVersion MyUser,
 
     app = App(False)
