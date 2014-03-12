@@ -51,7 +51,9 @@ CREATE OR REPLACE VIEW public.qry_susa (
     belegfeld1,
     hgb_acc_sort_code,
     cf_acc_sort_code,
-    i_comp
+    i_comp,
+    ssc_cost_centre,
+    cc_ssc_function
      )
 AS
 SELECT tbl_susa.id, tbl_susa.account_datev,
@@ -70,7 +72,9 @@ SELECT tbl_susa.id, tbl_susa.account_datev,
     tbl_susa.belegfeld1,
     tbl_chart_of_accounts.hgb_acc_sort_code,
     tbl_chart_of_accounts.cf_acc_sort_code,
-    tbl_chart_of_accounts.i_comp
+    tbl_chart_of_accounts.i_comp,
+    tbl_chart_of_accounts.ssc_cost_centre,
+    tbl_cost_centers.cc_ssc_function
 FROM tbl_susa
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa.account_datev::text =
        tbl_chart_of_accounts.account_datev::text
