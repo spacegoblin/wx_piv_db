@@ -535,7 +535,7 @@ class MDIPFrame(wx.MDIParentFrame):
         
         self.addMenuItem('Load from File', self.OnFrmLoadFromFile, 'Load an csv or xls file.')
         
-        self.addMenuItem('Load JDE', self.OnLoadJde, 'Load jde downloaded files.')
+       
         
         self.addMenuItem("JDE sql's", self.OnJdeSql, 'Insert the site office data into the reporting tables.')
         
@@ -660,38 +660,6 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
 
 
                     
-    def OnLoadJde(self, event):
-        """Insert the JDE file into the the temp table."""
-        default_dir = 'C:\home\downloads'
-        default_file = '*.csv'
-        wildcard = "csv files (*.csv)|*.csv|" \
-                    "All files (*.*)|*.*"
-
-        dialogue = wx.FileDialog(None, "Select file", default_dir,
-                               default_file, wildcard, wx.OPEN)
-        
-        if dialogue.ShowModal() == wx.ID_OK:
-            
-            progressMax = 100
-            prog_dial = wx.ProgressDialog("Inserting data",
-                                          "Please wait...",
-                                          progressMax,
-                                          style = wx.PD_ELAPSED_TIME
-                                          | wx.PD_REMAINING_TIME)
-            keepGoing = False
-            didDelete = False
-            
-            filestr = dialogue.GetPath()
-            from reporting.data_feed_09 import doDelete, doInsert
-            didDelete = doDelete()
-            #didDelete = True
-            if didDelete:
-                prog_dial.Update(50)
-            keepGoing = doInsert(filestr)
-            if keepGoing:
-                prog_dial.Destroy()
-            
-        dialogue.Destroy()
         
     def OnLoadDatevKontoBlatt(self, event):
         """Insert DATEV Kontoblatt file into the database."""
