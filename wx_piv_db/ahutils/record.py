@@ -187,44 +187,6 @@ class MetaRecord(object):
         return __lst
         
 
-    def loadPickle(self, dbId):
-        raise
-        sql = """select pickle from tbl_pickle 
-        where id=%d""" % (dbId)            
-
-        Db.c.execute(sql)
-        dbObj = Db.c.fetchone()[0]
-        obj = cPickle.loads(base64.b64decode(dbObj))
-        if callable(obj):
-            return obj
-        else:
-            return False
-
-    def loadPickleWhereBaseTable(self, base_table):
-        "Loads a list of objects with the same base table"
-        _lst = []
-        raise
-        sql = """select pickle from tbl_pickle 
-        where base_table='%s'""" % base_table            
-
-        Db.c.execute(sql)
-        lst = Db.c.fetchall()
-        for r in lst:
-            _lst.append( cPickle.loads(base64.b64decode(r[0])) )
-        return _lst 
-                
-
-    def insertPickle(self, sql_stmt='None'):   
-        raise('Lets deprecate this ....')     
-        from rclutils.db import quote
-        picledStr = base64.b64encode(cPickle.dumps(self.parent))
-        sql = """insert into tbl_pickle (id_parent, base_table, pickle, sql_stmt) 
-        values (%d, '%s', '%s', '%s')""" % \
-               (self.parent.id, self.base_table, picledStr, sql_stmt)
-
-        Db.c.execute(sql)
-        Db.commit()
-        return sql
    
         
 class Record(object):
@@ -1807,7 +1769,7 @@ def loadFromAlchemy_v02(query, base_record):
 
 
 def loadFromFile(file, sheet='Sheet1', basetable='No db table - xls'):
-    from rclutils.excel import easyExcel
+    from ahutils.excel import easyExcel
     lst=RecordList()
 #    lst.value_field = value_filed
     lst.base_table = basetable
