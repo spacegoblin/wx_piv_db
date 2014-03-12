@@ -537,8 +537,6 @@ class MDIPFrame(wx.MDIParentFrame):
         
        
         
-        self.addMenuItem("JDE sql's", self.OnJdeSql, 'Insert the site office data into the reporting tables.')
-        
        # self.addMenuItem("Ship insert sql's", self.OnShipSQL, 'Insert into the ship tables.')
 
         self.addMenuItem('Scripts', self.OnLoadScripts, 'Load installed scripts')
@@ -638,28 +636,7 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
             self.dicCallSQL[mnuobj.idname] = mnuobj
             self.dic_gui_menu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
             
-
-        
-    def OnJdeSql(self, event):
-        from reporting.data_feed_09 import doInsertSql
-
-        progressMax = 100
-        prog_dial = wx.ProgressDialog("Inserting data again",
-                                      "Please wait...",
-                                      progressMax,
-                                      style = wx.PD_ELAPSED_TIME
-                                      | wx.PD_REMAINING_TIME)
-        keepGoing = False
-        didDelete = False
-        
-
-        didDoInsertSql = doInsertSql()
-        if didDoInsertSql:
-            print "all inserted into JDE 02"
-            prog_dial.Destroy()
-
-
-                    
+                   
         
     def OnLoadDatevKontoBlatt(self, event):
         """Insert DATEV Kontoblatt file into the database."""
