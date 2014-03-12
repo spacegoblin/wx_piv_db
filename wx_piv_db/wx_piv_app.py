@@ -409,7 +409,9 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
         lst = loadFromFile(self.path, sheet, basetable)
         frame = Frm(self.parent, lst, self.path)
         frame.Show(True)
-          
+        
+        #TODO: should reintroduce this when bug by AK is found
+        
 #         try:
 #             wx.BeginBusyCursor()
 #             lst = loadFromFile(self.path, sheet, basetable)
@@ -463,22 +465,6 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
             wx.EndBusyCursor()
         dlg.Destroy()
 
-
-# class VersionHtmlWindow(wx.html.HtmlWindow):
-# def __init__(self, parent, new_version):
-# wx.html.HtmlWindow.__init__(self, parent, id=-1, style=wx.NO_FULL_REPAINT_ON_RESIZE)
-#
-# self.SetPage("""<p>
-# You have currently installed an older version
-# of the application.</p>
-# <p>
-#
-# </p>
-#
-# </p>""" % new_version)
-#
-# def OnLinkClicked(self, link):
-# wx.LaunchDefaultBrowser(link.GetHref())
 
         
 class VersionFrm(wx.Frame):
@@ -685,9 +671,7 @@ the event method of the menu item."""
         pivot_bol = getattr(self.dicCallSQL[event.Id], 'pivot')
         menutitle = getattr(self.dicCallSQL[event.Id], 'menutitle')
 
-#
-# worker = ShowSqlDataThread(self, sql, tbl, pivot_bol, menutitle, False)
-# worker.start()
+
         
 # try:
         lst = loadFromDb(sql, tbl)
@@ -793,18 +777,7 @@ the event method of the menu item."""
         frame.Show()
         evt.Skip()
 
-# def test(self, evt):
-# from startup.startup_model import Cabin, Person, session
-#
-# from rclutils.record import loadFromAlchemy
-#
-# qry = session.query(Cabin)
-# print len(qry.all())
-#
-# lst = loadFromAlchemy(qry)
-# print len(lst)
-# frame = Frm(self, lst)
-# frame.Show(True)
+
        
 class App(wx.App):
     
@@ -939,6 +912,4 @@ if __name__=='__main__':
     
     
     main(None)
-
-    Status
 
