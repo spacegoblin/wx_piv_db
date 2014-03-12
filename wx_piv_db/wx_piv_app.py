@@ -404,22 +404,28 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
         sheet = self.ctrSheet.GetValue().strip()
         if not self.path:
             self.path = self.ctrPath.GetValue().strip()
-        try:
-            wx.BeginBusyCursor()
-            lst = loadFromFile(self.path, sheet, basetable)
-            frame = Frm(self.parent, lst, self.path)
-            frame.Show(True)
+            
 
-        except:
+        lst = loadFromFile(self.path, sheet, basetable)
+        frame = Frm(self.parent, lst, self.path)
+        frame.Show(True)
+          
+#         try:
+#             wx.BeginBusyCursor()
+#             lst = loadFromFile(self.path, sheet, basetable)
+#             frame = Frm(self.parent, lst, self.path)
+#             frame.Show(True)
+# 
+#         except:
+# 
+#             dlg = wx.MessageDialog(None, '''Check the parameters for excel.''',
+#                                'Excel did not load!',
+#                                wx.OK | wx.ICON_INFORMATION)
+#             dlg.ShowModal()
+#             dlg.Destroy()
+#         finally:
+#             wx.EndBusyCursor()
 
-            dlg = wx.MessageDialog(None, '''Check the parameters for excel.''',
-                               'Excel did not load!',
-                               wx.OK | wx.ICON_INFORMATION)
-            dlg.ShowModal()
-            dlg.Destroy()
-        finally:
-            wx.EndBusyCursor()
-            event.Skip()
                     
     def OnLoadCsv(self, event):
         from ahutils.record import loadFromFileCsv
