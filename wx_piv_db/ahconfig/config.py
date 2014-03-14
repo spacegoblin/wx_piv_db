@@ -30,6 +30,9 @@ import const
 # 
 # 
 # const.alchemy_engine_rcldb = 'postgres://%s:%s@%s:5432/rcl_db' % (const.gui_user, const.gui_pwd, const.host)
+
+const.SHEET_NAME = 'Sheet1'
+
 const.host='192.168.1.91'
 #const.host='localhost'
 
