@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+SHEET_NAME = 'Sheet1'
+
+
 import wx
 import wx.aui
 from mygridtable_v2 import MyGridTable #, MyGridTableAlchemy
@@ -944,7 +947,8 @@ class FrmMixInn(object):
         try:
             xlApp = Dispatch('Excel.Application')
             xlBook = xlApp.Workbooks.Add()
-            xlSheet = xlBook.Worksheets('Sheet1')
+            
+            xlSheet = xlBook.Worksheets(SHEET_NAME)
             
             xlSheet.Range(xlSheet.Cells(1, 1),
                             xlSheet.Cells(row, rightCol)).Value = self.grid.lst.xlsTable
