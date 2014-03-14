@@ -9,7 +9,12 @@ import time
 import string
 import sys
 
-SHEET_NAME = 'Sheet1'
+if '../' not in sys.path:
+    sys.path.append('../')
+    print sys.path
+
+from ahconfig import const
+
 
 class easyExcel:
     """A utility to make it easier to get at Excel.  Remembering
@@ -47,7 +52,7 @@ class easyExcel:
         #xl = Dispatch('Excel.Application')
         xl = self.xlBook
         #xl.ActiveWorkbook.SaveAs(r'd:\pivottable.xls')
-        ws = xl.Worksheets(SHEET_NAME)
+        ws = xl.Worksheets(const.SHEET_NAME)
         pc = xl.PivotCaches().Add(cnst.xlExternal)
         pc.Connection = r'ODBC;DSN=MS Access Database;DBQ=d:\test.mdb;'
         pc.CommandType = cnst.xlCmdSql
@@ -147,8 +152,8 @@ def test():
     spr.show()
     
     input = 'hello'
-    spr.setCell(SHEET_NAME,1,4, input)
-    output = spr.getCell(SHEET_NAME,1,4)
+    spr.setCell(const.SHEET_NAME,1,4, input)
+    output = spr.getCell(const.SHEET_NAME,1,4)
     assert input == output, 'setCell/getCell failed'
     
     input = []
@@ -158,20 +163,22 @@ def test():
             row.append(str('(%d,%d)'% (j, i)))
         input.append(tuple(row))
     
-    spr.setRange(SHEET_NAME,2,2,input)
+    spr.setRange(const.SHEET_NAME,2,2,input)
     
-    output = spr.getRange(SHEET_NAME,2,2,11,5)
+    output = spr.getRange(const.SHEET_NAME,2,2,11,5)
     # get rid of unicode strings
     output = spr.fixStringsAndDates(output)
     assert input == output, 'setRange/getRange test failed'
     
     #get a contiguous range
-    output2 = spr.getContiguousRange(SHEET_NAME, 2,2)
+    output2 = spr.getContiguousRange(const.SHEET_NAME, 2,2)
     dimensions = (len(output2), len(output2[0]))
     assert dimensions == (10, 4), 'getContiguousRange failed'
     
     print 'passed!'
 
 if __name__=='__main__':
+    
+    
     test()
     

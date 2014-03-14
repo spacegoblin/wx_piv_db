@@ -1,7 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-SHEET_NAME = 'Sheet1'
+
+
 
 
 import wx
@@ -22,6 +23,7 @@ from ahgui import piv_ico # rccl_ico
 
 import ahgui.ssc_logo_3 as ssc_logo_2
 
+SHEET_NAME = const.SHEET_NAME
 
 ##from pytesser import *
 #from PIL import Image
