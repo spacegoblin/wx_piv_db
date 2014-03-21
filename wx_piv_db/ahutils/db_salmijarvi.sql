@@ -18,8 +18,7 @@ CREATE TABLE public.tbl_salmijarvi_agresso (
   amount NUMERIC(20,2) DEFAULT 0 NOT NULL,
   resk_nr VARCHAR(255),
   resk_nr_t VARCHAR(255),
+  company VARCHAR(255),
+  imp_str VARCHAR(255),
   PRIMARY KEY(id)
 ) ;
-
-ALTER TABLE public.tbl_salmijarvi_agresso
-  ALTER COLUMN t SET STATISTICS 0;
