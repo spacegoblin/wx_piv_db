@@ -76,7 +76,7 @@ SELECT tbl_susa.id, tbl_susa.account_datev,
     tbl_chart_of_accounts.i_comp,
     tbl_chart_of_accounts.ssc_cost_centre,
     tbl_cost_centers.cc_ssc_function,
-    tbl_cost_centers.p_mgr
+    tbl_cost_centers.p_mgr::text
 FROM tbl_susa
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa.account_datev::text =
        tbl_chart_of_accounts.account_datev::text
@@ -142,8 +142,8 @@ SELECT tbl_susa_aurora.id, tbl_susa_aurora.account_datev,
     tbl_chart_of_accounts.cf_acc_sort_code,
     tbl_chart_of_accounts.i_comp,
     tbl_chart_of_accounts.ssc_cost_centre,
-    '' as tbl_cost_centers,
-    '' as p_mgr
+    ''::text as tbl_cost_centers,
+    ''::text as p_mgr
 FROM tbl_susa_aurora
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa_aurora.account_datev::text =
        tbl_chart_of_accounts.account_datev::text;   
@@ -208,9 +208,9 @@ SELECT tbl_susa_plan.id, tbl_susa_plan.account_datev,
     tbl_chart_of_accounts.hgb_acc_sort_code,
     tbl_chart_of_accounts.cf_acc_sort_code,
     tbl_chart_of_accounts.i_comp,
-    tbl_chart_of_accounts.ssc_cost_centre,
-    tbl_cost_centers.cc_ssc_function,
-    tbl_cost_centers.p_mgr
+    tbl_chart_of_accounts.ssc_cost_centre::text,
+    tbl_cost_centers.cc_ssc_function::text,
+    tbl_cost_centers.p_mgr::text
 FROM tbl_susa_plan
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa_plan.account_datev::text =
        tbl_chart_of_accounts.account_datev::text
@@ -296,10 +296,14 @@ SELECT qry_susa_aurora_act.id, qry_susa_aurora_act.account_datev,
     qry_susa_aurora_act.partner_name, qry_susa_aurora_act.partner_int_ext, qry_susa_aurora_act.stapel_nr, qry_susa_aurora_act.belegfeld1,
     qry_susa_aurora_act.hgb_acc_sort_code, 
     qry_susa_aurora_act.cf_acc_sort_code,
-    qry_susa_aurora_act.i_comp
+    qry_susa_aurora_act.i_comp,
+    qry_susa_aurora_act.ssc_cost_centre,
+    qry_susa_aurora_act.cc_ssc_function,
+    qry_susa_aurora_act.p_mgr
 FROM qry_susa_aurora_act;
 
-    
+  
+
        
 /* View for the plan  */
 
@@ -608,7 +612,7 @@ CREATE OR REPLACE VIEW public.qry_susa_fcst_c (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
     fcst_choice)
 AS
 SELECT qry_susa_fcst.id, qry_susa_fcst.account_datev,
