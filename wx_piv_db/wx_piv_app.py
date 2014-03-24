@@ -347,6 +347,7 @@ parameters for errors.''',
         self.Close()
         
     def OnInit2(self):
+        print "OnInit2"
         frame = MDIPFrame(App, const.odbc_dsn, const.gui_version)
         frame.Show(True)
         self.app.mdi_parent_frame = frame
@@ -539,6 +540,8 @@ class MDIPFrame(wx.MDIParentFrame):
         ## next menu
 # self.menu3 = menu3 = wx.Menu()
         self.menu4 = menu4 = wx.Menu()
+        
+        #self.lst_db_views = []  #get the result table from db and store it in a list
 
         self.dic_gui_menu = {}
         
