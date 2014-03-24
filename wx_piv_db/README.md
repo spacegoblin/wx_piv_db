@@ -44,3 +44,5 @@ Installing the ODBC driver
 
 We have postgres version 9.1 installed so take this one http://www.postgresql.org/ftp/odbc/versions/msi/
 scroll down to bottom of page and install. When installed open the options and un-click "declare fetch"
+
+see also http://stackoverflow.com/questions/6796252/setting-up-postgresql-odbc-on-windows
