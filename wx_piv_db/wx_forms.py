@@ -551,7 +551,7 @@ Would you like to set the table in update mode?""",
         
        # wx.SetDefaultPyEncoding('utf-8') #trying to fix the decode problem when searching
          
-        dlg = wx.TextEntryDialog(None, "Enter a surch string:", "Search box")
+        dlg = wx.TextEntryDialog(None, "Enter a search string:", "Search box")
         if dlg.ShowModal() == wx.ID_OK:
             response = dlg.GetValue()
                
