@@ -45,4 +45,7 @@ Installing the ODBC driver
 We have postgres version 9.1 installed so take this one http://www.postgresql.org/ftp/odbc/versions/msi/
 scroll down to bottom of page and install. When installed open the options and un-click "declare fetch"
 
+You should install the 32 bit version even if we are running on 64 machines, this is because we have windows 32 on
+our machines. Then you should go and call the odbc manager from the C:\Windows\SysWOW64 folder odbcad32.exe
+
 see also http://stackoverflow.com/questions/6796252/setting-up-postgresql-odbc-on-windows
