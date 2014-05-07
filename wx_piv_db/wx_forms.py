@@ -2,9 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-
-
-
 import wx
 import wx.aui
 from mygridtable_v2 import MyGridTable #, MyGridTableAlchemy
@@ -30,8 +27,7 @@ SHEET_NAME = const.SHEET_NAME
 ##import pyPdf
 #import tempfile
 
-#testing some threading
-#from wxAnyThread import anythread
+
 
 def getPDFContent(tmpfile):
     content = []
@@ -284,19 +280,7 @@ class MyGrid(wx.grid.Grid):
         self.hasFocus = False
         event.Skip()
         
-        #define an attribute collor to use when updating in OnUpdate_v02
-# self.collorAttr = wx.grid.GridCellAttr()
-# self.collorAttr.SetBackgroundColour((12,230,120))
-# self.collorAttr.SetAlignment(wx.ALIGN_RIGHT,wx.ALIGN_RIGHT)
-# self.collorAttr.SetOverflow(False)
-#
-# self.SetAttr(2,2, self.collorAttr) #.IncRef()
 
-
-# def OnBeginDrag(self, event):
-# print event
-# print "Begin Drag"
-    # Event method called when a column move needs to take place
     
     def OnSelectCell(self, evt):
        # print "OnSelectCell"
@@ -341,11 +325,7 @@ class MyGrid(wx.grid.Grid):
     def OnClickCol(self, event):
         self.grd_col_num = int(event.GetCol())
         self.grd_row_num = int(event.GetRow())
-# print "OnClick - col_num: %d, row_num:%d" % (self.grd_col_num, self.grd_row_num)
-# #we are clicking the label on the top
-# if self.grd_row_num==-1 and self.grd_col_num>=0:
-# self.lst.sort(int(self.grd_col_num))
-# self.ForceRefresh()
+
         #we are clicking the label on the sides
 
         if self.grd_row_num==-1:
@@ -363,11 +343,7 @@ class MyGrid(wx.grid.Grid):
             self.lst.sort(int(self.grd_col_num))
             self.ForceRefresh()
         event.Skip()
-# def OnDoubleClickCell(self, event):
-# row_num = event.GetRow()
-# obj = self.lst.getObject(row_num)
-# frame = FrmSingle(-1, obj)
-# frame.Show(True)
+
 
     def OnClickCellLeft(self, event):
         #GRIDMACRO
@@ -384,12 +360,8 @@ class MyGrid(wx.grid.Grid):
         lst = False
         
         try:
-# if not self.lst.isPivoted:
-#
-# obj = self.lst.data[row_num] #, col_num)
-# if obj.linked_redords:
-# lst = obj.linked_redords
-#
+
+
 # else:
             lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
             lst.view_id = self.parent.pivot_lst.view_id
@@ -414,11 +386,7 @@ class MyGrid(wx.grid.Grid):
         except:
             if self.CanEnableCellControl():
                 self.EnableCellEditControl()
-            #row_num = self.GetGridCursorRow()
 
-            #pass
-            #obj = self.lst[row_num]
-            #frame = FrmSingle(self, obj, self.lst)
         finally:
             wx.EndBusyCursor()
             event.Skip()
@@ -570,21 +538,11 @@ Would you like to set the table in update mode?""",
   
 
     def OnClose(self, event):
-# print "------------------------"
         print "OnClose MyGrid"
-# print "GetActiveWindow ", wx.GetActiveWindow()
-# print "id", wx.GetCurrentId()
-# print self.parent
 
-# if self.hasFocus:
-# print "hasFocus is True"
-# self.parent.OnClose(event)
         self.parent.OnClose(event)
         
-        #print "after Close"
-        #event.Skip()
-# print "after Skip"
-# print "------------------------"
+
 
     def OnAppendCopy(self, event):
         
@@ -597,21 +555,13 @@ Would you like to set the table in update mode?""",
         
         _tmp_lst=[]
         
-
         
         for x in range(int(dlg.GetValue())):
-# t1 = datetime.datetime.now()
             copy = obj.copy()
-# t2 = datetime.datetime.now()
-# print "time to make copy", t2 - t1
-            
+
             if obj.id:
                 copy.id_parent = obj.id
                 _tmp_lst.append(copy)
-# copy.deleteAttr('id')
-# copy.deleteAttr('_parent')
-# print obj
-
 
             print copy.insert()
       
@@ -657,27 +607,12 @@ Would you like to set the table in update mode?""",
             frm = Frm2(self.parent.parent, new_table, self.parent.title)
         else:
             frm = Frm(self.parent.parent, new_table, self.parent.title)
-
-# try:
-# frm = Frm(self.parent.parent, new_table, self.parent.title)
-# except AttributeError:
-# if app.__dict__.get('mdi_parent_frame'):
-# frm = Frm2(app.mdi_parent_frame, new_table, 'Grid 2')
-# else:
-# frm = Frm2(None, new_table, 'Grid 2')
-# except:
-# print "Unexpected error:", sys.exc_info()[0]
-# raise
             
         frm.Show()
         #event.Skip()
 
 
-# def OnInsert(self, event):
-# row_num = self.GetGridCursorRow()
-# obj = self.lst[row_num]
-# print obj.insert()
-# self.ForceRefresh()
+
 
     def showSingleForm(self, row_num):
 # if const.RESTRICTED_USER:
@@ -754,19 +689,12 @@ Would you like to set the table in update mode?""",
         frm.Show()
         frm.Raise()
                  
-#sql="select * from tblm_ships"
-#lst = loadFromDb(sql,None)
-#frm = Frm(self.parent.parent, new_table)
-#frm.Show()
+
         
     def OnSingleForm(self, event):
         self.showSingleForm( self.GetGridCursorRow() )
-# if const.RESTRICTED_USER:
-# row_num = self.GetGridCursorRow()
-# obj = self.lst[row_num]
-# frame = FrmSingle(self.parent.parent, obj, self.lst)
-# frame.Show(True)
-# else: pass
+
+
 ###Startin to refactor the class Frm below.
 ###This form should have as its base class a panel
 ###the current structure only alows for the use of this as a MDIChild
@@ -957,7 +885,6 @@ class FrmMixInn(object):
         wx.BeginBusyCursor()
         
         row = len(self.grid.lst.table)
-        #row = len(self.grid.lst.data)
         
         from win32com.client import Dispatch
         try:
@@ -1062,7 +989,6 @@ class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
         
         self.Bind(wx.EVT_TEXT, self.OnTextUpdField, self.cmbForUpd)
         
-        #wx.StaticText(panel, -1, 'Changes will be made on %s' % here_field, size=(400, 25),pos=(90, 10))
         
         self.txt_ch = wx.TextCtrl(panel, -1, 'Changes will be made on %s' % here_field,
                                   size=(300, 20),pos=(90, 10), style=wx.TE_READONLY)
@@ -1141,9 +1067,7 @@ f.Show()
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         
         self.Bind(wx.EVT_MENU_CLOSE, self.OnMenuClose)
-      # self.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestry)
-      # self.Bind(wx.EVT_TEXT_COPY , self.OnTextCopy)
-# self.Bind(wx.EVT_SET_FOCUS , self.OnSetFocus)
+
 
     def createGrid(self, lst, dataCols=None):
         self.grid = MyGrid(self, lst) #, dataCols)
@@ -1151,12 +1075,10 @@ f.Show()
         
     def OnClose(self, event):
         print "closing Frm"
-# print "self.grid.Destroy() This causes imediate crash!"
-# self.grid.Destroy()
+        # print "self.grid.Destroy() This causes imediate crash!"
+        # self.grid.Destroy()
         self.grid.Close()
-# print "self.grid = None "
-        
-# self.Destroy()
+
         self.Destroy()
         
         #event.Skip()
@@ -1245,7 +1167,6 @@ class FrmSingle(wx.MDIChildFrame):
         
         btnShell = wx.Button(self.panel, -1, "Shell", pos=(800, 30))
         
-        #btnMeta = wx.Button(self.panel, -1, "Get Meta", pos=(600, 60))
         btnUpload = wx.Button(self.panel, -1, "Upload", pos=(700, 60))
         
         btnDelete = wx.Button(self.panel, -1, "Delete")
@@ -1254,7 +1175,6 @@ class FrmSingle(wx.MDIChildFrame):
         self.box_btn = wx.BoxSizer(wx.VERTICAL)
         
         self.box_btn.Add(btnShell)
-        #self.box_btn.Add(btnMeta)
         self.box_btn.Add(btnUpload)
         self.box_btn.AddSpacer(10)
         
@@ -1262,8 +1182,6 @@ class FrmSingle(wx.MDIChildFrame):
         self.CreateStaticText()
         self.vbox.AddSizer(self.hbox)
         
-        
-       # self.Bind(wx.EVT_BUTTON, self.OnClickBtn, btnMeta)
         self.Bind(wx.EVT_BUTTON, self.OnClickBtnUpload, btnUpload)
         self.Bind(wx.EVT_BUTTON, self.OnClickSave, btnUpdate)
         self.Bind(wx.EVT_BUTTON, self.OnClickDelete, btnDelete)
@@ -1293,15 +1211,7 @@ class FrmSingle(wx.MDIChildFrame):
         
         wx.MDIChildFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
 
-# def _getObjAttr(self, label):
-# txt = getattr(self.obj, label)
-# if type(txt) == datetime.datetime:
-# txt = txt.strftime('%Y-%m-%d')
-# elif type(txt)== DateTimeType:
-# txt = txt.strftime('%Y-%m-%d')
-# if not txt:
-# txt = ''
-# return txt
+
     
     def OnViewPivot(self, event):
         print "OnViewPivot"
@@ -1364,20 +1274,13 @@ class FrmSingle(wx.MDIChildFrame):
             _d = {}
             _d[key] = string
             self.dicTxtID_Label[ctr_id] = _d
-            #if string: #test because None will be represented as 'None'
-# if len(string)>60:
-# ctr = wx.TextCtrl(self.panel, ctr_id, string, size=(300, 100),pos=(250, cnt), style=wx.TE_MULTILINE)
-# cnt+=80
-# else:
-# ctr = wx.TextCtrl(self.panel, ctr_id, string, size=(300, 20),pos=(250, cnt))
-# ctr = wx.TextCtrl(self.panel, ctr_id, str( self._getObjAttr(key) ), size=(300, 20),pos=(250, cnt))
+
             _txt = _getObjAttr(self.obj, key)
             ctr = wx.TextCtrl(self.panel, ctr_id, str(_txt ), size=(300, 20),pos=(250, cnt))
 
             self.dicTxtID_Label[ctr_id] = key
             self.dicLabel_Txt2[key] = ctr
-                            
-            #ctr.Bind(wx.EVT_TEXT_ENTER, self.OnUpdate)
+
             ctr.Bind(wx.EVT_LEFT_DCLICK, self.OnDblClick)
             ctr.Bind(wx.EVT_TEXT, self.OnText)
             
@@ -1430,8 +1333,6 @@ The data was NOT inserted.''',
         #event.Skip()
         
     def OnClickBtnDownload(self, event):
-        #print "OnClickBtnDownload"
-        #print "event.GetSelection()", self.lstBox.GetSelection()
         
         dlg = wx.FileDialog(self, message="Save file as ...",
                             wildcard="*", style=wx.SAVE)
@@ -1469,9 +1370,6 @@ The data was NOT inserted.''',
         event.Skip()
         
 ### -Single Filed- ###
-#from pygments import highlight
-#from pygments.lexers import PythonLexer
-#from pygments.formatters import NullFormatter, HtmlFormatter
 
 class FrmSingleField(wx.Frame):
     def __init__(self, parent, obj, field):
@@ -1777,8 +1675,6 @@ class FrmOptions(wx.MDIChildFrame, CtrWCloseUtil):
         CtrWCloseUtil.__init__(self)
         
         app = wx.GetApp()
-        
-        
         
         self.txt_floatFormat = wx.TextCtrl(panel, -1, app.MY_FLOAT_FORMAT, size=(100, 21),pos=(10, 10))
         self.btn_floatFormat = wx.Button(panel, -1, 'Update float', pos=(10, 30))
