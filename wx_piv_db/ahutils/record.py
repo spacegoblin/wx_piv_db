@@ -49,6 +49,7 @@ def GenericMsgDlg(message, caption, styles=wx.OK | wx.ICON_INFORMATION):
 
 def WhichDb_v3(Driver, DbSelection, user=None, password=None):
     print "WhichDb_v3"
+
     from db import setQuote
 
     if Driver=='Postgress':
@@ -57,13 +58,9 @@ def WhichDb_v3(Driver, DbSelection, user=None, password=None):
         return globals()['Db']
 
     elif Driver=='sqlite':
-        setQuote('Access')
-        globals()['Db'] = db.Sqlite(DbSelection)
+        globals()['Db'] = db.Sqlite(dbName, user, password)
         return globals()['Db']
-    elif Driver=='Alex':
-        setQuote('Postgress')
-        globals()['Db'] = db.AlexDB()
-        return globals()['Db']    
+
     else:
         raise("You must set the database driver and dsn first to get a connection.")
         
@@ -71,7 +68,7 @@ def WhichDb_v3(Driver, DbSelection, user=None, password=None):
 def WhichDb_v4(Driver, dbName, user=None, password=None):
     print "WhichDb_v4"
     from db import setQuote
-
+    raise ("WhichDb_v4")
     if Driver=='PostgreSQL':
         setQuote('PostgreSQL')
         globals()['Db'] = db.This_Db(dbName, user, password)

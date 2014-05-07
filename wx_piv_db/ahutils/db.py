@@ -160,8 +160,8 @@ def setQuote(Driver):
         globals()['quote'] = _quoteNone
         
     elif Driver=='Postgress':
-        #globals()['quote'] = _quotePostgress
         globals()['quote'] = _quoteNone
+        
     elif Driver=='sqlite':
         globals()['quote'] = _quoteAccess
         
