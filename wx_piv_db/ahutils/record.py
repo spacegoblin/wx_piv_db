@@ -1005,19 +1005,7 @@ class RecordList(object):
         return ret
                     
     def search(self, searchStr, field=None):
-        #an alternative in postgres
-        #select * from tblh_people where tblh_people.familyname ~* '.*er.*'
 
-#        import sys
-#        print "module record in search(): sys.getdefaultencoding()", sys.getdefaultencoding()
-#        reload (sys)
-#        sys.setdefaultencoding('utf-8')
-#        sys.
-#        import codecs
-#        sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-
-
-        #sys.stdout.  #encoding('utf-8')
                             
         ret = self.createNewList()
         
@@ -1159,7 +1147,6 @@ class RecordList(object):
         
         lst.pivot(self.pivot_left, self.pivot_top, self.value_field)
       
-  
         return lst
 
                         
@@ -1840,13 +1827,6 @@ def insertIntoUserView(viewid, username='ahetland'):
     return True  
 
 
-def insertIntoSupplier():
-    sql = """insert into tbljde_address_number (address_number, 
-    explanation_alpha_name, active_sup) values ('NEW_CODE', 'New supplier', True)"""
-    
-    Db.c.execute(sql)
-    Db.cnn.commit()
-    return True  
 
 def showExample():
     import wx
@@ -1887,9 +1867,6 @@ def showExample():
     app.MainLoop() 
     
     
-def developCSVCapability():
-    lst = loadFromDb('select * from tblp_planrecords', 'xxx') 
-    lst.csv()
 
 def run():
     "Run the main program from here."
