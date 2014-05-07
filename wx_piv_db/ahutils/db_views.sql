@@ -54,7 +54,8 @@ CREATE OR REPLACE VIEW public.qry_susa (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
      )
 AS
 SELECT tbl_susa.id, tbl_susa.account_datev,
@@ -76,13 +77,16 @@ SELECT tbl_susa.id, tbl_susa.account_datev,
     tbl_chart_of_accounts.i_comp,
     tbl_chart_of_accounts.ssc_cost_centre,
     tbl_cost_centers.cc_ssc_function,
-    tbl_cost_centers.p_mgr::text
+    tbl_cost_centers.p_mgr::text,
+    tbl_chart_of_accounts.rpt_acc_sort_code
 FROM tbl_susa
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa.account_datev::text =
        tbl_chart_of_accounts.account_datev::text
    LEFT JOIN tbl_cost_centers ON tbl_susa.kost1::text =
        tbl_cost_centers.costcenternr::text;
 
+GRANT SELECT ON public.qry_susa TO db_read;
+  
 /* Base view for the SUSA Aurora (extra table) */  
      
 CREATE OR REPLACE VIEW public.qry_susa_aurora_act (
@@ -125,7 +129,8 @@ CREATE OR REPLACE VIEW public.qry_susa_aurora_act (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
     )
 AS
 SELECT tbl_susa_aurora.id, tbl_susa_aurora.account_datev,
@@ -143,11 +148,13 @@ SELECT tbl_susa_aurora.id, tbl_susa_aurora.account_datev,
     tbl_chart_of_accounts.i_comp,
     tbl_chart_of_accounts.ssc_cost_centre,
     ''::text as tbl_cost_centers,
-    ''::text as p_mgr
+    ''::text as p_mgr,
+    tbl_chart_of_accounts.rpt_acc_sort_code
 FROM tbl_susa_aurora
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa_aurora.account_datev::text =
        tbl_chart_of_accounts.account_datev::text;   
 
+GRANT SELECT ON public.qry_susa_aurora_act TO db_read;
 
 /* View for the plan */
 
@@ -191,7 +198,8 @@ CREATE OR REPLACE VIEW public.qry_susa_plan (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
     )
 AS
 SELECT tbl_susa_plan.id, tbl_susa_plan.account_datev,
@@ -210,13 +218,15 @@ SELECT tbl_susa_plan.id, tbl_susa_plan.account_datev,
     tbl_chart_of_accounts.i_comp,
     tbl_chart_of_accounts.ssc_cost_centre::text,
     tbl_cost_centers.cc_ssc_function::text,
-    tbl_cost_centers.p_mgr::text
+    tbl_cost_centers.p_mgr::text,
+    tbl_chart_of_accounts.rpt_acc_sort_code
 FROM tbl_susa_plan
    LEFT JOIN tbl_chart_of_accounts ON tbl_susa_plan.account_datev::text =
        tbl_chart_of_accounts.account_datev::text
    LEFT JOIN tbl_cost_centers ON tbl_susa_plan.project_code::text =
        tbl_cost_centers.project_code::text;
 
+GRANT SELECT ON public.qry_susa_plan TO db_read;
     
 /* Group view for the SUSA */
 
@@ -260,7 +270,8 @@ CREATE OR REPLACE VIEW public.qry_susa_act_group (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
     )
 AS
 SELECT qry_susa.id, qry_susa.account_datev,
@@ -279,7 +290,9 @@ SELECT qry_susa.id, qry_susa.account_datev,
     qry_susa.i_comp,
     qry_susa.ssc_cost_centre,
     qry_susa.cc_ssc_function,
-    qry_susa.p_mgr
+    qry_susa.p_mgr,
+    qry_susa.rpt_acc_sort_code
+    
 FROM qry_susa
 UNION
 SELECT qry_susa_aurora_act.id, qry_susa_aurora_act.account_datev,
@@ -299,11 +312,12 @@ SELECT qry_susa_aurora_act.id, qry_susa_aurora_act.account_datev,
     qry_susa_aurora_act.i_comp,
     qry_susa_aurora_act.ssc_cost_centre,
     qry_susa_aurora_act.cc_ssc_function,
-    qry_susa_aurora_act.p_mgr
+    qry_susa_aurora_act.p_mgr,
+    qry_susa_aurora_act.rpt_acc_sort_code
 FROM qry_susa_aurora_act;
 
   
-
+GRANT SELECT ON public.qry_susa_act_group TO db_read;
        
 /* View for the plan  */
 
@@ -347,7 +361,8 @@ CREATE OR REPLACE VIEW public.qry_susa_fcst (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
     )
     
 AS
@@ -366,7 +381,8 @@ SELECT qry_susa.id, qry_susa.account_datev,
     qry_susa.i_comp,
     qry_susa.ssc_cost_centre,
     qry_susa.cc_ssc_function,
-    qry_susa.p_mgr
+    qry_susa.p_mgr,
+    qry_susa.rpt_acc_sort_code
     
 FROM qry_susa
 UNION
@@ -383,15 +399,17 @@ SELECT qry_susa_plan.id, qry_susa_plan.account_datev,
     qry_susa_plan.i_comp,
     qry_susa_plan.ssc_cost_centre,
     qry_susa_plan.cc_ssc_function,
-    qry_susa_plan.p_mgr
-    
+    qry_susa_plan.p_mgr,
+    qry_susa_plan.rpt_acc_sort_code
+        
 FROM qry_susa_plan
 WHERE qry_susa_plan.period >= 201312 AND (qry_susa_plan.z_type::text =
     'P_14_02'::text 
     OR qry_susa_plan.z_type::text = 'FC_13'::text
     OR qry_susa_plan.z_type::text = 'FC_F14v1'::text
     );
-    
+
+GRANT SELECT ON public.qry_susa_fcst TO db_read;
 
 /* View for the union plan aurora */
 
@@ -437,7 +455,8 @@ CREATE OR REPLACE VIEW public.qry_susa_fcst_aurora (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
 )
 AS
 SELECT qry_susa_aurora_act.id, qry_susa_aurora_act.account_datev,
@@ -458,7 +477,8 @@ SELECT qry_susa_aurora_act.id, qry_susa_aurora_act.account_datev,
     qry_susa_aurora_act.i_comp,
     qry_susa_aurora_act.ssc_cost_centre,
     qry_susa_aurora_act.cc_ssc_function,
-    qry_susa_aurora_act.p_mgr
+    qry_susa_aurora_act.p_mgr,
+    qry_susa_aurora_act.rpt_acc_sort_code
     
 FROM qry_susa_aurora_act
 UNION
@@ -480,7 +500,8 @@ SELECT qry_susa_plan.id, qry_susa_plan.account_datev,
     qry_susa_plan.i_comp,
     qry_susa_plan.ssc_cost_centre,
     qry_susa_plan.cc_ssc_function,
-    qry_susa_plan.p_mgr
+    qry_susa_plan.p_mgr,
+    qry_susa_plan.rpt_acc_sort_code
     
 FROM qry_susa_plan
 WHERE qry_susa_plan.period >= 201312 AND (qry_susa_plan.z_type::text =
@@ -489,7 +510,7 @@ WHERE qry_susa_plan.period >= 201312 AND (qry_susa_plan.z_type::text =
     OR qry_susa_plan.z_type::text = 'FC_F14v1'::text) AND qry_susa_plan.company::text = 'Aurora'::text;
     
 
-
+GRANT SELECT ON public.qry_susa_fcst_aurora TO db_read;
 
 /* View for the union plan actuals */
 
@@ -533,7 +554,8 @@ CREATE OR REPLACE VIEW public.qry_susa_union (
     i_comp,
     ssc_cost_centre,
     cc_ssc_function,
-    p_mgr
+    p_mgr,
+    rpt_acc_sort_code
     )
 AS
 SELECT qry_susa.id, qry_susa.account_datev,
@@ -549,7 +571,8 @@ SELECT qry_susa.id, qry_susa.account_datev,
     qry_susa.i_comp,
     qry_susa.ssc_cost_centre,
     qry_susa.cc_ssc_function,
-    qry_susa.p_mgr
+    qry_susa.p_mgr,
+    qry_susa.rpt_acc_sort_code
     
 FROM qry_susa
 UNION
@@ -567,9 +590,12 @@ SELECT qry_susa_plan.id, qry_susa_plan.account_datev,
     qry_susa_plan.i_comp,
     qry_susa_plan.ssc_cost_centre,
     qry_susa_plan.cc_ssc_function,
-    qry_susa_plan.p_mgr
-    
+    qry_susa_plan.p_mgr,
+    qry_susa_plan.rpt_acc_sort_code
+        
 FROM qry_susa_plan;
+
+GRANT SELECT ON public.qry_susa_union TO db_read;
 
 /* View for the qry_susa_fcst_c */
 
@@ -613,25 +639,88 @@ CREATE OR REPLACE VIEW public.qry_susa_fcst_c (
     ssc_cost_centre,
     cc_ssc_function,
     p_mgr,
-    fcst_choice)
+    rpt_acc_sort_code,
+    fcst_choice,
+    company_grouped)
 AS
 SELECT qry_susa_fcst.id, qry_susa_fcst.account_datev,
-    qry_susa_fcst.kontobezeichnung_not_mdata, qry_susa_fcst.soll, qry_susa_fcst.haben, qry_susa_fcst.period, 
-    qry_susa_fcst.name_datev, qry_susa_fcst.zuordnung_bwa, qry_susa_fcst.bwa_titel, 
-    qry_susa_fcst.ifrs_acc_sort_code, 
-    
-    qry_susa_fcst.accounts_ssc, qry_susa_fcst.acc_description_ssc, qry_susa_fcst.amount, qry_susa_fcst.year, 
-    qry_susa_fcst.gegenkonto, qry_susa_fcst.buchungstext, qry_susa_fcst.comment, qry_susa_fcst.comment_2, qry_susa_fcst.kost1, 
-    qry_susa_fcst.project_code, qry_susa_fcst.z_type, qry_susa_fcst.base_table, qry_susa_fcst.company, qry_susa_fcst.foreign_amount, 
-    qry_susa_fcst.customer, qry_susa_fcst.internal_ext, qry_susa_fcst.business_unit, qry_susa_fcst.p_description, 
-    qry_susa_fcst.datum, qry_susa_fcst.partner_name, qry_susa_fcst.partner_int_ext, qry_susa_fcst.stapel_nr, qry_susa_fcst.belegfeld1, 
-    qry_susa_fcst.hgb_acc_sort_code, 
-    qry_susa_fcst.cf_acc_sort_code, 
-    qry_susa_fcst.i_comp, 
-    qry_susa_fcst.ssc_cost_centre,
-    qry_susa_fcst.cc_ssc_function,
-    qry_susa_fcst.p_mgr,
-    fcst_choice(201402, qry_susa_fcst.period, qry_susa_fcst.z_type::character varying) AS fcst_choice
+    qry_susa_fcst.kontobezeichnung_not_mdata, qry_susa_fcst.soll, qry_susa_fcst.haben, qry_susa_fcst.period, qry_susa_fcst.name_datev, qry_susa_fcst.zuordnung_bwa, qry_susa_fcst.bwa_titel, qry_susa_fcst.ifrs_acc_sort_code, qry_susa_fcst.accounts_ssc, qry_susa_fcst.acc_description_ssc, qry_susa_fcst.amount, qry_susa_fcst.year, qry_susa_fcst.gegenkonto, qry_susa_fcst.buchungstext, qry_susa_fcst.comment, qry_susa_fcst.comment_2, qry_susa_fcst.kost1, qry_susa_fcst.project_code, qry_susa_fcst.z_type, qry_susa_fcst.base_table, qry_susa_fcst.company, qry_susa_fcst.foreign_amount, qry_susa_fcst.customer, qry_susa_fcst.internal_ext, qry_susa_fcst.business_unit, qry_susa_fcst.p_description, qry_susa_fcst.datum, qry_susa_fcst.partner_name, qry_susa_fcst.partner_int_ext, qry_susa_fcst.stapel_nr, qry_susa_fcst.belegfeld1, qry_susa_fcst.hgb_acc_sort_code, qry_susa_fcst.cf_acc_sort_code, qry_susa_fcst.i_comp, qry_susa_fcst.ssc_cost_centre, qry_susa_fcst.cc_ssc_function, qry_susa_fcst.p_mgr, qry_susa_fcst.rpt_acc_sort_code, fcst_choice(201403, qry_susa_fcst.period, qry_susa_fcst.z_type::character varying) AS fcst_choice, company_grouped(qry_susa_fcst.company::text::character varying) AS company_grouped
 FROM qry_susa_fcst
    LEFT JOIN tbl_chart_of_accounts ON qry_susa_fcst.account_datev::text =
        tbl_chart_of_accounts.account_datev::text;
+       
+GRANT SELECT ON public.qry_susa_fcst_c TO db_read;
+
+/* View for the plan work table of Alex */
+
+CREATE OR REPLACE VIEW public.qry_susa_plan_alex (
+    id,
+    account_datev,
+    kontobezeichnung_not_mdata,
+    soll,
+    haben,
+    period,
+    name_datev,
+    zuordnung_bwa,
+    bwa_titel,
+    /* ifrs_accounts, */
+    ifrs_acc_sort_code,
+    accounts_ssc,
+    acc_description_ssc,
+    amount,
+    year,
+    gegenkonto,
+    buchungstext,
+    comment,
+    comment_2,
+    kost1,
+    project_code,
+    z_type,
+    base_table,
+    company,
+    foreign_amount,
+    customer,
+    internal_ext,
+    business_unit,
+    p_description,
+    datum,
+    partner_name,
+    partner_int_ext,
+    stapel_nr,
+    belegfeld1,
+    hgb_acc_sort_code,
+    cf_acc_sort_code,
+    i_comp,
+    ssc_cost_centre,
+    cc_ssc_function,
+    p_mgr,
+    rpt_acc_sort_code
+    )
+AS
+SELECT tbl_susa_plan_alex.id, tbl_susa_plan_alex.account_datev,
+    tbl_susa_plan_alex.kontobezeichnung_not_mdata, tbl_susa_plan_alex.soll, tbl_susa_plan_alex.haben, tbl_susa_plan_alex.period, tbl_chart_of_accounts.name_datev, 
+    tbl_chart_of_accounts.zuordnung_bwa, tbl_chart_of_accounts.bwa_titel, 
+    /* tbl_chart_of_accounts.ifrs_accounts, */ 
+    tbl_chart_of_accounts.ifrs_acc_sort_code, tbl_chart_of_accounts.accounts_ssc, 
+    tbl_chart_of_accounts.acc_description_ssc, tbl_susa_plan_alex.soll - tbl_susa_plan_alex.haben AS amount, "left"(tbl_susa_plan_alex.period::text, 4) AS year, 
+    tbl_susa_plan_alex.gegenkonto, tbl_susa_plan_alex.buchungstext, tbl_susa_plan_alex.comment, tbl_susa_plan_alex.comment_2, ''::character varying(255) AS kost1, 
+    tbl_susa_plan_alex.project_code, tbl_susa_plan_alex.z_type, 'tbl_susa_plan_alex'::text AS base_table, tbl_susa_plan_alex.company, tbl_susa_plan_alex.foreign_amount, 
+    tbl_cost_centers.customer, tbl_cost_centers.internal_ext, tbl_cost_centers.business_unit, tbl_cost_centers.description AS p_description, NULL::date AS datum, 
+    partner_name_v01(tbl_susa_plan_alex.gegenkonto)::text AS partner_name, partner_int_ext_v01(tbl_susa_plan_alex.gegenkonto)::text AS partner_int_ext, 
+    tbl_susa_plan_alex.stapel_nr, ''::character varying(255) AS belegfeld1,
+    tbl_chart_of_accounts.hgb_acc_sort_code,
+    tbl_chart_of_accounts.cf_acc_sort_code,
+    tbl_chart_of_accounts.i_comp,
+    tbl_chart_of_accounts.ssc_cost_centre::text,
+    tbl_cost_centers.cc_ssc_function::text,
+    tbl_cost_centers.p_mgr::text,
+    tbl_chart_of_accounts.rpt_acc_sort_code
+FROM tbl_susa_plan_alex
+   LEFT JOIN tbl_chart_of_accounts ON tbl_susa_plan_alex.account_datev::text =
+       tbl_chart_of_accounts.account_datev::text
+   LEFT JOIN tbl_cost_centers ON tbl_susa_plan_alex.project_code::text =
+       tbl_cost_centers.project_code::text;
+
+GRANT SELECT ON public.qry_susa_plan_alex TO db_read;
+GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES, TRIGGER, TRUNCATE
+  ON public.tbl_susa_plan_alex TO akunze;
