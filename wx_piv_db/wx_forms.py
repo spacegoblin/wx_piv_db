@@ -551,7 +551,7 @@ Would you like to set the table in update mode?""",
         
        # wx.SetDefaultPyEncoding('utf-8') #trying to fix the decode problem when searching
          
-        dlg = wx.TextEntryDialog(None, "Enter a search string:", "Search box")
+        dlg = wx.TextEntryDialog(None, "Enter a surch string:", "Search box")
         if dlg.ShowModal() == wx.ID_OK:
             response = dlg.GetValue()
                
@@ -902,11 +902,6 @@ class FrmMixInn(object):
         id_hist_img = wx.NewId()
         tb.AddSimpleTool(id_hist_img, hist_img, "Show histogram", "Show histogram")
         self.Bind(wx.EVT_TOOL, self.OnShowStatHistogram, id=id_hist_img)
-        
-        refresh_bmp = wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_TOOLBAR, bmp_size)
-        id_refresh = wx.NewId()
-        tb.AddSimpleTool(id_refresh, refresh_bmp, "Refresh pivot", "Refresh pivot")
-        self.Bind(wx.EVT_TOOL, self.OnViewPivot_2, id=id_refresh)        
                                 
         tb.SetToolBitmapSize(bmp_size)
         
@@ -927,23 +922,6 @@ class FrmMixInn(object):
         #frm = PivotCreatorFrm(self, self.pivot_lst)
         frm = PivotCreatorFrm(self.parent, self.pivot_lst)
         frm.Show(True)
-        
-    def OnViewPivot_2(self, event):
-        """Re-opens a pivoted view by getting the data from the database again."""
-        
-        print "OnViewPivot_2 "
-        
-        wx.BeginBusyCursor()
-        
-        newRecSet = self.pivot_lst.refreshPivot()
-        newRecSet.view_id = self.pivot_lst.view_id
-        
-        frame = Frm(self.parent, newRecSet, self.title)
-        frame.Show(True)
-        self.Close()
-        
-        wx.EndBusyCursor()
-
         
     def OnXlsExport(self, event):
         """Export the contents of the grid into an xls sheet."""
@@ -1253,7 +1231,7 @@ class FrmSingle(wx.MDIChildFrame):
         
         btnShell = wx.Button(self.panel, -1, "Shell", pos=(800, 30))
         
-        #btnMeta = wx.Button(self.panel, -1, "Get Meta", pos=(600, 60))
+        btnMeta = wx.Button(self.panel, -1, "Get Meta", pos=(600, 60))
         btnUpload = wx.Button(self.panel, -1, "Upload", pos=(700, 60))
         
         btnDelete = wx.Button(self.panel, -1, "Delete")
@@ -1262,7 +1240,7 @@ class FrmSingle(wx.MDIChildFrame):
         self.box_btn = wx.BoxSizer(wx.VERTICAL)
         
         self.box_btn.Add(btnShell)
-        #self.box_btn.Add(btnMeta)
+        self.box_btn.Add(btnMeta)
         self.box_btn.Add(btnUpload)
         self.box_btn.AddSpacer(10)
         
@@ -1271,7 +1249,7 @@ class FrmSingle(wx.MDIChildFrame):
         self.vbox.AddSizer(self.hbox)
         
         
-       # self.Bind(wx.EVT_BUTTON, self.OnClickBtn, btnMeta)
+        self.Bind(wx.EVT_BUTTON, self.OnClickBtn, btnMeta)
         self.Bind(wx.EVT_BUTTON, self.OnClickBtnUpload, btnUpload)
         self.Bind(wx.EVT_BUTTON, self.OnClickSave, btnUpdate)
         self.Bind(wx.EVT_BUTTON, self.OnClickDelete, btnDelete)
@@ -1312,7 +1290,7 @@ class FrmSingle(wx.MDIChildFrame):
 # return txt
     
     def OnViewPivot(self, event):
-        print "OnViewPivot"
+        
         wx.BeginBusyCursor()
         lst = loadFromDb( getattr(self.obj, 'sql'), getattr(self.obj, 'tablename'))
         lst.view_id = self.lst.view_id
@@ -1428,22 +1406,22 @@ class FrmSingle(wx.MDIChildFrame):
         event.Skip()
         frame.Show(True)
         
-#     def OnClickBtn(self, event):
-#         
-#         
-#         self.lstFileNames = self.meta.getFileNames()
-#         _lst = [rec[1] for rec in self.lstFileNames]
-#         self.lstBox = wx.ListBox(self.panel, 60, (600, 100), (180, 120), _lst,
-#                                  wx.LB_SINGLE)
-#         btnDownload = wx.Button(self.panel, -1, "Download", pos=(600, 300))
-#         self.Bind(wx.EVT_BUTTON, self.OnClickBtnDownload, btnDownload)
-#         
-# # btnPickle = wx.Button(self.panel, -1, "Pickle Show", pos=(700, 300))
-# # self.Bind(wx.EVT_BUTTON, self.OnClickBtnPickle, btnPickle)
-# #
-#         btnOCRParse = wx.Button(self.panel, -1, "OCR Parse", pos=(700, 330))
-#         self.Bind(wx.EVT_BUTTON, self.OnOCRParsing, btnOCRParse)
-#         event.Skip()
+    def OnClickBtn(self, event):
+        
+        
+        self.lstFileNames = self.meta.getFileNames()
+        _lst = [rec[1] for rec in self.lstFileNames]
+        self.lstBox = wx.ListBox(self.panel, 60, (600, 100), (180, 120), _lst,
+                                 wx.LB_SINGLE)
+        btnDownload = wx.Button(self.panel, -1, "Download", pos=(600, 300))
+        self.Bind(wx.EVT_BUTTON, self.OnClickBtnDownload, btnDownload)
+        
+# btnPickle = wx.Button(self.panel, -1, "Pickle Show", pos=(700, 300))
+# self.Bind(wx.EVT_BUTTON, self.OnClickBtnPickle, btnPickle)
+#
+        btnOCRParse = wx.Button(self.panel, -1, "OCR Parse", pos=(700, 330))
+        self.Bind(wx.EVT_BUTTON, self.OnOCRParsing, btnOCRParse)
+        event.Skip()
         
         
     def OnClickDelete(self, event):
@@ -1723,7 +1701,6 @@ class PivotCreatorFrm(wx.MDIChildFrame, CtrWCloseUtil):
         self.radio_selection = event.GetInt()
         
     def OnButtonSQL(self, event):
-        print "OnButtonSQL"
         sql = self.ctrSql.GetValue().strip()
         lst = loadFromDb(sql)
         app = wx.GetApp()
@@ -1732,7 +1709,6 @@ class PivotCreatorFrm(wx.MDIChildFrame, CtrWCloseUtil):
 
     def OnButtonPivot(self, event):
         head = self.ctrTopHead.GetValue()
-        print "OnButtonPivot"
         print head
         left = self.ctrLeftRow.GetValue()
         print left
@@ -2148,19 +2124,19 @@ def run():
 
 if __name__=='__main__':
     
-    run()
+# run()
 
 # const.user='ahetland'
-#     wx.SetDefaultPyEncoding('utf-8')
-#     app = wx.PySimpleApp()
-#     
-#     frame = FrmContract(None)
-#     frame.Show()
-# # #app =wx.GetApp()
-# ## app.mdi_parent_frame = None
-# ## frame = ButtonForm(None)
-# ## frame.addButton('first',a)
-# ## frame.addButton('second',b)
-# ## frame.Show(True)
-# #
-#     app.MainLoop() 
+    wx.SetDefaultPyEncoding('utf-8')
+    app = wx.PySimpleApp()
+    
+    frame = FrmContract(None)
+    frame.Show()
+# #app =wx.GetApp()
+## app.mdi_parent_frame = None
+## frame = ButtonForm(None)
+## frame.addButton('first',a)
+## frame.addButton('second',b)
+## frame.Show(True)
+#
+    app.MainLoop() 
