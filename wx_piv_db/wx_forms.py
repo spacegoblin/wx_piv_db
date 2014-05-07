@@ -283,20 +283,6 @@ class MyGrid(wx.grid.Grid):
         #print "onLostFocus"
         self.hasFocus = False
         event.Skip()
-        
-        #define an attribute collor to use when updating in OnUpdate_v02
-# self.collorAttr = wx.grid.GridCellAttr()
-# self.collorAttr.SetBackgroundColour((12,230,120))
-# self.collorAttr.SetAlignment(wx.ALIGN_RIGHT,wx.ALIGN_RIGHT)
-# self.collorAttr.SetOverflow(False)
-#
-# self.SetAttr(2,2, self.collorAttr) #.IncRef()
-
-
-# def OnBeginDrag(self, event):
-# print event
-# print "Begin Drag"
-    # Event method called when a column move needs to take place
     
     def OnSelectCell(self, evt):
        # print "OnSelectCell"
@@ -310,17 +296,15 @@ class MyGrid(wx.grid.Grid):
             
     def OnRangeSelect(self, event):
         if event.Selecting():
-            #print "OnRangeSelect: top-left %s, bottom-right %s\n" % (event.GetTopLeftCoords(), event.GetBottomRightCoords())
+
             self.grd_range_left_top = event.GetTopLeftCoords()
             self.grd_range_bottom_right = event.GetBottomRightCoords()
-# print "self.grd_range_left_top:", self.grd_range_left_top
+
             a,b = self.grd_range_left_top
-# print "a,b = self.grd_range_left_top[0]", a, b
-# print event.GetTopLeftCoords()
+
             c,d = self.grd_range_bottom_right
             self.rangeDelete.SetText("Delete range %d to %d" % (a+1, c+1))
-# self.rangeDelete.SetText("Delete range %d to %d" % (int(a)+1, int(c)+1))
-        
+                   
         event.Skip()
         
     
@@ -341,11 +325,7 @@ class MyGrid(wx.grid.Grid):
     def OnClickCol(self, event):
         self.grd_col_num = int(event.GetCol())
         self.grd_row_num = int(event.GetRow())
-# print "OnClick - col_num: %d, row_num:%d" % (self.grd_col_num, self.grd_row_num)
-# #we are clicking the label on the top
-# if self.grd_row_num==-1 and self.grd_col_num>=0:
-# self.lst.sort(int(self.grd_col_num))
-# self.ForceRefresh()
+
         #we are clicking the label on the sides
 
         if self.grd_row_num==-1:
