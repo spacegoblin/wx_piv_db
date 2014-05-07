@@ -488,7 +488,7 @@ for all records in this set. The changes are in reversable. Would you like to pr
         label = self.GetColLabelValue(col_num)
         obj = self.lst[row_num]
         app = wx.GetApp()
-      # print "Object to update", obj
+
         if not self.UPDATE_ALLOWED:
 
             dlg = wx.MessageDialog(self, """You are about to make an update.
@@ -505,9 +505,6 @@ Would you like to set the table in update mode?""",
 
                 upd = obj.update(str(label))
                 
-                #trying to get Alchemy to work
-                #upd = obj.update(self.lst.session)
-# print upd
                 if upd:
                     #helper hack so that we can double click
                     #when using a form without being a child of app
@@ -515,16 +512,13 @@ Would you like to set the table in update mode?""",
                         app.mdi_parent_frame.statusbar.SetStatusText('Record id: %d was successfully updated.' % obj.id)
                     except: pass
                 else:
-                    
                     #helper hack so that we can double click
                     #when using a form without being a child of app
                     try:
                         app.mdi_parent_frame.statusbar.SetStatusText('NO UPDATE MADE!!!')
                     except: pass
                 
-                #self.Set
-                #self.SetRowAttr(col_num, self.table.collorAttr)
-                event.Skip()
+                #event.Skip()
             else:
                 
                 self.UPDATE_ALLOWED = False
