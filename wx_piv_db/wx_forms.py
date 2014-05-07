@@ -888,10 +888,10 @@ class FrmMixInn(object):
         tb.AddSimpleTool(id_xls, getXlsImage(), "Export to xls", "Export to xls")
         self.Bind(wx.EVT_TOOL, self.OnXlsExport, id=id_xls)
 
-        copy_bmp = wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_TOOLBAR, bmp_size)
+        copy_bmp = wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_TOOLBAR, bmp_size)
         id_newpvt = wx.NewId()
-        tb.AddSimpleTool(id_newpvt, copy_bmp, "New pivot", "New pivot")
-        self.Bind(wx.EVT_TOOL, self.OnRedoPivot, id=id_newpvt)
+        tb.AddSimpleTool(id_newpvt, copy_bmp, "Show View", "Show view definitions")
+        self.Bind(wx.EVT_TOOL, self.OnShowViewDef, id=id_newpvt)
 
         copy_exe = wx.ArtProvider.GetBitmap(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR, bmp_size)
         id_shell = wx.NewId()
@@ -922,10 +922,8 @@ class FrmMixInn(object):
         self.Bind(wx.EVT_TOOL, method, id=id_shell)
         self.tb.Realize()
         
-    def OnRedoPivot(self, event):
-        #print self.pivot_lst
-        #frm = PivotCreatorFrm(self, self.pivot_lst)
-        frm = PivotCreatorFrm(self.parent, self.pivot_lst)
+    def OnShowViewDef(self, event):
+        frm = ViewDefFrm(self.parent, self.pivot_lst)
         frm.Show(True)
         
     def OnViewPivot_2(self, event):
@@ -1598,154 +1596,33 @@ class FrmSingleField(wx.Frame):
         self.Close()
         event.Skip()
         
-### -The Infor Form- ###
-#class PivotCreatorFrm(wx.Frame, CtrWCloseUtil):
-# """Redo the pivot"""
-class PivotCreatorFrm(wx.MDIChildFrame, CtrWCloseUtil):
-    
+### -The Information Form- ###
+
+class ViewDefFrm(wx.MDIChildFrame, CtrWCloseUtil):
+    """Information Form. Display the view definitions"""
     def __init__(
-            self, parent, lst, ID=-1, title='Re-create a pivot', pos=wx.DefaultPosition,
+            self, parent, lst, ID=-1, title='View definitions', pos=wx.DefaultPosition,
             size=(600,600), style=wx.DEFAULT_FRAME_STYLE
             ):
 
-        #wx.Frame.__init__(self, parent, ID, title, pos, size, style)
+        
         wx.MDIChildFrame.__init__(self, parent, ID, title,
                                   pos, size, style)
         wx.MDIChildFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
-        #self.panel = wx.Panel(self, -1)
+
         CtrWCloseUtil.__init__(self)
-        self.nb = wx.aui.AuiNotebook(self)
-        #self.panel_p1 = wx.Panel(self.nb, -1)
-        
-        self.panel_p1 = wx.ScrolledWindow(self, -1)
-        self.panel_p1.SetScrollbars(1,1,0,600)
-        self.panel_p1.SetScrollRate(20,20)
+
         
         self.parent = parent
         self.lst = lst
-                
-        self.radio_selection = 0
-        self.left_row = self.lst.pivot_left
-        self.top_head = self.lst.pivot_top
-        self.sum_value = 'amount'
-        
-        
-        btn_int=0
-        btn_hor = 10
-        btn_cnt = 1
-        self.dic_btn_ids = {}
-        
-        if not self.lst.fieldnames_original:
-            self.lst.fieldnames_original = self.lst.fieldnames
-        
-        for field in self.lst.fieldnames_original:
-            b_id = wx.NewId()
-            self.dic_btn_ids[b_id] = field
-            btn = wx.Button(self.panel_p1, b_id, field, pos=(btn_hor, btn_int))
-            self.Bind(wx.EVT_BUTTON, self.OnButtonClick, btn)
-            btn_int+=25
-            btn_cnt += 1
-            if btn_cnt%10==1:
-                btn_int = 0
-                btn_hor+=150
-            
-            #print field
-            #wx.StaticText(self.panel_p1, -1, key, (100, cnt))
-        if self.lst.view_id:
-            self.ctrBaseTbl = wx.StaticText(self.panel_p1, -1, "View id: %d" % self.lst.view_id, size=(200, 25),pos=(120, 300))
-        else:
-            self.ctrBaseTbl = wx.StaticText(self.panel_p1, -1, "No View id pressent.", size=(200, 25),pos=(120, 300))
-            
-        self.ctrBaseTbl = wx.StaticText(self.panel_p1, -1, 'base_table', size=(200, 25),pos=(120, 325))
-        try:
-            _base_table = self.lst[0].base_table
-        except:
-            _base_table = self.lst.base_table
-        else:
-            _base_table = '<No table>'
-        self.ctrBaseTbl_2 = wx.TextCtrl(self.panel_p1, -1, _base_table, size=(200, 25),pos=(330, 325))
-        #self.ctrBaseTbl.SetValue(self.lst[0].base_table)
-       # font = wx.Font(18, wx.SWISS, wx.BOLD, wx.BOLD)
-       # self.ctrBaseTbl.SetFont(font)
-                
-        self.ctrLeftRow = wx.TextCtrl(self.panel_p1, -1, str(self.lst.pivot_left), size=(200, 25),pos=(120, 350))
-        self.ctrTopHead = wx.TextCtrl(self.panel_p1, -1, str(self.lst.pivot_top), size=(200, 25),pos=(120, 375))
-        self.ctrAmount = wx.TextCtrl(self.panel_p1, -1, 'amount', size=(200, 25),pos=(120, 400))
-
-        self.ctrLeftRowOrg = wx.TextCtrl(self.panel_p1, -1, str(self.lst.pivot_left), size=(200, 25),pos=(330, 350))
-        self.ctrTopHeadOrg = wx.TextCtrl(self.panel_p1, -1, str(self.lst.pivot_top), size=(200, 25),pos=(330, 375))
-        self.ctrAmountOrg = wx.TextCtrl(self.panel_p1, -1, str(self.lst.value_field), size=(200, 25),pos=(330, 400))
-        
-        self.radioBox = wx.RadioBox(
-                self.panel_p1, -1, "Select pivot", (20, 350), wx.DefaultSize,
-                ['Left row', 'Top header', 'value'], 1, wx.RA_SPECIFY_COLS)
-        
-        self.Bind(wx.EVT_RADIOBOX, self.EvtRadioBox, self.radioBox)
-        
-        self.ctrSql = wx.TextCtrl(self.panel_p1, -1, str(self.lst.sql), size=(400, 100),pos=(120, 425), style=wx.TE_MULTILINE)
-
-        self.btnPivot = wx.Button(self.panel_p1, -1, 'Pivot', pos=(20, 450))
-        self.Bind(wx.EVT_BUTTON, self.OnButtonPivot, self.btnPivot)
-
-        self.btnPivot = wx.Button(self.panel_p1, -1, 'SQL for flat', pos=(20, 475))
-        self.Bind(wx.EVT_BUTTON, self.OnButtonSQL, self.btnPivot)
-        
-        self.nb.AddPage(self.panel_p1, "Info")
-        
+                   
         if self.lst.view_id:
             lst_view_sql = "select * from tbl_views where id=%d" % self.lst.view_id
             view_lst = loadFromDb(lst_view_sql, 'tbl_views')
             view_lst.view_id = self.lst.view_id
-           # self.panel_p2 = wx.Panel(self, -1)
-            grd = MyGrid(self.nb, view_lst)
-            grd.parent = self #.parent
-            self.nb.AddPage(grd, "View table")
-            
-        sizer = wx.BoxSizer()
-        sizer.Add(self.nb, 1, wx.EXPAND)
+            grd = MyGrid(self, view_lst)
+            grd.parent = self 
         
-        self.SetSizer(sizer)
-        #self.SetSizer(sizer)
-                                    
-    def OnButtonClick(self, event):
-        if self.radio_selection == 0:
-            self.left_row.append( self.dic_btn_ids[ event.GetId() ] )
-            self.ctrLeftRow.SetValue( str(self.left_row) )
-        elif self.radio_selection == 1:
-            self.top_head.append( self.dic_btn_ids[ event.GetId() ] )
-            self.ctrTopHead.SetValue( str(self.top_head) )
-        elif self.radio_selection == 2:
-            self.sum_value = self.dic_btn_ids[ event.GetId() ]
-            self.ctrAmount.SetValue( str(self.sum_value) )
-        else: raise
-    
-    def EvtRadioBox(self, event):
-        self.radio_selection = event.GetInt()
-        
-    def OnButtonSQL(self, event):
-        print "OnButtonSQL"
-        sql = self.ctrSql.GetValue().strip()
-        lst = loadFromDb(sql)
-        app = wx.GetApp()
-        frame = Frm(app.mdi_parent_frame, lst)
-        frame.Show(True)
-
-    def OnButtonPivot(self, event):
-        head = self.ctrTopHead.GetValue()
-        print "OnButtonPivot"
-        print head
-        left = self.ctrLeftRow.GetValue()
-        print left
-        
-        sql = self.ctrSql.GetValue().strip()
-        lst = loadFromDb(sql)
-        lst.pivot(left, head, self.sum_value)
-        app = wx.GetApp()
-        frame = Frm(app.mdi_parent_frame, lst)
-        frame.Show(True)
-        
-
-
        
 ### -Paged Form- ###
 
