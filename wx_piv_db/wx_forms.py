@@ -903,7 +903,7 @@ class FrmMixInn(object):
         tb.AddSimpleTool(id_hist_img, hist_img, "Show histogram", "Show histogram")
         self.Bind(wx.EVT_TOOL, self.OnShowStatHistogram, id=id_hist_img)
         
-        refresh_bmp = wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_TOOLBAR, bmp_size)
+        refresh_bmp = wx.ArtProvider.GetBitmap(wx.ART_REDO, wx.ART_TOOLBAR, bmp_size)
         id_refresh = wx.NewId()
         tb.AddSimpleTool(id_refresh, refresh_bmp, "Refresh pivot", "Refresh pivot")
         self.Bind(wx.EVT_TOOL, self.OnViewPivot_2, id=id_refresh)        
