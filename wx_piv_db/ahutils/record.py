@@ -1150,6 +1150,17 @@ class RecordList(object):
         
         self.pivot(left, top, 'cnt')
 
+    
+    def refreshPivot(self):
+        """The data is reloaded from the databse and a new lst is produced.
+        The new list is pivoted according to the previous definitions."""
+        
+        lst = loadFromDb(self.sql, self.base_table, self.value_field)
+        
+        lst.pivot(self.pivot_left, self.pivot_top, self.value_field)
+        
+        return lst
+
                         
     def pivot(self, left, top, value=None):
         """you would call pivot with the arguments:
