@@ -92,6 +92,7 @@ def run(FILE):
         print "DONE! %d records inserted" % i
 
 
+
 if __name__ == '__main__':
     
    # Z:\Reporting\2014\03-Mar\LSE
