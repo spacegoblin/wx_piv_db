@@ -21,8 +21,9 @@ pwd = raw_input ("Enter password: ")
 
 DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd)
 
+#BL    Kontonummer    Datum    BU    Gegenkonto    Buchungstext    USt%    Belegfeld1    Umsatz Soll    Umsatz Haben    WKZ    Eingabebetrag    Kurs    Stapel-Nr.    BSNr.    HK    KOST1    KOST2    KOST-Menge    ZI
 
-CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1']
+CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1'] #, 'KOST2','KOST-Menge', 'ZI']
         #   0         1            2      3          4              5           6          7             8               9          10          11          12          13        14       15    16
         
 
@@ -93,9 +94,9 @@ def run(FILE):
 
 if __name__ == '__main__':
     
-   # Z:\Reporting\2014\01-Jan\LSE\v03nachtrag
+   # Z:\Reporting\2014\03-Mar\LSE
    
-    PATH='Z:/Reporting/2014/01-Jan/LSE/v03nachtrag/imp.csv'
+    PATH='Z:/Reporting/2014/04-Apr/LSE/v01/imp.csv'
 
     run(PATH)
 
