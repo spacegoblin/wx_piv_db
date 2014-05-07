@@ -931,7 +931,7 @@ class FrmMixInn(object):
     def OnViewPivot_2(self, event):
         """Re-opens a pivoted view by getting the data from the database again."""
         
-        print "OnViewPivot_2"
+        print "OnViewPivot_2 "
         
         wx.BeginBusyCursor()
         
