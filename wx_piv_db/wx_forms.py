@@ -545,7 +545,7 @@ Would you like to set the table in update mode?""",
                 except: pass
                 
         wx.EndBusyCursor()
-        event.Skip()
+        #event.Skip()
         
     def OnSearch(self, event):
         
