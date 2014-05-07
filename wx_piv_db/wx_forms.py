@@ -467,6 +467,9 @@ Would you like to set the table in update mode?""",
                                wx.YES_NO | wx.YES_DEFAULT |
                         wx.ICON_QUESTION)
             val = dlg.ShowModal()
+            
+            dlg.Destroy()
+            
             wx.BeginBusyCursor()
             if val==wx.ID_YES:
                 busy = wx.BusyInfo("Inserting data ...")
@@ -490,11 +493,7 @@ Would you like to set the table in update mode?""",
                 
                 #event.Skip()
             else:
-                
                 self.UPDATE_ALLOWED = False
-
-            dlg.Destroy()
-
         else:
             busy = wx.BusyInfo("Inserting data ...")
             wx.BeginBusyCursor()
