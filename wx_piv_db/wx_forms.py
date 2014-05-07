@@ -461,7 +461,7 @@ for all records in this set. The changes are in reversable. Would you like to pr
             finally:
                 wx.EndBusyCursor()
         
-        event.Skip()
+       # event.Skip()
         
    
     ##@anythread
@@ -582,7 +582,7 @@ Would you like to set the table in update mode?""",
         self.parent.OnClose(event)
         
         #print "after Close"
-        event.Skip()
+        #event.Skip()
 # print "after Skip"
 # print "------------------------"
 
@@ -641,7 +641,7 @@ Would you like to set the table in update mode?""",
             frm = Frm(self.parent.parent, n_lst)
         frm.Show()
         
-        event.Skip()
+        #event.Skip()
                
     def OnReduceData(self, event):
         col_num = self.GetGridCursorCol()
@@ -670,7 +670,7 @@ Would you like to set the table in update mode?""",
 # raise
             
         frm.Show()
-        event.Skip()
+        #event.Skip()
 
 
 # def OnInsert(self, event):
@@ -728,7 +728,7 @@ Would you like to set the table in update mode?""",
                #method see OnCommitToDb r.update( here_field )
             except:
                 raise('not possible to change value')
-        event.Skip()
+        #event.Skip()
 
     def OnAddNumber(self, event):
         return self.doingSomeMath(event, operator.add)
@@ -744,7 +744,7 @@ Would you like to set the table in update mode?""",
         
         for r in self.lst:
             print r.update( here_field )
-        event.Skip()
+        #event.Skip()
         
     def OnMathForm(self, event):
         col_num = self.GetGridCursorCol()
@@ -789,7 +789,7 @@ Would you like to set the table in update mode?""",
         self.ForceRefresh()
         dlg.Destroy()
         
-        event.Skip()
+        #event.Skip()
         
     def OnUpdateColFormGroup(self, event):
         "Updates the entire columnb, but using a different sql statement"
@@ -815,7 +815,7 @@ Would you like to set the table in update mode?""",
         self.ForceRefresh()
         dlg.Destroy()
         
-        event.Skip()
+        #event.Skip()
     
     def setCMove(self, evt):
         "Change the modus of how the cursor moves"
@@ -952,7 +952,7 @@ class FrmMixInn(object):
             dlg.ShowModal()
             dlg.Destroy()
             return True
-            event.Skip()
+            #event.Skip()
 
         wx.BeginBusyCursor()
         
@@ -981,7 +981,7 @@ class FrmMixInn(object):
             dlg.Destroy()
         finally:
             wx.EndBusyCursor()
-            event.Skip()
+            #event.Skip()
 
             
     def importFile(self, fullpathname='C:\\home\\workspace\\rclutils\\period.py'):
@@ -1012,7 +1012,7 @@ class FrmMixInn(object):
         
     def OnShowStatHistogram(self, event):
         self.grid.lst.stat_plotHist()
-        event.Skip()
+        #event.Skip()
         
         
     def OnShell_v02(self, event):
@@ -1103,13 +1103,13 @@ class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
             else: raise('select an operator')
             setattr(r, self.here_field, new_nr)
                 
-        event.Skip()
+        #event.Skip()
         
     def OnClickBtnCommit(self, event):
         for r in self.lst:
             print r.update( self.here_field )
             
-        event.Skip()
+        #event.Skip()
         
     def OnTextUpdField(self, event):
         self.here_field = self.cmbForUpd.GetValue()
@@ -1159,7 +1159,7 @@ f.Show()
 # self.Destroy()
         self.Destroy()
         
-        event.Skip()
+        #event.Skip()
         
     def OnMenuClose(self, evt):
         print "OnMenuClose"
@@ -1178,7 +1178,7 @@ f.Show()
     def OnWindowDestry(self, evt):
         print "OnWindowDestry"
         self.Destroy()
-        evt.Skip()
+        #evt.Skip()
                    
 
 class Frm2(wx.Frame, FrmMixInn):
@@ -1203,7 +1203,7 @@ f.Show()
     def OnClose(self, event):
         print "closing parent"
         self.Destroy()
-        event.Skip()
+        #event.Skip()
                 
     def createGrid(self, lst, dataCols=None):
         self.grid = MyGrid(self, lst, dataCols)
@@ -1324,22 +1324,9 @@ class FrmSingle(wx.MDIChildFrame):
         frame = Frm(self.parent, lst, menutitle)
         frame.Show(True)
         wx.EndBusyCursor()
-        event.Skip()
-# def OnUpdate(self, event):
-# print "OnUpdate on EVT_BUTTON and EVT_TEXT_ENTER"
-# print event.GetString()
-# print event.GetId()
-# d = self.dicTxtID_Label[event.GetId()]
-# print d.keys(), d.values()
-# setattr(self.obj, d.keys()[0], event.GetString())
-# if self.obj.id:
-# print self.obj.update(d.keys()[0])
-# else:
-# print getattr(self.obj, d.keys()[0])
-# event.Skip()
+        #event.Skip()
 
-# def OnEvtTxtEnter(self, event):
-# pass
+
     def OnClickSave(self, event):
         for key, val in self.dicTxtID_NewText.items():
             self.obj.__dict__[key] = val
@@ -1360,13 +1347,8 @@ class FrmSingle(wx.MDIChildFrame):
                     self.dicLabel_Txt2[key].SetBackgroundColour('Red')
                 self.Refresh()
         self.dicTxtID_NewText = {}
-        event.Skip()
+        #event.Skip()
             
-# def OnUpdate2(self, event):
-# if not self.obj.id:
-# print "no id ready for update as this is copy"
-# print self.obj.insert()
-       
         
     def CreateStaticText(self):
         "The object is displayed"
@@ -1420,23 +1402,6 @@ class FrmSingle(wx.MDIChildFrame):
         event.Skip()
         frame.Show(True)
         
-#     def OnClickBtn(self, event):
-#         
-#         
-#         self.lstFileNames = self.meta.getFileNames()
-#         _lst = [rec[1] for rec in self.lstFileNames]
-#         self.lstBox = wx.ListBox(self.panel, 60, (600, 100), (180, 120), _lst,
-#                                  wx.LB_SINGLE)
-#         btnDownload = wx.Button(self.panel, -1, "Download", pos=(600, 300))
-#         self.Bind(wx.EVT_BUTTON, self.OnClickBtnDownload, btnDownload)
-#         
-# # btnPickle = wx.Button(self.panel, -1, "Pickle Show", pos=(700, 300))
-# # self.Bind(wx.EVT_BUTTON, self.OnClickBtnPickle, btnPickle)
-# #
-#         btnOCRParse = wx.Button(self.panel, -1, "OCR Parse", pos=(700, 330))
-#         self.Bind(wx.EVT_BUTTON, self.OnOCRParsing, btnOCRParse)
-#         event.Skip()
-        
         
     def OnClickDelete(self, event):
         "Delete the database record"
@@ -1445,7 +1410,7 @@ class FrmSingle(wx.MDIChildFrame):
         if msg==wx.ID_YES:
             self.obj.delete()
             
-        event.Skip()
+        #event.Skip()
         
     def OnClickBtnUpload(self, event):
         dlg = wx.FileDialog(self, wildcard="*")
@@ -1462,7 +1427,7 @@ The data was NOT inserted.''',
                 dlg.Destroy()
             wx.EndBusyCursor()
         dlg.Destroy()
-        event.Skip()
+        #event.Skip()
         
     def OnClickBtnDownload(self, event):
         #print "OnClickBtnDownload"
@@ -1486,40 +1451,7 @@ The data was NOT inserted.''',
             
             wx.EndBusyCursor()
         dlg.Destroy()
-        event.Skip()
-
-
-    def OnOCRParsing(self, event):
-        raise('not implemented')
-        db_fname = ( self.lstFileNames[self.lstBox.GetSelection()][1] )
-        
-        db_id = int( self.lstFileNames[self.lstBox.GetSelection()][0] )
-        stream = self.meta.getBlob(db_id)
-        data = stream.read()
-                
-        if db_fname[-3:].lower()=='pdf':
-            print "Parsing pdf file"
-            tmp_fd, tmp_name = tempfile.mkstemp(suffix='.pdf')
-            f = os.fdopen(tmp_fd, 'w+b')
-            f.write(data)
-            f.close()
-            return getPDFContent(tmp_name)
-
-        elif db_fname[-3:].lower()=='jpg' or db_fname[-3:].lower()=='tif':
-            tmp_fd, tmp_name = tempfile.mkstemp()
-            f = os.fdopen(tmp_fd, 'w+b')
-            f.write(data)
-            #f.close()
-            im = Image.open(f)
-            #im = Image.fromstring(mode, size, data, decoder_name)
-            print "Image", im
-            text = image_to_string(im)
-            return text
-
-        else:
-            print "No OCR parsing worked"
-
-
+        #event.Skip()
         
     def OnShell(self, event):
         from wx.py.shell import ShellFrame
@@ -1583,12 +1515,12 @@ class FrmSingleField(wx.Frame):
         else:
             self.txt.SetBackgroundColour('Red')
         self.Refresh()
-        event.Skip()
+        #event.Skip()
         
     def OnClose(self, event):
         print "OnClose 3"
         self.Close()
-        event.Skip()
+        #event.Skip()
         
 ### -The Information Form- ###
 
@@ -1748,7 +1680,7 @@ class PagePannelBase(wx.Panel):
     def OnText(self, event):
         label = self.dicTxtID_Label[event.GetId()]
         self.dicTxtID_NewText[ label ] = event.GetString()
-        event.Skip()
+        #event.Skip()
         
     def OnClickSave(self, event):
         for key, val in self.dicTxtID_NewText.items():
@@ -1770,7 +1702,7 @@ class PagePannelBase(wx.Panel):
                     self.dicLabel_Txt2[key].SetBackgroundColour('Red')
                 self.Refresh()
         self.dicTxtID_NewText = {}
-        event.Skip()
+        #event.Skip()
         
     def OnClickInsert(self, event):
         for key, val in self.dicTxtID_NewText.items():
@@ -1785,7 +1717,7 @@ class PagePannelBase(wx.Panel):
             for key, val in self.dicTxtID_NewText.items():
                 self.dicLabel_Txt2[key].SetBackgroundColour('Red')
         self.Refresh()
-        event.Skip()
+        #event.Skip()
         
     def OnDblClick(self, event):
         "Show a signle field form."
@@ -1794,12 +1726,12 @@ class PagePannelBase(wx.Panel):
         frame = FrmSingleField(self, self.obj, d)
         
         frame.Show(True)
-        event.Skip()
+        #event.Skip()
 
     def OnClose(self, event):
         print "OnClose 4"
         self.parent.Close()
-        event.Skip()
+        #event.Skip()
 ### -HeadedGrid- ###
 
 
