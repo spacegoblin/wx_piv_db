@@ -78,7 +78,7 @@ class MyGridTable(wx.grid.PyGridTableBase):
             elif type(value)==float:
 
                 fmt = "{:%s}" % wx.GetApp().MY_FLOAT_FORMAT
-
+            
                 try:
                     return "{:%s}".format(value)
                 except ValueError:
