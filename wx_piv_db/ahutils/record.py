@@ -1158,7 +1158,8 @@ class RecordList(object):
         lst = loadFromDb(self.sql, self.base_table, self.value_field)
         
         lst.pivot(self.pivot_left, self.pivot_top, self.value_field)
-        
+      
+  
         return lst
 
                         
