@@ -217,12 +217,12 @@ class MyGrid(wx.grid.Grid):
         self.sorter = m.Append(-1, "Sort")
         m.AppendSeparator()
         #the rows
-        self.rowDelete = m.Append(-1, "Delete Row")
-        self.rangeDelete = m.Append(-1, "Delete Range")
+        self.rowDelete = m.Append(-1, " ")   #Remove Row
+        self.rangeDelete = m.Append(-1, " ")  #Remove Range
         #spacer
         m.AppendSeparator()
         #the columns
-        self.columnDelete = m.Append(-1, "Delete Column")
+        self.columnDelete = m.Append(-1, "Remove Column")  
         #spacer
         m.AppendSeparator()
         #the columns
@@ -302,7 +302,7 @@ class MyGrid(wx.grid.Grid):
 # print "a,b = self.grd_range_left_top[0]", a, b
 # print event.GetTopLeftCoords()
             c,d = self.grd_range_bottom_right
-            self.rangeDelete.SetText("Delete range %d to %d" % (a+1, c+1))
+            self.rangeDelete.SetText("Remove range %d to %d" % (a+1, c+1))
 # self.rangeDelete.SetText("Delete range %d to %d" % (int(a)+1, int(c)+1))
         
         event.Skip()
@@ -330,8 +330,10 @@ class MyGrid(wx.grid.Grid):
 
         if self.grd_row_num==-1:
             self.sorter.SetText('Sort column %d' % (int(self.grd_col_num)+1))
+            self.rowDelete.SetText(' ') #Remove Row %d' % (int(self.grd_row_num)+1))
+            
         if self.grd_col_num==-1:
-            self.rowDelete.SetText('Delete Row %d' % (int(self.grd_row_num)+1))
+            self.rowDelete.SetText('Remove Row %d' % (int(self.grd_row_num)+1))
         event.Skip()
         
     def OnLblLeftDbClick(self, event):
