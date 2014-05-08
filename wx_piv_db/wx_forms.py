@@ -54,8 +54,9 @@ def GenericQuestionDlg(message, caption, default=''):
     dlg = wx.TextEntryDialog(None, message, caption, default)
     result = dlg.ShowModal()
     if result == wx.ID_OK:
+        val = dlg.GetValue()
         dlg.Destroy()
-        return dlg.GetValue()
+        return val #dlg.GetValue()
     else:
         dlg.Destroy()
         return None
@@ -790,9 +791,8 @@ class FrmMixInn(object):
 
     #------------------------------------------------------------------------------
     def createTheToolBar(self):
-        print self.CreateToolBar.__doc__
-        
-        #raise
+        #print self.CreateToolBar.__doc__
+
         tb = self.CreateToolBar( wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT )
        # tb = wx.ToolBar(self, -1, style= wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
         
@@ -847,16 +847,21 @@ class FrmMixInn(object):
         
         print "OnViewPivot_2"
         
-        wx.BeginBusyCursor()
+        test = self.pivot_lst.isPivoted
         
-        newRecSet = self.pivot_lst.refreshPivot()
-        newRecSet.view_id = self.pivot_lst.view_id
-        
-        frame = Frm(self.parent, newRecSet, self.title)
-        frame.Show(True)
-        self.Close()
-        
-        wx.EndBusyCursor()
+        if test:
+            wx.BeginBusyCursor()
+            
+            newRecSet = self.pivot_lst.refreshPivot()
+            newRecSet.view_id = self.pivot_lst.view_id
+            
+            frame = Frm(self.parent, newRecSet, self.title)
+            frame.Show(True)
+            self.Close()
+            
+            wx.EndBusyCursor()
+        else:
+            self.Close()
 
         
     def OnXlsExport(self, event):
