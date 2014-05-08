@@ -16,7 +16,7 @@ import exceptions
 
 import operator
 
-from ahgui import piv_ico # rccl_ico
+from ahgui import piv_ico
 
 import ahgui.ssc_logo_3 as ssc_logo_2
 
@@ -294,16 +294,15 @@ class MyGrid(wx.grid.Grid):
             
     def OnRangeSelect(self, event):
         if event.Selecting():
-            #print "OnRangeSelect: top-left %s, bottom-right %s\n" % (event.GetTopLeftCoords(), event.GetBottomRightCoords())
+
             self.grd_range_left_top = event.GetTopLeftCoords()
             self.grd_range_bottom_right = event.GetBottomRightCoords()
-# print "self.grd_range_left_top:", self.grd_range_left_top
+
             a,b = self.grd_range_left_top
-# print "a,b = self.grd_range_left_top[0]", a, b
-# print event.GetTopLeftCoords()
+
             c,d = self.grd_range_bottom_right
             self.rangeDelete.SetText("Remove range %d to %d" % (a+1, c+1))
-# self.rangeDelete.SetText("Delete range %d to %d" % (int(a)+1, int(c)+1))
+
         
         event.Skip()
         
@@ -316,10 +315,6 @@ class MyGrid(wx.grid.Grid):
         event.Skip()
 
     def OnRightClickCol(self, event):
-# col_num = event.GetCol()
-# row_num = event.GetRow()
-        #print "RightClick - col_num: %d, row_num:%d" % (col_num, row_num)
-        
         self.PopupMenu(self.menuColPop)
         
     def OnClickCol(self, event):
@@ -527,8 +522,6 @@ Would you like to set the table in update mode?""",
                 frm = Frm2(self.parent.parent, new_lst, self.parent.title)
             else:
                 frm = Frm(self.parent.parent, new_lst, self.parent.title)
-                    
-
         
             frm.Show()
             #return True
@@ -912,7 +905,7 @@ class FrmMixInn(object):
             #event.Skip()
 
             
-    def importFile(self, fullpathname='C:\\home\\workspace\\rclutils\\period.py'):
+    def importFile(self, fullpathname='C:\\home\\workspace\\period.py'):
         "loads a module into the name space of crust"
         import imp
         path, filename = os.path.split(str(fullpathname))
@@ -958,8 +951,8 @@ class FrmMixInn(object):
         frame.shell.interp.locals['parent']= self.parent
         frame.shell.interp.locals['App']= wx.GetApp()
             
-# frame.shell.interp.locals['lst']= self.pivot_lst
-# frame.shell.interp.locals['r']= self.pivot_lst[0]
+        # frame.shell.interp.locals['lst']= self.pivot_lst
+        # frame.shell.interp.locals['r']= self.pivot_lst[0]
         frame.Show()
         frame.shell.write('"In local scope: r - lst - importFile - FrmShow - parent"')
         
@@ -1041,7 +1034,6 @@ class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
     def OnTextUpdField(self, event):
         self.here_field = self.cmbForUpd.GetValue()
         self.txt_ch.SetValue('Changes will be made on %s' % self.here_field)
-#raise
 
 
 class Frm(wx.MDIChildFrame, FrmMixInn):
@@ -1644,7 +1636,7 @@ class TestPannel(PagePannelBase):
     
     def initPages(self):
             
-        lst = ['id', 'peoplesoftid', 'givenname', 'familyname', 'position']
+        lst = ['id', 'pid', 'givenname', 'familyname', 'position']
         self.createPage(lst, "Person")
 
         lst = ['email', 'phoneextension', 'mobile']
