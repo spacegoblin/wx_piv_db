@@ -191,8 +191,8 @@ class MyGrid(wx.grid.Grid):
         self.Bind(wx.EVT_MENU, self.OnSubtractNumber, id=id_sub_math_sub)
 
         id_sub_math_frm = wx.NewId()
-        sub_math_menue.Append(id_sub_math_frm, 'Show math form')
-        self.Bind(wx.EVT_MENU, self.OnMathForm, id=id_sub_math_frm)
+        sub_math_menue.Append(id_sub_math_frm, 'Increment by 1')
+        self.Bind(wx.EVT_MENU, self.OnIncByOne, id=id_sub_math_frm)
         
         
         id_sub_math_commit = wx.NewId()
@@ -676,15 +676,38 @@ Would you like to set the table in update mode?""",
             print r.update( here_field )
         #event.Skip()
         
-    def OnMathForm(self, event):
+    def OnIncByOne(self, event):
         col_num = self.GetGridCursorCol()
         here_field = self.lst.fieldnames[col_num]
+
+        row_num = self.GetGridCursorRow()
         
-        frm = FrmMathCalcHlp(self.parent.parent, self.lst, here_field)
-        frm.Show()
-        frm.Raise()
+        here_recordval = self.lst.get(row_num, col_num)
+
+        here_obj = self.lst[row_num]
+        
+        per_start = float(getattr(here_obj, here_field))
+        
+        i=0
+        for r in self.lst:
+            setattr(r, here_field, per_start + i )
+            i+=1
+            
+# print "test is working"
+# print here_recordval
+# i=0
+# start=float(here_recordval)
+# for x in here_lst:
+#     x.period=start+i
+#     i+=1
+#     x.update('period')
+
+            #         frm = FrmMathCalcHlp(self.parent.parent, self.lst, here_field)
+            #         frm.Show()
+            #         frm.Raise()
                  
 
+    
         
     def OnSingleForm(self, event):
         self.showSingleForm( self.GetGridCursorRow() )
@@ -970,7 +993,7 @@ class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
     def __init__(self, parent, lst, here_field):
         """Calculate on a list.
 """
-        
+        raise("lets not use this any more")
         self.lst = lst
         self.here_field = here_field
         
