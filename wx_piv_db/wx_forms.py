@@ -994,6 +994,7 @@ class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
         """Calculate on a list.
 """
         raise("lets not use this any more")
+    
         self.lst = lst
         self.here_field = here_field
         
