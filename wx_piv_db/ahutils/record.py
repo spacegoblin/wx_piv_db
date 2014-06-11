@@ -311,8 +311,10 @@ class Record(object):
     
       
         
-    def insert(self, fields=None):
-
+    def insert(self, fields=None, sqlString=None):
+        """insert into datanase. 
+        If args: fields inserts fields only, 
+        sqlString=True returns only string to be executed"""
         dict = {}
         
         if fields:
@@ -328,6 +330,9 @@ class Record(object):
         
         
         sql = dictToInsert(dict, self.base_table)
+        
+        if sqlString:
+            return sql
 
         try:
             Db.c.execute(sql)
