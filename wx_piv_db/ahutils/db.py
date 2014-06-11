@@ -277,6 +277,13 @@ def insertBlobSql(fname, pathWithFileName, object_id, base_table):
     return sql
 
 
+def initPostgres(db_name, usr, pwd):
+    setQuote('Postgress')
+    globals()['Db'] = This_Db(db_name, usr, pwd)
+    return globals()['Db']
+
+
+    
 def test():
     print "test" 
     
