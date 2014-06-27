@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
+
 import datetime
 
 import sys
@@ -46,15 +47,7 @@ def run(FILE):
             dict_ = {}
             if i==0:
                 assert row==CSV_ROW, "%s" % row
-                
-
             else:
-
-            
-            #id        kontobezeichnung_not_mdata    tmp    id_parent        foreign_amount    comment       
-            #zui    comment_2
-            
-                 #dict_['xx'] = row[0]
                 dict_['account_datev'] = row[1]
                 dict_['datum'] = helper( row[2] )
                 dict_['bu'] = row[3]
@@ -77,16 +70,18 @@ def run(FILE):
                 dict_['company'] = 'LSE HGB'
                 dict_['imp_str'] = const.random_str
                 
+                dict_['zui'] = const.random_str
+                
                 sql = db.dictToInsert(dict_, 'tbl_susa')
+
                 
                 DB.c.execute(sql)
                 DB.cnn.commit()
                 
             i+=1         
 
-    except csv.Error, e:
-        print 'line %d: %s' % (reader.line_num, e)
-        raise
+    except:
+        print 'line %d: %s' % (reader.line_num, sys.exc_info()[0] )
     
     finally:
         print "DONE! %d records inserted" % i
@@ -97,7 +92,7 @@ if __name__ == '__main__':
     
    # Z:\Reporting\2014\03-Mar\LSE
    
-    PATH='Z:/Reporting/2014/04-Apr/LSE/v01/imp.csv'
+    PATH='Z:/Reporting/2014/05-May/LSE/v02/imp.csv'
 
     run(PATH)
 

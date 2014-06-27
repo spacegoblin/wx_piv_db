@@ -3,7 +3,12 @@
 
 from ConfigParser import ConfigParser
 import const
-#from ahutils import decrypt
+
+import sys
+if '..//' not in sys.path:
+    sys.path.append('..//')
+    
+from ahutils import pwd
 
 
 # cfg = ConfigParser()
@@ -20,7 +25,13 @@ import const
 #     const.gui_user=cfg.get('user', 'user')
 #     
 
-    
+#loading the menues from config
+
+#id    menutitle    tablename    sql    view_type    pivothead    pivotrow    pivotvalue    gui_menu    comment    sorted    id_parent    username, , tbl_users_view.view_id
+# const.gui_menues_tpl = [(1, 'menutitle', 'tablename', 'SQL', 'PIVOT', 'pivothead',  'pivotrow', 'pivotvalue', 'gui_menu', 'comment', 0, 0, 'ahetland', 0),
+#                         
+#                         ]
+
 # const.db_lst_dsn=cfg.get('active_database', 'db_lst_dsn')
 # 
 # const.gui_user=cfg.get('user', 'gui_user')
@@ -37,15 +48,15 @@ const.host='192.168.1.91'
 #const.host='localhost'
 
 const.db_lst_dsn='lse_fin_db'
-#const.db_lst_dsn='new_db'
+#const.db_lst_dsn='rpt_db_may'
+
  
 const.gui_user='ahetland'
-const.pwd=''
+const.pwd=pwd.pwd('hetland')
 
 
 if __name__=='__main__':
-    import sys
-    sys.path.append('..//')
+
     from wx_piv_app import main
     main(None)
     
