@@ -3,6 +3,9 @@ wx_piv_db
 
 Pivot tables and views in a database
 
+To the Docs
+-----------
+http://htmlpreview.github.io/?https://github.com/ahetland/wx_piv_db/blob/master/wx_piv_db/docs/_build/html/index.html
 
 
 Installing from scratch
