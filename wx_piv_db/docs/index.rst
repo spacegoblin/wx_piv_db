@@ -13,6 +13,7 @@ Contents:
 
    introduction.rst
    installation.rst
+   ssc_crm.rst
    appendix.rst
 
 Indices and tables
