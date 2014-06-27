@@ -146,7 +146,8 @@
     
     <span class="k">def</span> <span class="nf">columnToHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Map the column headers to field names.&quot;&quot;&quot;</span>
-        <span class="c">#Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    Amount2    Delivery start3    Amount3    Length3    SSC main party</span>
+        <span class="c">#Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    </span>
+        <span class="c">#Amount2    Delivery start3    Amount3    Length3    SSC main party</span>
         <span class="n">d</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> 
         <span class="s">&#39;sale_id&#39;</span><span class="p">:</span> <span class="s">&#39;Sale ID&#39;</span><span class="p">,</span> 
         <span class="s">&#39;project_id&#39;</span><span class="p">:</span> <span class="s">&#39;Project ID&#39;</span><span class="p">,</span> 
@@ -209,7 +210,7 @@
 
 <span class="kn">from</span> <span class="nn">ahutils</span> <span class="kn">import</span> <span class="n">pwd</span>
 
-                                                                                                                          <span class="c">#, client_encoding=&#39;utf8&#39;)</span>
+                                                                                    <span class="c">#, client_encoding=&#39;utf8&#39;)</span>
 <span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&quot;postgresql+psycopg2://ahetland:</span><span class="si">%s</span><span class="s">@/lse_fin_db?host=192.168.1.91&quot;</span> <span class="o">%</span> <span class="n">pwd</span><span class="o">.</span><span class="n">pwd</span><span class="p">(</span><span class="s">&#39;hetland&#39;</span><span class="p">))</span>  
 
  

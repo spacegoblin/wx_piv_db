@@ -95,7 +95,8 @@ class CRM(Base):
     
     def columnToHeader(self):
         """Map the column headers to field names."""
-        #Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    Amount2    Delivery start3    Amount3    Length3    SSC main party
+        #Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    
+        #Amount2    Delivery start3    Amount3    Length3    SSC main party
         d={'id': None, 
         'sale_id': 'Sale ID', 
         'project_id': 'Project ID', 
@@ -158,7 +159,7 @@ class CRM(Base):
 
 from ahutils import pwd
 
-                                                                                                                          #, client_encoding='utf8')
+                                                                                    #, client_encoding='utf8')
 engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland'))  
 
  
