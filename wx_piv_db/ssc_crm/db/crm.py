@@ -158,9 +158,7 @@ class CRM(Base):
 
 from ahutils import pwd
 
-#engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host='192.168.1.91'" % pwd.pwd('hetland') )
-
-#engine = create_engine("postgresql+psycopg2://ahetland:%s@/rpt_db_may?host=localhost" % pwd.pwd('hetland'))  #, client_encoding='utf8')
+                                                                                                                          #, client_encoding='utf8')
 engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland'))  
 
  

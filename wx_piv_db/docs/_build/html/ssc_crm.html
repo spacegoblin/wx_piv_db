@@ -49,6 +49,258 @@
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>The CRM data is down loaded from CRM and inserted into the database. The data is first flattened so that one can more easily create reports.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+
+<span class="k">if</span> <span class="s">&#39;..//..//&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;..//..//&#39;</span><span class="p">)</span>
+    
+    
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">,</span> <span class="n">Integer</span><span class="p">,</span> <span class="n">String</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Date</span><span class="p">,</span> <span class="n">Float</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">relationship</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="n">sessionmaker</span>
+ 
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+ 
+    
+<span class="k">class</span> <span class="nc">CRM</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for a single CRM Record.&quot;&quot;&quot;</span>
+
+    <span class="n">__tablename__</span> <span class="o">=</span> <span class="s">&#39;tbl_ssccrm&#39;</span>
+    
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">sale_id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,)</span>
+    <span class="n">project_id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="p">)</span>   <span class="c">#nullable=False</span>
+    <span class="n">stage</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">organization</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">user_id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">delivery_start</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">,)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,)</span>
+    <span class="n">delivery_start2</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">,)</span>
+    <span class="n">amount2</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,)</span>
+    <span class="n">delivery_start3</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Date</span><span class="p">,)</span>
+    <span class="n">amount3</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,)</span>
+    <span class="n">length3</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">ssc_main_party</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">z_random_str</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">z_type</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">z_year</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,)</span>
+    <span class="n">z_amount</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">z_history</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">z_comment</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>
+    <span class="n">z_partner_adj</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Unicode</span><span class="p">(</span><span class="mi">255</span><span class="p">),)</span>   <span class="c">#To use the same partner name as in the accounting</span>
+    
+
+    <span class="k">def</span> <span class="nf">getdate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_date</span>
+    <span class="k">def</span> <span class="nf">setdate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">/%m/%Y&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">val</span><span class="p">,</span> <span class="s">&quot;did not enter as date&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_date</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getdate</span><span class="p">,</span> <span class="n">setdate</span><span class="p">)</span>
+    
+          
+    <span class="k">def</span> <span class="nf">getdelivery_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start</span>
+    <span class="k">def</span> <span class="nf">setdelivery_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">/%m/%Y&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">delivery_start</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getdelivery_start</span><span class="p">,</span> <span class="n">setdelivery_start</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">getdelivery_start2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start2</span>
+    <span class="k">def</span> <span class="nf">setdelivery_start2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">/%m/%Y&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start2</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">delivery_start2</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getdelivery_start2</span><span class="p">,</span> <span class="n">setdelivery_start2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getdelivery_start3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start3</span>
+    <span class="k">def</span> <span class="nf">setdelivery_start3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start3</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">/%m/%Y&#39;</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delivery_start3</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">delivery_start3</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getdelivery_start3</span><span class="p">,</span> <span class="n">setdelivery_start3</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return string representation&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> Project: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">)</span> 
+    
+    <span class="k">def</span> <span class="nf">columnToHeader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Map the column headers to field names.&quot;&quot;&quot;</span>
+        <span class="c">#Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    Amount2    Delivery start3    Amount3    Length3    SSC main party</span>
+        <span class="n">d</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> 
+        <span class="s">&#39;sale_id&#39;</span><span class="p">:</span> <span class="s">&#39;Sale ID&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;project_id&#39;</span><span class="p">:</span> <span class="s">&#39;Project ID&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="s">&#39;Date&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;stage&#39;</span><span class="p">:</span> <span class="s">&#39;Stage&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;text&#39;</span><span class="p">:</span> <span class="s">&#39;Text&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;organization&#39;</span><span class="p">:</span> <span class="s">&#39;Organization&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;user_id&#39;</span><span class="p">:</span> <span class="s">&#39;User ID&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="s">&#39;Status&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;delivery_start&#39;</span><span class="p">:</span> <span class="s">&#39;Delivery start&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;amount&#39;</span><span class="p">:</span> <span class="s">&#39;Amount&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;delivery_start2&#39;</span><span class="p">:</span> <span class="s">&#39;Delivery start2&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;amount2&#39;</span><span class="p">:</span> <span class="s">&#39;Amount2&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;delivery_start3&#39;</span><span class="p">:</span> <span class="s">&#39;Delivery start3&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;amount3&#39;</span><span class="p">:</span> <span class="s">&#39;Amount3&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;length3&#39;</span><span class="p">:</span> <span class="s">&#39;Length3&#39;</span><span class="p">,</span> 
+        <span class="s">&#39;ssc_main_party&#39;</span><span class="p">:</span> <span class="s">&#39;SSC main party&#39;</span><span class="p">,</span>
+        <span class="s">&#39;z_random_str&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;z_type&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;z_year&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span> 
+        <span class="s">&#39;z_amount&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;z_history&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        <span class="s">&#39;z_comment&#39;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+        
+        <span class="p">}</span>
+
+ 
+<span class="c"># Create an engine that stores data in the local directory&#39;s</span>
+<span class="c"># sqlalchemy.db file.</span>
+
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a copy of self&quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">CRM</span><span class="p">()</span>
+        <span class="c"># obj.id = None since it has not been inserted into db </span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">sale_id</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">sale_id</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">project_id</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">date</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">date</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">stage</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">stage</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">text</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">organization</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">organization</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">user_id</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">user_id</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">status</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">status</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_delivery_start</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">delivery_start</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">amount</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">amount</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">delivery_start2</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">delivery_start2</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">amount2</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">amount2</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">delivery_start3</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">delivery_start3</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">amount3</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">amount3</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">length3</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">length3</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">ssc_main_party</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">ssc_main_party</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_random_str</span>  <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">z_random_str</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_type</span>  <span class="o">=</span>  <span class="bp">None</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_year</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_amount</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_history</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">z_comment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_comment</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    
+<span class="c">#engine = create_engine(&#39;sqlite:///crm_ssc.db&#39;)</span>
+
+<span class="kn">from</span> <span class="nn">ahutils</span> <span class="kn">import</span> <span class="n">pwd</span>
+
+                                                                                                                          <span class="c">#, client_encoding=&#39;utf8&#39;)</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="s">&quot;postgresql+psycopg2://ahetland:</span><span class="si">%s</span><span class="s">@/lse_fin_db?host=192.168.1.91&quot;</span> <span class="o">%</span> <span class="n">pwd</span><span class="o">.</span><span class="n">pwd</span><span class="p">(</span><span class="s">&#39;hetland&#39;</span><span class="p">))</span>  
+
+ 
+<span class="c"># Create all tables in the engine. This is equivalent to &quot;Create Table&quot;</span>
+<span class="c"># statements in raw SQL.</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+<span class="c">#From here we have declarations for the queries.</span>
+<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">engine</span>
+<span class="n">DBSession</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">()</span>
+<span class="n">DBSession</span><span class="o">.</span><span class="n">bind</span> <span class="o">=</span> <span class="n">engine</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">DBSession</span><span class="p">()</span>
+
+    
+<span class="kn">from</span> <span class="nn">ahutils.utils</span> <span class="kn">import</span> <span class="n">randomString</span>
+<span class="n">random_str</span> <span class="o">=</span> <span class="n">randomString</span><span class="p">()</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">def</span> <span class="nf">loadCSVFile</span><span class="p">(</span><span class="n">PATH</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load a CRM file&quot;&quot;&quot;</span>
+
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">lst</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="c">#assert row==CSV_ROW, &quot;%s&quot; % row</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">crm</span> <span class="o">=</span> <span class="n">CRM</span><span class="p">()</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">sale_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">project_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">organization</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">user_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">amount</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">amount2</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start3</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">12</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">amount3</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">length3</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">ssc_main_party</span> <span class="o">=</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">15</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">z_random_str</span> <span class="o">=</span> <span class="n">random_str</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">z_type</span> <span class="o">=</span> <span class="s">&#39;Original&#39;</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">z_history</span> <span class="o">=</span> <span class="s">&#39;Current&#39;</span>
+            <span class="n">crm</span><span class="o">.</span><span class="n">z_comment</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">crm</span><span class="p">)</span>
+            
+            <span class="c">#We will for each Original Record insert a copy with value and year</span>
+            <span class="k">if</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start</span><span class="p">:</span>
+                <span class="n">cp</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_year</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start</span><span class="o">.</span><span class="n">year</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_amount</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">amount</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_type</span> <span class="o">=</span> <span class="s">&#39;Generated&#39;</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start2</span><span class="p">:</span>
+                <span class="n">cp</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_year</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start2</span><span class="o">.</span><span class="n">year</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_amount</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">amount2</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_type</span> <span class="o">=</span> <span class="s">&#39;Generated&#39;</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start3</span><span class="p">:</span>
+                <span class="n">cp</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_year</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">delivery_start3</span><span class="o">.</span><span class="n">year</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_amount</span> <span class="o">=</span> <span class="n">crm</span><span class="o">.</span><span class="n">amount3</span>
+                <span class="n">cp</span><span class="o">.</span><span class="n">z_type</span> <span class="o">=</span> <span class="s">&#39;Generated&#39;</span>
+                <span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cp</span><span class="p">)</span>
+                                                        
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+
+    <span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+                   
+
+<span class="k">def</span> <span class="nf">test</span><span class="p">():</span>
+    <span class="n">qry</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">CRM</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">qry</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+    <span class="n">loadCSVFile</span><span class="p">(</span><span class="n">PATH</span><span class="o">=</span><span class="s">&#39;C:\Users\hetland\Desktop\Book1.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
