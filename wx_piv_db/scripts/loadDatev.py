@@ -9,7 +9,9 @@ import sys
 if '..//' not in sys.path:
     sys.path.append('..//')
     print sys.path
-    
+
+from ahutils import pwd
+
 from ahutils.utils import randomString
 from ahconfig import const
 const.random_str = randomString()
@@ -18,9 +20,9 @@ const.random_str = randomString()
 from ahutils import db
 db.setQuote('Postgress')
 
-pwd = raw_input ("Enter password: ")
 
-DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd)
+
+DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd.pwd('hetland'))
 
 #BL    Kontonummer    Datum    BU    Gegenkonto    Buchungstext    USt%    Belegfeld1    Umsatz Soll    Umsatz Haben    WKZ    Eingabebetrag    Kurs    Stapel-Nr.    BSNr.    HK    KOST1    KOST2    KOST-Menge    ZI
 
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     
    # Z:\Reporting\2014\03-Mar\LSE
    
-    PATH='Z:/Reporting/2014/05-May/LSE/v02/imp.csv'
+    PATH='Z:/Reporting/2014/06-Jun/LSE/v01/imp.csv'
 
     run(PATH)
 
