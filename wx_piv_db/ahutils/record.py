@@ -9,6 +9,12 @@ or any other object. The factory method loadFromDb loads a RecordList into memor
 
 
 import wx
+
+import sys
+if '..//' not in sys.path:
+    sys.path.append('..//')
+        
+        
 from ahutils import db
 from ahutils.db import dictToUpdate, dictToInsert, insertBlobSql
 from mx.DateTime import DateTimeType as DateTimeType
@@ -210,7 +216,24 @@ class Record(object):
     def __repr__(self):
         return "%s" % self.__dict__
     
-    
+    #SOME MATH ON THE RECORD
+    def __mul__(self, val):
+        "Multiply the value field with the number."
+        setattr(self, self.value_field,  getattr(self, self.value_field) * val ) 
+
+    def __add__(self, val):
+        "Add the value field with the number."
+        setattr(self, self.value_field,  getattr(self, self.value_field) + val ) 
+
+    def __sub__(self, val):
+        "Subtract the value field with the number."
+        setattr(self, self.value_field,  getattr(self, self.value_field) + val ) 
+
+    def __div__(self, val):
+        "Divide the value field with the number."
+        setattr(self, self.value_field,  getattr(self, self.value_field) + float(val) ) 
+    #END MATH ON RECORD
+                       
     def items(self):
         raise('in use?')
         for x, y in self.__dict__.items():
@@ -1796,17 +1819,16 @@ def showExample():
 
 def run():
     "Run the main program from here."
-    import sys
+    from wx_piv_app import main
+    main(None)
     
-    from wx_things.wx_rccl import main
-    main(sys.argv)   
     
 if __name__=='__main__':
     
 
-    setDbConst()
-
-    showExample()
-#    run()
+#     setDbConst()
+# 
+#     showExample()
+    run()
 #    developCSVCapability()
 
