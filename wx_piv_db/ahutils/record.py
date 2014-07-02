@@ -210,13 +210,6 @@ class Record(object):
     def __repr__(self):
         return "%s" % self.__dict__
     
-    def __getitem__(self, key):
-        raise ('in use?')
-        return self.__dict__[key]
-#        try:
-#            return self.__dict__[key]
-#        except KeyError:
-#            return ''
     
     def items(self):
         raise('in use?')
@@ -458,76 +451,7 @@ class Record(object):
         for att in attr:
             self.__dict__.pop(att)
             
-    def onTriggerUpdate(self):
-        
-        """I put this here as a future idea ....
-        The idea is to have a method that is automatically triggered on an update statement.
-        The challenge is to find the right place to attach this peace of code to the record. """
-        raise('the right place is in the database')
-    
-    def splitCopy(self):
-        """Make 3 copies of this record so that the sum is zero of the copies and 
-        you can detail more.
-        
-        Method is for accounting and reporting use only .... """
-        
-        cp_1 = self.copy()
-        cp_2 = self.copy()
-        cp_3 = self.copy()
-        
-        relevant_atr = ['lt', 
-'amount', 
-'account_number', 
-'account_description', 
-'sub_ledger', 
-'cur_cod', 
-'business_unit', 
-'test_period', 
-'my_costcenter', 
-'my_type', 
-'my_uid', 
-'my_drcr', 
-'z_psid', 
-'volume', 
-'explanation_alpha_name', 
-'z_explanation_alpha_name', 
-'explanation_remark', 
-'foreign_amount', 
-'address_number', 
-'document_number', 
-'p_projectdim_a', 
-'p_projectdim_b', 
-'invoice_number', 
-'p_projectdim_c', 
-'p_projectdim_d', 
-'description', 
-'co', 
-'open_closed',  
-'amount_plan', 
-'base_table']
-        
-        for relevant in self.__dict__.keys():
-            if not relevant in relevant_atr:
-                cp_1.deleteAttr(relevant)
-                cp_2.deleteAttr(relevant)
-                cp_3.deleteAttr(relevant)
-        
-        
-        cp_1.base_table = 'tbljde_transactions02_plan'
-        cp_1.my_type = 'ILV'
-        cp_1.amount = float(self.amount) * -1
-        
-        cp_2.base_table = 'tbljde_transactions02_plan'
-        cp_2.my_type = 'ILV'
-        cp_2.amount = float(self.amount) * 0.5
-           
-        cp_3.base_table = 'tbljde_transactions02_plan'
-        cp_3.my_type = 'ILV'
-        cp_3.amount = float(self.amount) * 0.5
-        
-        cp_1.insert()
-        cp_2.insert()
-        cp_3.insert()
+
         
             
 class LiveType(object):
