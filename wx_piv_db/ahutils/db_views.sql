@@ -724,3 +724,30 @@ FROM tbl_susa_plan_alex
 GRANT SELECT ON public.qry_susa_plan_alex TO db_read;
 GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES, TRIGGER, TRUNCATE
   ON public.tbl_susa_plan_alex TO akunze;
+  
+  
+  
+
+CREATE OR REPLACE VIEW public.qry_crm (
+    id,
+    project_id,
+    stage,
+    text,
+    z_partner_adj,
+    ssc_main_party,
+    z_year,
+    z_amount,
+    z_comment,
+    zz_type,
+    base_table)
+AS
+SELECT tbl_ssccrm.id, tbl_ssccrm.project_id, tbl_ssccrm.stage, tbl_ssccrm.text,
+    tbl_ssccrm.z_partner_adj, tbl_ssccrm.ssc_main_party, tbl_ssccrm.z_year, tbl_ssccrm.z_amount, tbl_ssccrm.z_comment, 'CRM'::text AS zz_type, 'tbl_ssccrm'::text AS base_table
+FROM tbl_ssccrm tbl_ssccrm
+WHERE tbl_ssccrm.z_year = 2014 AND tbl_ssccrm.z_history::text = 'Current'::text
+UNION
+SELECT qry_susa_fcst_c.id, qry_susa_fcst_c.project_code AS project_id,
+    qry_susa_fcst_c.z_type AS stage, ''::character varying AS text, qry_susa_fcst_c.partner_name AS z_partner_adj, 'ES - LSE Space GmbH'::character varying AS ssc_main_party, 2014 AS z_year, qry_susa_fcst_c.amount AS z_amount, ''::character varying AS z_comment, 'Forecast'::text AS zz_type, 'n.a.'::text AS base_table
+FROM qry_susa_fcst_c
+WHERE qry_susa_fcst_c.period >= 201401 AND qry_susa_fcst_c.period <= 201412 AND
+    qry_susa_fcst_c.zuordnung_bwa::text = 'GuV'::text AND (qry_susa_fcst_c.z_type = 'Actual'::text OR qry_susa_fcst_c.z_type = 'FC_F14v1'::text) AND (qry_susa_fcst_c.company::text = 'LSE IFRS'::text OR qry_susa_fcst_c.company::text = 'LSE HGB'::text OR qry_susa_fcst_c.company::text = 'LSE'::text) AND qry_susa_fcst_c.fcst_choice = 'Fcst'::text AND qry_susa_fcst_c.rpt_acc_sort_code::text = '00-Revenues'::text;

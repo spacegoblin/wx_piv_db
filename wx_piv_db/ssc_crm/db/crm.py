@@ -27,19 +27,19 @@ class CRM(Base):
     id = Column(Integer, primary_key=True)
     sale_id = Column(Integer,)
     project_id = Column(Unicode(255),)
-    date = Column(Date, )   #nullable=False
+    _date = Column('date', Date, )   #nullable=False
     stage = Column(Unicode(255),)
     text = Column(Unicode(255),)
     organization = Column(Unicode(255),)
     user_id = Column(Unicode(255),)
     status = Column(Unicode(255),)
-    delivery_start = Column(Date,)
+    _delivery_start = Column('delivery_start', Date,)
     amount = Column(Float,)
-    delivery_start2 = Column(Date,)
+    _delivery_start2 = Column('delivery_start2', Date,)
     amount2 = Column(Float,)
-    delivery_start3 = Column(Date,)
+    _delivery_start3 = Column('delivery_start3', Date,)
     amount3 = Column(Float,)
-    length3 = Column(Unicode(255),)
+    #length3 = Column(Unicode(255),)
     ssc_main_party = Column(Unicode(255),)
     z_random_str = Column(Unicode(255),)
     z_type = Column(Unicode(255),)
@@ -48,7 +48,8 @@ class CRM(Base):
     z_history = Column(Unicode(255),)
     z_comment = Column(Unicode(255),)
     z_partner_adj = Column(Unicode(255),)   #To use the same partner name as in the accounting
-    
+    include_in_revenue_plan = Column(Integer,)
+
 
     def getdate(self):
         return self._date
@@ -93,35 +94,6 @@ class CRM(Base):
         
         return "%s Project: %s" % (self.z_type, self.project_id) 
     
-    def columnToHeader(self):
-        """Map the column headers to field names."""
-        #Sale ID    Project ID    Date    Stage    Text    Organization    User ID    Status    Delivery start    Amount    Delivery start2    
-        #Amount2    Delivery start3    Amount3    Length3    SSC main party
-        d={'id': None, 
-        'sale_id': 'Sale ID', 
-        'project_id': 'Project ID', 
-        'date': 'Date', 
-        'stage': 'Stage', 
-        'text': 'Text', 
-        'organization': 'Organization', 
-        'user_id': 'User ID', 
-        'status': 'Status', 
-        'delivery_start': 'Delivery start', 
-        'amount': 'Amount', 
-        'delivery_start2': 'Delivery start2', 
-        'amount2': 'Amount2', 
-        'delivery_start3': 'Delivery start3', 
-        'amount3': 'Amount3', 
-        'length3': 'Length3', 
-        'ssc_main_party': 'SSC main party',
-        'z_random_str': None,
-        'z_type': None,
-        'z_year': None, 
-        'z_amount': None,
-        'z_history': None,
-        'z_comment': None,
-        
-        }
 
  
 # Create an engine that stores data in the local directory's
@@ -145,7 +117,6 @@ class CRM(Base):
         obj.amount2  =  self.amount2
         obj.delivery_start3  =  self.delivery_start3
         obj.amount3  =  self.amount3
-        obj.length3  =  self.length3
         obj.ssc_main_party  =  self.ssc_main_party
         obj.z_random_str  =  self.z_random_str
         obj.z_type  =  None
@@ -153,6 +124,7 @@ class CRM(Base):
         obj.z_amount = None
         obj.z_history = self.z_history
         obj.z_comment = self.z_comment
+        obj.include_in_revenue_plan = self.include_in_revenue_plan
         return obj
     
 #engine = create_engine('sqlite:///crm_ssc.db')
@@ -206,12 +178,13 @@ def loadCSVFile(PATH):
             crm.amount2 = row[11]
             crm.delivery_start3 = row[12]
             crm.amount3 = row[13]
-            crm.length3 = row[14]
+            #######crm.length3 = row[14]
             crm.ssc_main_party = unicode(row[15], errors='ignore')
             crm.z_random_str = random_str
             crm.z_type = 'Original'
             crm.z_history = 'Current'
             crm.z_comment = None
+            crm.include_in_revenue_plan = row[16]
             session.add(crm)
             
             #We will for each Original Record insert a copy with value and year
