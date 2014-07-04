@@ -221,4 +221,4 @@ def test():
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    loadCSVFile(PATH='C:\Users\hetland\Desktop\Book1.csv')
+    loadCSVFile(PATH='C:\ocra_export\imp.csv')
