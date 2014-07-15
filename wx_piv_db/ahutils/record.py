@@ -1639,56 +1639,15 @@ def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_recor
     return lst
 
 
-def loadFromDb_REF_131008(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_record=Record, base_lst=RecordList):
-    """Factory method to load database records into the models.
-    sql: sql statement for the records to retrieve
-    value_filed: field to be used in pivot and statistics
-    base_record: you can override and use an inherited Record
-    base_lst: you can override and use an inherited RecordList
-    
-    You can load directly from an sql statement and have this mapped
-    to a default record object or supply your customized object to be loaded.
-    In the future I hope you can also decide you would like to load
-    SQLAlchemy objects (but Alchemy is a killer in speed).
-    
-    Returns a recordset from an sql statement.
-    
-    Example sql::
-    >>> WhichDb_v3('Postgres', None)
-    >>> sql = "select * from tbb_period where year=2007"
-    >>> lst = loadFromDb(sql)
-    >>> print len(lst)
-    12
-    """
-    lst=base_lst()
-    lst.value_field = value_filed
-    lst.base_table = table_name
-    #lst.sql = sql
 
-    
 
-    lst.fieldnames = sql.fetchone().keys()
-    #lst.field_types = Db.fieldTypes()
-    lst.sql = sql
-
-    for rec in sql.fetchall():
-        obj=base_record(table_name)
-        #refactor out parent
-        #obj.parent = lst
-        last_zip = zip(lst.fieldnames, rec)
-        for xx in last_zip:
-            setattr(obj, xx[0], xx[1])
-        lst.append(obj)
-
-    return lst
-
-def loadFromAlchemy(query, table_name, base_record):
+def loadFromAlchemy(query, base_record):
     """Loads an sql alchemy query object."""
     lst=RecordList()
     lst.value_field = None
-    lst.base_table = table_name
+    lst.base_table = base_record.__table__
 
-    lst.fieldnames = [r.name for r in table_name.c]
+    lst.fieldnames = base_record.fieldnames #must be overridden
     lst.field_types = None
     lst.sql = base_record #'cannot be used as error is raised in pivot get node copy method' #query.statement
 
@@ -1737,7 +1696,6 @@ def loadFromFile(file, sheet='Sheet1', basetable='No db table - xls'):
         last_zip = zip(lst.fieldnames, rec)
         
         for xx in last_zip:
-            #obj.set(xx[0], xx[1])
             setattr(obj, xx[0], xx[1])
         lst.append(obj)
 
@@ -1760,14 +1718,13 @@ def loadFromFileCsv(file, basetable='No db table - csv'):
             last_zip = zip(lst.fieldnames, row)
 
             for xx in last_zip:
-                #obj.set(xx[0], xx[1])
                 setattr(obj, xx[0], xx[1])
             lst.append(obj)
     return lst
 
 def setDbConst():
-
-    Db=WhichDb_v3('Postgress', 'dev_db', const.gui_user, const.gui_pwd)
+    #Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.gui_pwd)
+    Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.gui_pwd)
     
 def insertIntoUserView(viewid, username='ahetland'):
     sql = """insert into tbl_users_view ("user", view_id) values ('%s', %d)""" % (username, viewid)

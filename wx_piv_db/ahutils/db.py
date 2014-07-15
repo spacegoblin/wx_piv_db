@@ -6,6 +6,10 @@ import datetime
 from string import join, replace
 import decimal
 
+import sys
+if '..//' not in sys.path:
+    sys.path.append('..//')
+    
 #import sqlite3
 #import xconfig
 from ahconfig import const

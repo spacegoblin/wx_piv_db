@@ -29,6 +29,8 @@ class Person(Base):
     first_name = Column(Unicode(255),)
     last_name = Column(Unicode(255),)
 
+
+    fieldnames = ['id', 'code', 'first_name', 'last_name']
         
     def __str__(self):
         """Return string representation"""        

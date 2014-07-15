@@ -49,7 +49,8 @@ class CRM(Base):
     z_comment = Column(Unicode(255),)
     z_partner_adj = Column(Unicode(255),)   #To use the same partner name as in the accounting
     include_in_revenue_plan = Column(Integer,)
-
+    sale_type = Column(Unicode(255),)
+    currency_desc = Column(Unicode(255),)
 
     def getdate(self):
         return self._date
@@ -125,6 +126,10 @@ class CRM(Base):
         obj.z_history = self.z_history
         obj.z_comment = self.z_comment
         obj.include_in_revenue_plan = self.include_in_revenue_plan
+        
+        obj.sale_type = self.sale_type
+        obj.currency_desc = self.currency_desc
+    
         return obj
     
 #engine = create_engine('sqlite:///crm_ssc.db')
@@ -185,6 +190,10 @@ def loadCSVFile(PATH):
             crm.z_history = 'Current'
             crm.z_comment = None
             crm.include_in_revenue_plan = row[16]
+            
+            crm.sale_type = row[17]
+            crm.currency_desc = row[18]
+            
             session.add(crm)
             
             #We will for each Original Record insert a copy with value and year
