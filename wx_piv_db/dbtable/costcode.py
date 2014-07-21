@@ -58,8 +58,29 @@ class CostCode(Base):
 
 def test():
     qry = session.query(CostCode)
-    for r in qry:
-        print r
+    from ahutils import record
+    from wx_forms import Frm2
+    
+    lst = record.loadFromAlchemy(qry, CostCode)
+    
+    import wx
+    from ahconfig import const
+    const.user='ahetland'
+    
+    wx.SetDefaultPyEncoding('utf-8')
+    app = wx.PySimpleApp()
+     
+    frame = Frm2(None, lst)
+    frame.Show()
+# # #app =wx.GetApp()
+# ## app.mdi_parent_frame = None
+# ## frame = ButtonForm(None)
+# ## frame.addButton('first',a)
+# ## frame.addButton('second',b)
+# ## frame.Show(True)
+# #
+    app.MainLoop() 
+    
 
 if __name__=='__main__':
     from ahutils import pwd
