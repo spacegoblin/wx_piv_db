@@ -15,7 +15,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
- 
+
+
 Base = declarative_base()
  
     
@@ -50,7 +51,7 @@ class Datev(Base):
     imp_str = Column(Unicode(255),)
     zui = Column(Unicode(255), default=u'na', nullable=False)
     comment_2 = Column(Unicode(255),)
-    pers_code = Column(Unicode(255),)
+    pers_code = Column(Unicode(255), ForeignKey('tbl_person_stand.code'), nullable=False, default=0)
     
     fieldnames = ['id', 'account_datev', 'amount', 'period']
         
@@ -126,8 +127,40 @@ def getSession():
 
 def test():
     session = getSession()
-    qry = session.query(Datev)
-    print qry.first()
+    import wx
+    from ahutils import record
+    from wx_forms import Frm2
+    
+    qry = session.query(Datev).filter(Datev.pers_code==u'00159')
+    lst = record.loadFromAlchemy(qry, Datev)
+    lst.pivot(['account_datev'], ['period'], 'amount')
+
+    app = wx.PySimpleApp()
+    
+    app.MY_FLOAT_FORMAT = ',.2f'
+    
+    frame = Frm2(None, lst)
+    frame.Show()
+
+    app.MainLoop() 
+    
+def show():
+    session = getSession()
+    import wx
+    from ahutils import record
+    from wx_forms import Frm2
+    
+    qry = session.query(Datev).filter(Datev.pers_code==u'00159')
+    lst = record.loadFromAlchemy(qry, Datev) 
+    
+    app = wx.PySimpleApp()
+    
+    app.MY_FLOAT_FORMAT = ',.2f'
+    
+    frame = Frm2(None, lst)
+    frame.Show()
+
+    app.MainLoop() 
 
 if __name__=='__main__':
     import doctest
