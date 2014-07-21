@@ -53,36 +53,7 @@ class CostCode(Base):
         return "Code: %s Nr.: %s \n%s\n-------------------------" % (self.project_code, self.costcenternr, self.description) 
 
 
-
-       
-
-def test():
-    qry = session.query(CostCode)
-    from ahutils import record
-    from wx_forms import Frm2
-    
-    lst = record.loadFromAlchemy(qry, CostCode)
-    
-    import wx
-    from ahconfig import const
-    const.user='ahetland'
-    
-    wx.SetDefaultPyEncoding('utf-8')
-    app = wx.PySimpleApp()
-     
-    frame = Frm2(None, lst)
-    frame.Show()
-# # #app =wx.GetApp()
-# ## app.mdi_parent_frame = None
-# ## frame = ButtonForm(None)
-# ## frame.addButton('first',a)
-# ## frame.addButton('second',b)
-# ## frame.Show(True)
-# #
-    app.MainLoop() 
-    
-
-if __name__=='__main__':
+def getSession():
     from ahutils import pwd
     engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland'))  
     
@@ -93,7 +64,45 @@ if __name__=='__main__':
     DBSession = sessionmaker()
     DBSession.bind = engine
     session = DBSession()
+    return session
+       
+def show():
+    session = getSession()
+    import wx
+    from ahutils import record
+    from wx_forms import Frm
+    
+    qry = session.query(CostCode)
+    lst = record.loadFromAlchemy(qry, CostCode)
+    
+    app = wx.GetApp()
+    frame = Frm(app.mdi_parent_frame, lst)
+    frame.Show()
+ 
+    
+def test():
+    session = getSession()
+    
+    qry = session.query(CostCode)
+    from ahutils import record
+    from wx_forms import Frm2
+    
+    lst = record.loadFromAlchemy(qry, CostCode)
+    
+    import wx
 
+    wx.SetDefaultPyEncoding('utf-8')
+    app = wx.PySimpleApp()
+     
+    frame = Frm2(None, lst)
+    frame.Show()
+
+    app.MainLoop() 
+    
+
+if __name__=='__main__':
+
+    
     import doctest
     doctest.testmod()
     test()
