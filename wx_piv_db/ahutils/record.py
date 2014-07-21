@@ -908,7 +908,7 @@ class RecordList(object):
         return newRecordList
     
     def sqlUpdateGrup(self, table_used, field, new_value, lst_ids):
-        """A more efficient way of updating when doing from Miami.
+        """A more efficient way of updating when doing from overseas.
         Uses a list of ids to create one update statement (and not one update per record).
         
         Warning!!:
