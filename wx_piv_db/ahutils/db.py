@@ -224,17 +224,14 @@ def dictToUpdate(dict, tablename, **upd_id):
         if type(key)==unicode:
             key = key.encode('ascii')
         typ = type(value)
-#        print "------dictToUpdate -----------"
-#        print "Type of value>>",  type(value), ">>", value
-#        print "Type of key>>", type(key), ">>", key
-#        print "----------END-----------------"
+
         if value == None:
             continue       
         elif typ == list:
             continue
         elif typ == unicode:
             #print "Test for unicode"
-            #raise "Test for unicode"
+
             db_values.append("""'%s'""" % quote (value.encode('utf-8')))
         elif typ == datetime.date:
             db_values.append("'" + value.strftime('%Y-%m-%d') + "'")
