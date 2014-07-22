@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+#===============================================================================
+# This module will check for your windows login name
+# if it is the user you specify it will return the password you hard coded into 
+# this file.
+# To prevent anyone from reading the file you run the file to compile the file
+# and it can no longer be read. 
+#===============================================================================
 import os
 
 
