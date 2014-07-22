@@ -133,7 +133,6 @@ def test(persCode):
     
     app.MY_FLOAT_FORMAT = ',.3f'
     
-
     
     frame = Frm2(None, lst)
     frame.Show()

@@ -1610,19 +1610,19 @@ def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_recor
     lst.value_field = value_filed
     lst.base_table = table_name
     #lst.sql = sql
-#     try:
-#          
-#         Db.c.execute(str(sql))
-#          
-#     except Exception, e:
-#              
-#             print sql
-#             print 'SQL error message: %s' % str(e)
-#              
-#             GenericMsgDlg(str(e), 'SQL error', wx.OK | wx.ICON_INFORMATION)
-#             Db.resetConnection()
-#             return False
-    Db.c.execute(str(sql))
+    try:
+          
+        Db.c.execute(str(sql))
+          
+    except Exception, e:
+              
+            print sql
+            print 'SQL error message: %s' % str(e)
+              
+            GenericMsgDlg(str(e), 'SQL error', wx.OK | wx.ICON_INFORMATION)
+            Db.resetConnection()
+            return False
+#    Db.c.execute(str(sql))
 
     lst.fieldnames = Db.fields()
     lst.field_types = Db.fieldTypes()
