@@ -285,6 +285,9 @@ class DbSelectionFrm(wx.Frame):
         py_driver = self.connectionList[self.cb.GetSelection()]
 
         pwd = self.txt_pwd.GetValue()
+        
+        print "DEBUG PWD", pwd
+        
         user = self.txt_usr.GetValue()
         try:
             const.gui_version = __version__.version
