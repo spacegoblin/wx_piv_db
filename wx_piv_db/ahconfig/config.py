@@ -52,7 +52,8 @@ const.db_lst_dsn='lse_fin_db'
 
  
 const.gui_user='ahetland'
-const.pwd=pwd.pwd('hetland')
+#const.pwd=pwd.pwd('hetland')
+const.windows_pwd=pwd.pwd('hetland')
 
 
 if __name__=='__main__':
