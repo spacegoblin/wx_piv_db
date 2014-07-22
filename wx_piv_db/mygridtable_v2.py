@@ -80,7 +80,7 @@ class MyGridTable(wx.grid.PyGridTableBase):
                 fmt = "{:%s}" % wx.GetApp().MY_FLOAT_FORMAT
             
                 try:
-                    return "{:%s}".format(value)
+                    return fmt.format(value)
                 except ValueError:
                     return value
                 
