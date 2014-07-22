@@ -14,7 +14,7 @@ import os
 def pwd(windowsUser):
     """Returns the compiled password if the user name matches the windows log-inn."""
     if windowsUser==os.environ.get( "USERNAME" ):
-        return 'your password'
+        return 'sdfjhio8974sadyxc'
     else:
         return None
 

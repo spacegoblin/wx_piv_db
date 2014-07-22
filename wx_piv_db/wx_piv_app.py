@@ -285,36 +285,39 @@ class DbSelectionFrm(wx.Frame):
         py_driver = self.connectionList[self.cb.GetSelection()]
 
         pwd = self.txt_pwd.GetValue()
-        
-        print "DEBUG PWD", pwd
+        if pwd=='password':
+            pwd = const.pwd
         
         user = self.txt_usr.GetValue()
         try:
             const.gui_version = __version__.version
             const.user = user
-        except: pass
+        except: 
+            
+            pass
         
+        initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
+        self.emergencyExit = True
 
-
-        try:
-            initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
-            self.emergencyExit = True
- 
-        except psycopg2.OperationalError, e:
-            GenericMsgDlg(str(e), 'Database error', wx.OK | wx.ICON_INFORMATION)
-            return False
-         
-        except Exception, e:
-            print "Except in OnSelectDb", py_driver, odbc_dsn, user, pwd
-            dlg = wx.MessageDialog(None, '''Check the odbc connection or your connection
-parameters for errors.''',
-                               """Your database connection was refused.
-%s""" % e,
-                               wx.OK | wx.ICON_ERROR)
-            dlg.ShowModal()
-            dlg.Destroy()
-            self.Destroy()
-            return False
+#         try:
+#             initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
+#             self.emergencyExit = True
+#             print "bug 02"
+#         except psycopg2.OperationalError, e:
+#             GenericMsgDlg(str(e), 'Database error', wx.OK | wx.ICON_INFORMATION)
+#             return False
+#          
+#         except Exception, e:
+#             print "Except in OnSelectDb", py_driver, odbc_dsn, user, pwd
+#             dlg = wx.MessageDialog(None, '''Check the odbc connection or your connection
+# parameters for errors.''',
+#                                """Your database connection was refused.
+# %s""" % e,
+#                                wx.OK | wx.ICON_ERROR)
+#             dlg.ShowModal()
+#             dlg.Destroy()
+#             self.Destroy()
+#             return False
         
     #-- Refactored out
     
@@ -336,16 +339,16 @@ parameters for errors.''',
             
     #-- Refactored to
 
-        try:
-            const.RESTRICTED_USER = True
-            self.OnInit2()
-        except:
-            dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
-                               """Your database connection was refused. (Double pwd settings not met).""",
-                               wx.OK | wx.ICON_ERROR)
-            dlg.ShowModal()
-            dlg.Destroy()
-            self.Destroy()
+       # try:
+            #const.RESTRICTED_USER = True
+        self.OnInit2()
+       # except:
+#         dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
+#                            """Your database connection was refused. (Double pwd settings not met).""",
+#                            wx.OK | wx.ICON_ERROR)
+#         dlg.ShowModal()
+#         dlg.Destroy()
+        self.Destroy()
                     
         self.Close()
         
@@ -356,7 +359,7 @@ parameters for errors.''',
         self.app.mdi_parent_frame = frame
         self.app.SetTopWindow(frame)
         self.app.db_name = str(const.odbc_dsn)
-        print self.app.db_name
+       # print self.app.db_name
         #print "Loading updated modules"
         #importCodeFirst()
         #self.app.initScript()
