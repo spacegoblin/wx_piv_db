@@ -606,6 +606,7 @@ class RecordList(object):
         "Returns object by index in self.data"
         if self.isPivoted:
             print "isPivoted"
+            raise ("Why would I want to use this, gets ugly with SQLAlchemy ... ")
             return self.pivot_data[index]
         else:
             return self.data[index]
