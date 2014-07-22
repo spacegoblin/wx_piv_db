@@ -784,7 +784,7 @@ the event method of the menu item."""
        
 class App(wx.App):
     
-    MY_FLOAT_FORMAT = '.2f'
+    MY_FLOAT_FORMAT = ',.2f'
     MY_DECIMAL_FORMAT = ',.2f'
     MY_DATE_FORMAT = '%Y-%m-%d' #'%b %d, %Y'
     
