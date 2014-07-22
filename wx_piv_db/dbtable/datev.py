@@ -119,45 +119,44 @@ class Datev(Base):
 
                    
 
-def test():
+def test(persCode):
     session = getSession()
     import wx
     from ahutils import record
     from wx_forms import Frm2
     
-    qry = session.query(Datev).filter(Datev.pers_code==u'00159')
+    qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
     lst = record.loadFromAlchemy(qry, Datev)
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
 
     app = wx.PySimpleApp()
     
-    app.MY_FLOAT_FORMAT = ',.2f'
+    app.MY_FLOAT_FORMAT = ',.3f'
+    
+
     
     frame = Frm2(None, lst)
     frame.Show()
 
     app.MainLoop() 
     
-def show():
+def showPerson(persCode):
     session = getSession()
     import wx
     from ahutils import record
-    from wx_forms import Frm2
+    from wx_forms import Frm
     
-    qry = session.query(Datev).filter(Datev.pers_code==u'00159')
-    lst = record.loadFromAlchemy(qry, Datev) 
+    qry = session.query(Datev).filter(Datev.pers_code==unicode(persCode))
+    lst = record.loadFromAlchemy(qry, Datev)
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
     
-    app = wx.PySimpleApp()
-    
-    app.MY_FLOAT_FORMAT = ',.2f'
-    
-    frame = Frm2(None, lst)
+    app = wx.GetApp()
+    frame = Frm(app.mdi_parent_frame, lst)
     frame.Show()
 
-    app.MainLoop() 
 
 if __name__=='__main__':
     import doctest
     doctest.testmod()
 
-    test()
+    test('00159')
