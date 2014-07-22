@@ -11,12 +11,11 @@ if '..//' not in sys.path:
     
     
 from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from coa import Account, Base
+
+from dbtable import Base, getSession
+from coa import Account
  
 #Base = declarative_base()    I use the Base in the mapper below so we need to use the same base
  
@@ -117,23 +116,7 @@ class Datev(Base):
 
         return cp
     
-def getSession():
-    
-    from ahutils import pwd                                                                                  
-    engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland'))  
-    
-     
-    # Create all tables in the engine. This is equivalent to "Create Table"
-    # statements in raw SQL.
-    #Base.metadata.create_all(engine)
-    
-    #From here we have declarations for the queries.
-    Base.metadata.bind = engine
-    DBSession = sessionmaker()
-    DBSession.bind = engine
-    session = DBSession()
 
-    return session
                    
 
 def test():

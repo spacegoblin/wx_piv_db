@@ -11,12 +11,10 @@ if '..//' not in sys.path:
     
     
 from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
  
-Base = declarative_base()
+from dbtable import Base, getSession
  
     
 class FXRate(Base):
@@ -30,21 +28,7 @@ class FXRate(Base):
     period = Column(Integer,)
 
 
-from ahutils import pwd
 
-                                                                                   
-engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland')) #, encoding='utf-8')  
-
- 
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
-Base.metadata.create_all(engine)
-
-#From here we have declarations for the queries.
-Base.metadata.bind = engine
-DBSession = sessionmaker()
-DBSession.bind = engine
-session = DBSession()
 
     
 
@@ -59,11 +43,13 @@ def addRate(desc, rate, period):
 
 def test():
     """
+    >>> session = getSession()
     >>> qry = session.query(FXRate).filter(FXRate.rate_descr == u'PLAN2014-EUR')
     >>> x = qry[0]
     >>> print x.rate
     8.5
     """
+    session = getSession()
     qry = session.query(FXRate).filter(FXRate.rate_descr == u'PLAN2014-EUR')
     
 
