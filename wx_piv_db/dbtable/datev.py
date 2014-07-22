@@ -16,8 +16,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-
-Base = declarative_base()
+from coa import Account, Base
+ 
+#Base = declarative_base()    I use the Base in the mapper below so we need to use the same base
  
     
 class Datev(Base):
@@ -26,7 +27,7 @@ class Datev(Base):
     __tablename__ = 'tbl_susa'
     
     id = Column(Integer, primary_key=True)
-    account_datev = Column(Unicode(255), nullable=False)
+    account_datev = Column(Unicode(255), ForeignKey('tbl_chart_of_accounts.account_datev'), nullable=False)
     kontobezeichnung_not_mdata = Column(Unicode(255),)
     _soll = Column('soll', Float,)
     haben = Column(Float,)
@@ -53,8 +54,9 @@ class Datev(Base):
     comment_2 = Column(Unicode(255),)
     pers_code = Column(Unicode(255), ForeignKey('tbl_person_stand.code'), nullable=False, default=0)
     
-    fieldnames = ['id', 'account_datev', 'amount', 'period']
-        
+    fieldnames = ['id', 'fin_statement', 'account_datev', 'name_datev', 'amount', 'period']
+    
+    account = relationship("Account")
 
     def __str__(self):
         return "%s %.2f" % (self.account_datev, self.amount)
@@ -62,6 +64,15 @@ class Datev(Base):
     def getAmount(self):
         return self.soll - self.haben
     amount = property(getAmount)
+    
+    ##
+    def getAccName(self):
+        return self.account.name_datev
+    name_datev = property(getAccName)
+    ##
+    def getFinStatement(self):
+        return self.account.zuordnung_bwa
+    fin_statement = property(getFinStatement)
     
     def getSoll(self):
         return self._soll
@@ -133,7 +144,7 @@ def test():
     
     qry = session.query(Datev).filter(Datev.pers_code==u'00159')
     lst = record.loadFromAlchemy(qry, Datev)
-    lst.pivot(['account_datev'], ['period'], 'amount')
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
 
     app = wx.PySimpleApp()
     
