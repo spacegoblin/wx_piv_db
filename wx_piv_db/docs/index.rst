@@ -14,6 +14,7 @@ Contents:
    introduction.rst
    installation.rst
    ssc_crm.rst
+   expreport.rst
    appendix.rst
 
 Indices and tables
