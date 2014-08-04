@@ -22,3 +22,18 @@ def getSession():
     DBSession.bind = engine
     session = DBSession()
     return session
+
+
+def getLocalSession():
+    from ahutils import pwd
+    engine = create_engine("postgresql+psycopg2://%s:%s@/%s?host=%s" % (const.gui_user, const.windows_pwd, 'ah_db', 'localhost'))  
+    
+    #This will create the database table if not created already
+    #Base.metadata.create_all(engine)
+    
+    #From here we have declarations for the queries.
+    Base.metadata.bind = engine
+    DBSession = sessionmaker()
+    DBSession.bind = engine
+    session = DBSession()
+    return session

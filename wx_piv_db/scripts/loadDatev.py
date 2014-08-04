@@ -94,7 +94,7 @@ if __name__ == '__main__':
     
    # Z:\Reporting\2014\03-Mar\LSE
    #Z:\Reporting\2014\05-May\LSE\v02\imp.csv
-    PATH='Z:\\Reporting\\2014\\05-May\\LSE\\v02\\imp.csv'
+    PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\v02\\imp.csv'
 
     run(PATH)
 

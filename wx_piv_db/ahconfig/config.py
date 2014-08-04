@@ -48,11 +48,13 @@ const.host='192.168.1.91'
 #const.host='localhost'
 
 const.db_lst_dsn='lse_fin_db'
-#const.db_lst_dsn='rpt_db_may'
+#const.db_lst_dsn='ah_db'
 
  
 const.gui_user='ahetland'
 const.pwd=pwd.pwd('hetland')
+
+
 const.windows_pwd=pwd.pwd('hetland')
 
 

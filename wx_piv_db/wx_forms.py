@@ -351,7 +351,7 @@ class MyGrid(wx.grid.Grid):
         event.Skip()
         
     def OnDoubleClickCellLeft(self, event):
-    
+        print "OnDoubleClickCellLeft"
         row_num = event.GetRow()
         col_num = event.GetCol()
         wx.BeginBusyCursor()
@@ -846,7 +846,12 @@ class FrmMixInn(object):
         id_refresh = wx.NewId()
         tb.AddSimpleTool(id_refresh, refresh_bmp, "Refresh pivot", "Refresh pivot")
         self.Bind(wx.EVT_TOOL, self.OnViewPivot_2, id=id_refresh)        
-                                
+        
+        tb.AddSeparator()
+        #ID_TEST_BUTTON = wx.NewId()
+        #tb.AddControl( wx.Button( tb, ID_TEST_BUTTON, "Button", wx.DefaultPosition, wx.DefaultSize ) )
+        tb.AddControl( wx.StaticText( tb, -1, self.title))
+                       
         tb.SetToolBitmapSize(bmp_size)
         
         tb.Realize()

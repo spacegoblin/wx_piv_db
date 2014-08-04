@@ -6,17 +6,15 @@ import sys
 import datetime
 
 
-if '..//..//' not in sys.path:
-    sys.path.append('..//..//')
+if '..//' not in sys.path:
+    sys.path.append('..//')
     
     
-from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float, Boolean, Text
+
 from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
- 
-Base = declarative_base()
+
+from dbtable import Base, getSession
  
     
 class CRM(Base):
@@ -132,23 +130,9 @@ class CRM(Base):
     
         return obj
     
-#engine = create_engine('sqlite:///crm_ssc.db')
 
-from ahutils import pwd
 
-                                                                                    #, client_encoding='utf8')
-engine = create_engine("postgresql+psycopg2://ahetland:%s@/lse_fin_db?host=192.168.1.91" % pwd.pwd('hetland'))  
-
- 
-# Create all tables in the engine. This is equivalent to "Create Table"
-# statements in raw SQL.
-Base.metadata.create_all(engine)
-
-#From here we have declarations for the queries.
-Base.metadata.bind = engine
-DBSession = sessionmaker()
-DBSession.bind = engine
-session = DBSession()
+session = getSession()
 
     
 from ahutils.utils import randomString
@@ -230,4 +214,5 @@ def test():
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    loadCSVFile(PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\crm_20140801_1200Hour.csv')
+    #loadCSVFile(PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\crm_20140801_1200Hour.csv')
+    test()

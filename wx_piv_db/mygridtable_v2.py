@@ -87,7 +87,10 @@ class MyGridTable(wx.grid.PyGridTableBase):
 
             elif type(value)==decimal.Decimal:
                 #return "{:,.2f}".format(value)
-                fmt = "{:%s}" % wx.GetApp().MY_DECIMAL_FORMAT
+                try:
+                    fmt = "{:%s}" % wx.GetApp().MY_DECIMAL_FORMAT
+                except AttributeError:
+                    fmt = "{:,.2f}"
                 return fmt.format(value)
             
             return value

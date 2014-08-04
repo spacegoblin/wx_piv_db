@@ -16,7 +16,8 @@ from sqlalchemy.orm import relationship
 
 from dbtable import Base, getSession
 from coa import Account
- 
+from ahutils.record import loadFromAlchemy
+
 #Base = declarative_base()    I use the Base in the mapper below so we need to use the same base
  
     
@@ -126,7 +127,7 @@ def test(persCode):
     from wx_forms import Frm2
     
     qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
-    lst = record.loadFromAlchemy(qry, Datev)
+    lst = loadFromAlchemy(qry, Datev)
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
 
     app = wx.PySimpleApp()
@@ -140,18 +141,34 @@ def test(persCode):
     app.MainLoop() 
     
 def showPerson(persCode):
+    """Show the person within the GUI"""
     session = getSession()
     import wx
     from ahutils import record
     from wx_forms import Frm
     
     qry = session.query(Datev).filter(Datev.pers_code==unicode(persCode))
-    lst = record.loadFromAlchemy(qry, Datev)
+    lst = loadFromAlchemy(qry, Datev)
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
     
     app = wx.GetApp()
     frame = Frm(app.mdi_parent_frame, lst)
     frame.Show()
+
+ 
+def showPersonGrid(wxParent, persCode):
+    """Show the person but return a grid.
+    This is to be used in within a call in a wx Form"""
+    session = getSession()
+#     import wx
+    #from ahutils import record
+    from wx_forms import MyGrid
+    
+    qry = session.query(Datev).filter(Datev.pers_code==unicode(persCode))
+    lst = loadFromAlchemy(qry, Datev)
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
+    
+    return MyGrid(wxParent, lst)
 
 
 if __name__=='__main__':
