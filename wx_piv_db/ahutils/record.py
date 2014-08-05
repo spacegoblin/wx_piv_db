@@ -480,7 +480,7 @@ class RecordAlchemy(Record):
         raise("must be overridden")
         
     def getBaseTable(self):
-        raise("must be overridden")
+        return self.__tablename__
     
     base_table = property(getBaseTable)
 
@@ -1258,7 +1258,7 @@ class RecordList(object):
         return self
 
     def pvt_getNode(self, row, col):
-        #"in pvt_getNode with row col ", row, col
+        "in pvt_getNode with row col ", row, col
         newRecordList = RecordList()
         
         try:
