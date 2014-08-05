@@ -5,8 +5,6 @@
 classes in use are RecordList and Record. RecordList is a list of objects of type record,
 or any other object. The factory method loadFromDb loads a RecordList into memory."""
 
-#TEST
-
 
 import wx
 
@@ -70,23 +68,6 @@ def WhichDb_v3(Driver, DbSelection, user=None, password=None):
     else:
         raise("You must set the database driver and dsn first to get a connection.")
         
-
-def WhichDb_v4(Driver, dbName, user=None, password=None):
-    print "WhichDb_v4"
-    from db import setQuote
-    raise ("WhichDb_v4")
-    if Driver=='PostgreSQL':
-        setQuote('PostgreSQL')
-        globals()['Db'] = db.This_Db(dbName, user, password)
-        return globals()['Db']
-
-    elif Driver=='sqlite':
-        #setQuote('Access')
-        globals()['Db'] = db.Sqlite(dbName, user, password)
-        return globals()['Db']
-  
-    else:
-        raise("You must set the database driver and dsn first to get a connection.")
     
     
 def funcToMethod(func,clas,method_name=None):
