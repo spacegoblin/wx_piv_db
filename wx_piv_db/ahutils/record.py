@@ -487,11 +487,21 @@ class LiveType(object):
 
           
 class RecordAlchemy(Record):
-    def __init__(self, session):
-        raise "I think this has been discontinued"
-        self.session = session
-        Record.__init__(self, None)
-        #self.base_table = 'Alchemy'
+    """A mix inn class for alchemised records.
+    
+    Usage example:
+    
+    class PersonAlchemy(Person, RecordAlchemy):
+        session = getSession()  #static attribute set only once
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()
+        
+    """
+    
+    def __init__(self):
+        print "init RecordAlchemy"
+        super(RecordAlchemy, self).__init__()
+        
         
     def fieldnames(self):
         raise("must be overridden")
@@ -511,9 +521,6 @@ class RecordAlchemy(Record):
         raise('This method must be overridden to work, see example in startup model')
     
     def update(self, *arg):
-        print arg
-        #print self.session.flush()
-        #print "session was flushed"
         self.session.commit()
         return True
     
@@ -1527,6 +1534,7 @@ class RecordList(object):
 class NormalisedRecordList(Record):
     """A class that normalises a flat list over attributes that are equal."""
     def __init__(self, linkField, record, recordList):
+        
         Record.__init__(self, '')
         self.base_table = record.base_table
         cp = record.copyEmpty()

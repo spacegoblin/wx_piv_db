@@ -16,6 +16,7 @@ from sqlalchemy.dialects.postgresql import NUMERIC
 from sqlalchemy.orm import relationship
 
 from dbtable import Base, getSession
+from ahutils.record import RecordAlchemy, loadFromAlchemy
 
 
 class Person(Base):
@@ -30,12 +31,17 @@ class Person(Base):
     comment = Column(Unicode(255),)
     run_update = Column(Boolean,)
 
-    fieldnames = ['id', 'code', 'first_name', 'last_name']
+    fieldnames = ['code', 'first_name', 'last_name', 'comment', 'run_update']
         
     def __str__(self):
         """Return string representation"""        
-        return "%s %s Code: %s" % (self.first_name, self.last_name, self.code) 
+        return "Class Person(): %s %s Code: %s" % (self.first_name, self.last_name, self.code)
     
+class PersonAlchemy(Person, RecordAlchemy):
+    session = getSession()  #this gets the session only once!
+    
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()
 
 class PersonStdCost(Base):
     """Standard costing table for person"""
@@ -69,10 +75,7 @@ class PersonAndStdCost(Person):
     def __iter__(self):
         for x in self.related:
             yield x
-    
-
-
-                   
+               
 
 def test():
     session = getSession()
@@ -82,9 +85,29 @@ def test():
     print o
     for cost in o:
         print cost.dict()
+        
+def testMixInn():
+    "Testing the alchemy mix inn class"
+    session = PersonAlchemy.session
+    qry = session.query(PersonAlchemy)
+
+    o = qry.get('159')
+    print o
+    
+    lst = loadFromAlchemy(qry, PersonAlchemy)
+
+    import wx
+    from wx_forms import Frm2
+       
+    app = wx.PySimpleApp()
+        
+    frame = Frm2(None, lst)
+    frame.Show()
+
+    app.MainLoop() 
 
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    test()
+    testMixInn()
     
