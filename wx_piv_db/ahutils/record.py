@@ -1528,31 +1528,6 @@ class RecordList(object):
         app.MainLoop() 
 
 
-    
-def loadFromObjects(lstObjects, table_name="<NO_UPDATE_TABLE>", value_filed=None):
-    """arg is a list of objects."""
-    lst=RecordList()
-    lst.value_field = value_filed
-    lst.base_table = table_name
-    lst.fieldnames = lstObjects[0].__dict__.keys()
-    
-    for rec in lstObjects:
-        obj=Record(table_name)
-        
-        for key, val in rec.__dict__.items():
-            setattr(obj, key, val)
-        lst.append(obj) 
-    return lst
-
-def loadFromInheritedObject(lstObjects):
-    "Used in sqlalchemy loaded objects"
-    
-    lst=RecordList()
-    
-    for rec in lstObjects:
-        lst.append(rec) 
-    return lst
-          
 
 
 def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_record=Record, base_lst=RecordList):
