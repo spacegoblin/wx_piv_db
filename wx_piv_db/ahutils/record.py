@@ -1602,24 +1602,6 @@ def loadFromAlchemy(query, base_record):
 
     return lst   
 
-def loadFromAlchemy_v02(query, base_record):
-    """Loads an sql alchemy query object.
-    Upgrade to SQLAlchemy version > 0.7"""
-    lst=RecordList()
-    lst.value_field = None
-    lst.base_table = base_record.__tablename__
-
-    lst.fieldnames = base_record().fieldnames
-
-    lst.field_types = None
-    lst.sql = None #'cannot be used as error is raised in pivot get node copy method' #query.statement
-
-    for rec in query.all():
-        lst.append(rec)
-
-    return lst   
-
-
 
 def loadFromFile(file, sheet='Sheet1', basetable='No db table - xls'):
     from ahutils.excel import easyExcel
