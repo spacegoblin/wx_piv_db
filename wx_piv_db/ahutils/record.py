@@ -475,15 +475,7 @@ class Record(object):
             self.__dict__.pop(att)
             
 
-        
-            
-class LiveType(object):
-    """Development idea....
-    This is a "smart" type that has additional functionalities
-    in the wx application, it can execute sql queries and jump around to other
-    records etc.
-    Assume you have a float value in a grid, you can add colour, sql jump statements etc."""
-    def __init__(self): pass
+
 
           
 class RecordAlchemy(Record):
