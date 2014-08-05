@@ -1529,44 +1529,6 @@ class RecordList(object):
 
 
     
-
-                       
-class NormalisedRecordList(Record):
-    """A class that normalises a flat list over attributes that are equal."""
-    def __init__(self, linkField, record, recordList):
-        
-        Record.__init__(self, '')
-        self.base_table = record.base_table
-        cp = record.copyEmpty()
-        #a copy of all the attributes
-        for key, val in cp.__dict__.items():
-            self.__dict__[key] = val
-        
-        self.lstItems = recordList.copyEmpty()
-        
-        for r in recordList:
-            if getattr(r, linkField)==getattr(self, linkField):
-                self.append(r)
-        #if all atributes are equal then keep the attribute
-        #if not set to None       
-        for item in self:
-            for key, val in item.items():
-                if not getattr(item, key)==getattr(self,key):
-                    setattr(self, key, None)
-                
-    def __iter__(self):
-        for r in self.lstItems:
-            yield r
-        
-    def append(self, obj):
-        self.lstItems.append(obj)
-        
-    def xls(self):
-        self.lstItems.xls()
-      
-
-    
-    
 def loadFromObjects(lstObjects, table_name="<NO_UPDATE_TABLE>", value_filed=None):
     """arg is a list of objects."""
     lst=RecordList()
