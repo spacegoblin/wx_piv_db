@@ -54,7 +54,7 @@ class Datev(Base):
     comment_2 = Column(Unicode(255),)
     pers_code = Column(Unicode(255), ForeignKey('tbl_person_stand.code'), nullable=False, default=0)
     
-    fieldnames = ['id', 'fin_statement', 'account_datev', 'name_datev', 'amount', 'period']
+    fieldnames = ['id', 'fin_statement', 'account_datev', 'name_datev', 'amount', 'period', 'buchungstext']
     
     account = relationship("Account")
 
@@ -131,14 +131,34 @@ def test(persCode):
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
 
     app = wx.PySimpleApp()
-    
-    app.MY_FLOAT_FORMAT = ',.3f'
-    
-    
+        
     frame = Frm2(None, lst)
     frame.Show()
 
     app.MainLoop() 
+    
+def showFrm2(persCode):
+    session = getSession()
+    import wx
+    from ahutils import record
+    from wx_forms import Frm2
+    
+    qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
+    lst = loadFromAlchemy(qry, Datev)
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
+
+
+        
+    frame = Frm2(None, lst)
+    
+    return frame
+
+def returnPivotedPerson(persCode):
+    session = getSession()    
+    qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
+    lst = loadFromAlchemy(qry, Datev)
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
+    return lst
     
 def showPerson(persCode):
     """Show the person within the GUI"""
@@ -160,8 +180,7 @@ def showPersonGrid(wxParent, persCode):
     """Show the person but return a grid.
     This is to be used in within a call in a wx Form"""
     session = getSession()
-#     import wx
-    #from ahutils import record
+
     from wx_forms import MyGrid
     
     qry = session.query(Datev).filter(Datev.pers_code==unicode(persCode))

@@ -10,6 +10,7 @@ Base = declarative_base()
 from ahconfig import const
 
 def getSession():
+
     from ahutils import pwd
     engine = create_engine("postgresql+psycopg2://%s:%s@/%s?host=%s" % (const.gui_user, const.windows_pwd, const.db_lst_dsn, const.host))  
     
