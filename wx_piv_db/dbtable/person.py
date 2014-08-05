@@ -40,8 +40,14 @@ class Person(Base):
 class PersonAlchemy(Person, RecordAlchemy):
     session = getSession()  #this gets the session only once!
     
+    fieldnames = ['name']
+    
     def __init__(self):
         super(RecordAlchemy, self).__init__()
+        
+    def getName(self):
+        return "%s - %s %s" % (self.code, self.first_name, self.last_name)
+    name = property(getName)
 
 class PersonStdCost(Base):
     """Standard costing table for person"""

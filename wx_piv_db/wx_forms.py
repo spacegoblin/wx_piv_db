@@ -352,16 +352,43 @@ class MyGrid(wx.grid.Grid):
         
     def OnDoubleClickCellLeft(self, event):
         print "OnDoubleClickCellLeft"
+        print self.parent.__class__.__name__
+        print self.parent.pivot_lst.__class__.__name__
+        
         row_num = event.GetRow()
         col_num = event.GetCol()
         wx.BeginBusyCursor()
         lst = False
         
+        
+        try:
+            #if pvt_getNode does not throw error
+            lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
+        except:
+            
+            obj = self.lst[row_num]
+            
+            print "Open single form instead"
+            print self.parent.parent
+            print obj
+            print self.lst.view_id
+            print '-----'
+            
+            #frame = FrmSingle(self.parent.parent, obj, self.lst)
+            if self.parent.__class__.__name__=='Frm2':
+                frame = FrmSingle2(self.parent.parent, obj, self.lst.view_id) #, self.lst)
+            else:
+                frame = FrmSingle(self.parent.parent, obj, self.lst.view_id) #, self.lst)
+                
+            frame.Show(True)
+            wx.EndBusyCursor()
+            return False
+        
         try:
 
-
-# else:
-            lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
+            #lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
+            #was moved upwards in the code
+            
             lst.view_id = self.parent.pivot_lst.view_id
             lst.dicExecCode = self.parent.pivot_lst.dicExecCode
             lst.loadExecCode()
@@ -387,7 +414,7 @@ class MyGrid(wx.grid.Grid):
 
         finally:
             wx.EndBusyCursor()
-            event.Skip()
+            #event.Skip()
             return lst
     #def OnHideColumn
     def OnDelRange(self, event):
@@ -607,17 +634,14 @@ Would you like to set the table in update mode?""",
         #event.Skip()
 
 
-
-
     def showSingleForm(self, row_num):
-# if const.RESTRICTED_USER:
-            #row_num = self.GetGridCursorRow()
+
         print "showSingleForm"
         obj = self.lst[row_num]
-        frame = FrmSingle(self.parent.parent, obj, self.lst)
+        #frame = FrmSingle(self.parent.parent, obj, self.lst)
+        frame = FrmSingle(self.parent.parent, obj, self.lst.view_id) #, self.lst)
         frame.Show(True)
-# else: pass
-        
+
 
     def OnEvalCode(self, event):
 
@@ -1166,14 +1190,17 @@ f.Show()
         self.Bind(wx.EVT_TOOL, method, id=id_x)
         
 ### -Sigle Object Form- ###
-class FrmSingle(wx.MDIChildFrame):
-    """Displays a record object."""
-    def __init__(self, parent, obj, lst):
-        from ahutils.record import MetaRecord
+
+from ahutils.record import MetaRecord
+
+class ScrolledWindowSingle(wx.ScrolledWindow):
+    
+    def __init__(self, parent, obj, view_id=None):
         self.parent = parent
-        self.lst = lst
         self.obj = obj
-        self.fieldnames = lst.fieldnames
+        self.view_id = view_id
+        self.obj = obj
+        #self.fieldnames = lst.fieldnames
         self.meta = MetaRecord(self.obj)
 
         self.dicTxtID_Label = {} #the keys and values of the objects.__dict__
@@ -1182,21 +1209,19 @@ class FrmSingle(wx.MDIChildFrame):
         self.dicTxtID_NewText = {}
         self.dicTxtID_Label = {}
         self.dicLabel_Txt2 = {}
-                    
-        wx.MDIChildFrame.__init__(self, parent, id=-1, title='Single Object Frame',
-                          size=(950,600))
-        self.panel = wx.ScrolledWindow(self, -1)
+        
+        wx.ScrolledWindow.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
 
-        self.panel.SetScrollbars(1,1,950,1600)
-        self.panel.SetScrollRate(20,20)
+        self.SetScrollbars(1,1,950,1600)
+        self.SetScrollRate(20,20)
         
-        btnUpdate = wx.Button(self.panel, -1, "Update", pos=(600, 30))
+        btnUpdate = wx.Button(self, -1, "Update", pos=(600, 30))
         
-        btnShell = wx.Button(self.panel, -1, "Shell", pos=(800, 30))
+        btnShell = wx.Button(self, -1, "Shell", pos=(800, 30))
         
-        btnUpload = wx.Button(self.panel, -1, "Upload", pos=(700, 60))
+        btnUpload = wx.Button(self, -1, "Upload", pos=(700, 60))
         
-        btnDelete = wx.Button(self.panel, -1, "Delete")
+        btnDelete = wx.Button(self, -1, "Delete")
         
         self.vbox = wx.BoxSizer(wx.HORIZONTAL)
         self.box_btn = wx.BoxSizer(wx.VERTICAL)
@@ -1215,16 +1240,12 @@ class FrmSingle(wx.MDIChildFrame):
 
         self.Bind(wx.EVT_BUTTON, self.OnShell, btnShell)
 
-        ID_CLOSE = wx.NewId()
-        wx.EVT_MENU(self, ID_CLOSE, self.OnClose)
 
-        #accelerator table for shortcut keys
-        acceltbl = wx.AcceleratorTable( [(wx.ACCEL_CTRL, ord('W'),
-                                        ID_CLOSE)] )
-        self.SetAcceleratorTable(acceltbl)
+
+
         
         if obj.__dict__.has_key('pivothead'):
-            btnView = wx.Button(self.panel, -1, "Pivot", pos=(800, 60))
+            btnView = wx.Button(self, -1, "Pivot", pos=(800, 60))
             self.Bind(wx.EVT_BUTTON, self.OnViewPivot, btnView)
             self.box_btn.Add(btnView)
             self.box_btn.AddSpacer(10)
@@ -1233,18 +1254,47 @@ class FrmSingle(wx.MDIChildFrame):
         self.box_btn.AddSpacer(200)
         self.box_btn.Add(btnDelete)
         self.vbox.AddSizer(self.box_btn)
-        self.panel.SetSizer(self.vbox)
-        self.panel.Fit()
-        
-        wx.MDIChildFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
+        self.SetSizer(self.vbox)
 
+    def CreateStaticText(self):
+        "The object is displayed"
+        self.hbox = wx.BoxSizer(wx.VERTICAL)
+        cnt = 30
+        #for key in self.fieldnames:
+        for key in self.obj.__dict__.keys():
+            vbox_inner = wx.BoxSizer(wx.HORIZONTAL)
+            stat_txt = wx.StaticText(self, -1, key, (100, cnt), size=(100,22))
+            strng = "%s" % str(getattr(self.obj, key))
 
-    
+            ctr_id = wx.NewId()
+            #associate the controls with the values
+            _d = {}
+            _d[key] = strng
+            self.dicTxtID_Label[ctr_id] = _d
+
+            #_txt = _getObjAttr(self.obj, key)
+            ctr = wx.TextCtrl(self, ctr_id, strng, size=(300, 20),pos=(250, cnt))
+
+            self.dicTxtID_Label[ctr_id] = key
+            self.dicLabel_Txt2[key] = ctr
+
+            ctr.Bind(wx.EVT_LEFT_DCLICK, self.OnDblClick)
+            ctr.Bind(wx.EVT_TEXT, self.OnText)
+            
+            cnt+=30
+            vbox_inner.AddSpacer(10)
+            vbox_inner.Add(stat_txt, 0, wx.RIGHT, 8)
+            vbox_inner.Add(ctr, 1, wx.EXPAND|wx.ALL)
+            vbox_inner.AddSpacer(10)
+            self.hbox.AddSizer(vbox_inner)
+                 
+
     def OnViewPivot(self, event):
         print "OnViewPivot"
         wx.BeginBusyCursor()
         lst = loadFromDb( getattr(self.obj, 'sql'), getattr(self.obj, 'tablename'))
-        lst.view_id = self.lst.view_id
+        #lst.view_id = self.lst.view_id
+        lst.view_id = self.view_id
         _pivotrow = getattr(self.obj, 'pivotrow')
         _pivotrow = _pivotrow.split(',')
         #strip the field for space
@@ -1285,39 +1335,7 @@ class FrmSingle(wx.MDIChildFrame):
                 self.Refresh()
         self.dicTxtID_NewText = {}
         #event.Skip()
-            
-        
-    def CreateStaticText(self):
-        "The object is displayed"
-        self.hbox = wx.BoxSizer(wx.VERTICAL)
-        cnt = 30
-        for key in self.fieldnames:
-            vbox_inner = wx.BoxSizer(wx.HORIZONTAL)
-            stat_txt = wx.StaticText(self.panel, -1, key, (100, cnt), size=(100,22))
-            string = str(getattr(self.obj, key))
-
-            ctr_id = wx.NewId()
-            #associate the controls with the values
-            _d = {}
-            _d[key] = string
-            self.dicTxtID_Label[ctr_id] = _d
-
-            _txt = _getObjAttr(self.obj, key)
-            ctr = wx.TextCtrl(self.panel, ctr_id, str(_txt ), size=(300, 20),pos=(250, cnt))
-
-            self.dicTxtID_Label[ctr_id] = key
-            self.dicLabel_Txt2[key] = ctr
-
-            ctr.Bind(wx.EVT_LEFT_DCLICK, self.OnDblClick)
-            ctr.Bind(wx.EVT_TEXT, self.OnText)
-            
-            cnt+=30
-            vbox_inner.AddSpacer(10)
-            vbox_inner.Add(stat_txt, 0, wx.RIGHT, 8)
-            vbox_inner.Add(ctr, 1, wx.EXPAND|wx.ALL)
-            vbox_inner.AddSpacer(10)
-            self.hbox.AddSizer(vbox_inner)
-        
+                    
 
     def OnText(self, event):
         label = self.dicTxtID_Label[event.GetId()]
@@ -1327,7 +1345,7 @@ class FrmSingle(wx.MDIChildFrame):
     def OnDblClick(self, event):
         "Show a signle field form."
         d = self.dicTxtID_Label[event.GetId()]
-        #print d
+        #print d, "d is here"
         frame = FrmSingleField(self, self.obj, d)
         event.Skip()
         frame.Show(True)
@@ -1387,15 +1405,71 @@ The data was NOT inserted.''',
         frame = ShellFrame(parent=self)
         frame.shell.interp.locals['r']= self.obj
         frame.shell.interp.locals['meta']= self.meta
-        frame.shell.interp.locals['lst']= self.lst
-        frame.shell.write('"in local scope: r - meta - lst"')
+        #frame.shell.interp.locals['lst']= self.lst
+        frame.shell.write('"in local scope: r - meta"')
         frame.Show()
         event.Skip()
         
+
+                  
+class FrmSingle(wx.MDIChildFrame):
+    """Displays a record object."""
+    #def __init__(self, parent, obj, lst):
+    def __init__(self, parent, obj, view_id=None):
+        
+        self.parent = parent
+
+        wx.MDIChildFrame.__init__(self, parent, id=-1, title='Single Object Frame',
+                          size=(950,600))
+        
+        self.panel = ScrolledWindowSingle(self, obj, view_id) #wx.ScrolledWindow(self, -1)
+
+        self.panel.Fit()  
+        
+        wx.MDIChildFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
+
+
+        ID_CLOSE = wx.NewId()
+        wx.EVT_MENU(self, ID_CLOSE, self.OnClose)    
+
+        #accelerator table for shortcut keys
+        acceltbl = wx.AcceleratorTable( [(wx.ACCEL_CTRL, ord('W'),
+                                        ID_CLOSE)] )
+        self.SetAcceleratorTable(acceltbl)
+        
     def OnClose(self, event):
         self.Close()
-        event.Skip()
+        #event.Skip()
+
+class FrmSingle2(wx.Frame):
+    """Displays a record object."""
+    #def __init__(self, parent, obj, lst):
+    def __init__(self, parent, obj, view_id=None):
         
+        self.parent = parent
+
+        wx.Frame.__init__(self, parent, id=-1, title='Single Object Frame',
+                          size=(950,600))
+        
+        self.panel = ScrolledWindowSingle(self, obj, view_id) #wx.ScrolledWindow(self, -1)
+
+        self.panel.Fit()  
+        
+        wx.Frame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
+
+
+        ID_CLOSE = wx.NewId()
+        wx.EVT_MENU(self, ID_CLOSE, self.OnClose)    
+
+        #accelerator table for shortcut keys
+        acceltbl = wx.AcceleratorTable( [(wx.ACCEL_CTRL, ord('W'),
+                                        ID_CLOSE)] )
+        self.SetAcceleratorTable(acceltbl)
+        
+    def OnClose(self, event):
+        self.Close()
+        #event.Skip()
+            
 ### -Single Filed- ###
 
 class FrmSingleField(wx.Frame):
@@ -1647,7 +1721,7 @@ class PagePannelBase(wx.Panel):
     def OnDblClick(self, event):
         "Show a signle field form."
         d = self.dicTxtID_Label[event.GetId()]
-        #print d
+        print d
         frame = FrmSingleField(self, self.obj, d)
         
         frame.Show(True)
