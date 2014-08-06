@@ -358,8 +358,8 @@ class AppSettings(object):
     These are collected from the database."""
     def __init__(self):
         self.settings = {}  #event.Id and AppMenues() instance
-        self.dic_gui_menu = {}  #rec.gui_menu = wx.Menu()
-        
+        self.dic_gui_headmenu = {}  #rec.gui_menu = wx.Menu()
+        self.loadMenu()
 
     def __call__(self, eventId, atr):
         """Returns the AppMenues attribute of that particular menu id"""
@@ -376,7 +376,11 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         lst = loadFromDb(sql)
         
         for rec in lst:
-            self.dic_gui_menu[rec.gui_menu] = wx.Menu()
+            self.dic_gui_headmenu[rec.gui_menu] = wx.Menu()
+    
+    def x(self):
+        for key in self.settings.keys():
+            yield key
                       
 class MDIPFrame(wx.MDIParentFrame):
     def __init__(self, app, db_name, gui_version):
@@ -426,9 +430,9 @@ class MDIPFrame(wx.MDIParentFrame):
         
         self.dicCallSQL = AppSettings()
         
-        #self.dic_gui_menu = {}
+        #self.dic_gui_headmenu = {}
         
-        self.dicCallSQL.loadMenu()
+        #self.dicCallSQL.loadMenu()
         
         #self.dicCallSQL = {} #dictionaries with the sql statements
         
@@ -438,8 +442,8 @@ class MDIPFrame(wx.MDIParentFrame):
         self.menuBar = wx.MenuBar()
         self.menuBar.Append(menu, "File")
 
-        for key, val in self.dicCallSQL.dic_gui_menu.items():
-            self.menuBar.Append(val, str(key))
+        for menue_title, wxMenueObj in self.dicCallSQL.dic_gui_headmenu.items():
+            self.menuBar.Append(wxMenueObj, str(menue_title))
         
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
         self.statusbar.SetStatusWidths([-2, -3])
@@ -457,6 +461,8 @@ INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
 WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                   
         lst = loadFromDb(sql)
+        
+
         
         for rec in lst:
             mnuobj = AppMenues()
@@ -491,10 +497,8 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                 self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
 
             self.dicCallSQL.settings[mnuobj.idname] = mnuobj
-            self.dicCallSQL.dic_gui_menu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
+            self.dicCallSQL.dic_gui_headmenu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
             
-                   
-        
 
 
     def OnShowSqlData(self, event):
