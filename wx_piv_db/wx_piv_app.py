@@ -209,55 +209,9 @@ class DbSelectionFrm(wx.Frame):
         initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
         self.emergencyExit = True
 
-#         try:
-#             initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
-#             self.emergencyExit = True
-#             print "bug 02"
-#         except psycopg2.OperationalError, e:
-#             GenericMsgDlg(str(e), 'Database error', wx.OK | wx.ICON_INFORMATION)
-#             return False
-#          
-#         except Exception, e:
-#             print "Except in OnSelectDb", py_driver, odbc_dsn, user, pwd
-#             dlg = wx.MessageDialog(None, '''Check the odbc connection or your connection
-# parameters for errors.''',
-#                                """Your database connection was refused.
-# %s""" % e,
-#                                wx.OK | wx.ICON_ERROR)
-#             dlg.ShowModal()
-#             dlg.Destroy()
-#             self.Destroy()
-#             return False
-        
-    #-- Refactored out
-    
-#         verifyUser = MyUser(user, pwd)
-#         #print verifyUser
-#         if verifyUser():
-#             if verifyUser.role=='ALL':
-#                 const.RESTRICTED_USER = True
-#             else:
-#                 const.RESTRICTED_USER = False
-#             self.OnInit2()
-#         else:
-#             dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
-#                                """Your database connection was refused. (Double pwd settings not met).""",
-#                                wx.OK | wx.ICON_ERROR)
-#             dlg.ShowModal()
-#             dlg.Destroy()
-#             self.Destroy()
-            
-    #-- Refactored to
 
-       # try:
-            #const.RESTRICTED_USER = True
         self.OnInit2()
-       # except:
-#         dlg = wx.MessageDialog(None, '''Username or passord is wrong.''',
-#                            """Your database connection was refused. (Double pwd settings not met).""",
-#                            wx.OK | wx.ICON_ERROR)
-#         dlg.ShowModal()
-#         dlg.Destroy()
+    
         self.Destroy()
                     
         self.Close()
