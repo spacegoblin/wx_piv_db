@@ -4,7 +4,6 @@
 import wx
 wx.SetDefaultPyEncoding("utf-8")
 
-
 #---------------------------
 #here are some imports that are needed for files
 #that are in the scripts directory
@@ -22,7 +21,7 @@ if '.' not in sys.path:
 
 if '..' not in sys.path:
     sys.path.append('..')
-#sys.path.append('./xconfig')
+
 
 import imp
 import pprint
@@ -40,7 +39,6 @@ import urlparse
 import urllib
 from ConfigParser import ConfigParser
 
-#import six
 
 import matplotlib
 matplotlib.use('wxagg')
@@ -69,79 +67,8 @@ import wx.lib.mixins.inspection
 #------------------------
 import exceptions
 
-import sqlite3
-
-
-#sys.path.append('.\\scripts')
-
-#from rclutils.record import loadFromDb, WhichDb_v3
-#from wx_forms import Frm, GenericMsgDlg
-##import xconfig
-#from xconfig import const
-#from rclutils.user import MyUser
-
 import ahgui.ssc_logo_3 as ssc_logo_2
-
-import threading
-
-myEVT_SHOWSQL = wx.NewEventType()
-EVT_SHOWSQL = wx.PyEventBinder(myEVT_SHOWSQL, 1)
-class ShowDataEvt(wx.PyCommandEvent):
-    """Event to signal that a form with sql retrieved data is ready."""
-    def __init__(self, etype, eid, frm=None):
-        wx.PyCommandEvent.__init__(self, etype, eid)
-        self._frm = frm
-        
-    def GetFrm(self):
-        """Returns the value of the event.
-@return: the value of this event
-was also called GetValue
-"""
-        return self._frm.Show()
-    
-class ShowSqlDataThread(threading.Thread):
-    def __init__(self, parent, sql, tbl, pivot_bol, menutitle, frm):
-        threading.Thread.__init__(self)
-        self._parent = parent
-        self._frm = frm
-        self.sql = sql
-        self.tbl = tbl
-        self.pivot_bol = pivot_bol
-        self.menutitle = menutitle
-        
-    def run(self):
-        try:
-            lst = loadFromDb(self.sql, self.tbl)
-            if lst:
-                #lst.view_id = getattr(self.dicCallSQL[event.Id], 'view_id')
-                
-                lst.loadExecCode()
-        
-                if self.pivot_bol:
-                    pivot_head = getattr(self.dicCallSQL[event.Id], 'pivothead')
-                    pivot_row = getattr(self.dicCallSQL[event.Id], 'pivotrow')
-                    pivot_amount = getattr(self.dicCallSQL[event.Id], 'pivotvalue')
-        
-                    lst.pivot(pivot_row, pivot_head, pivot_amount)
-        
-                frame = Frm(self._parent, lst, self.menutitle)
-            else:
-                frame = False
-            
-        except Exception, e:
-            print "Error in wx_app.py - sql: %s" % self.sql
-            print str(e)
-            print "%s" % sys.exc_info()[0]
-
-            frame = False
-        finally:
-            wx.EndBusyCursor()
-
-# if frame:
-# frame.Show(True)
-                        
-        evt = ShowDataEvt(myEVT_SHOWSQL, -1, self._frm)
-        wx.PostEvent(self._parent, evt)
+   
         
 ####
 
@@ -190,24 +117,7 @@ Returns a newly generated module.
 
     return module
 
-def importCodeFirst():
-    "import code to be put in the scope"
-    raise("we will deprecate this")
-    sql = "select name, code from tbpy_modules"
-    lst = loadFromDb(sql)
-    for r in lst:
-        #stream = base64.b64decode(r.code.strip())
-        stream = r.code.strip()
-        #code = cStringIO.StringIO(stream)
-        #code = compile(stream, r.name, 'exec')
-        importCode(stream, r.name)
 
-# import cStringIO
-# sql = "select blob from tbl_meta where id=%d" % dbId
-# Db.c.execute(sql)
-# stream = base64.b64decode(Db.c.fetchone()[0].strip())
-# stream = cStringIO.StringIO(stream)
-# return stream
 
 class DbSelectionFrm(wx.Frame):
     """Select any one of various databases."""
@@ -359,10 +269,7 @@ class DbSelectionFrm(wx.Frame):
         self.app.mdi_parent_frame = frame
         self.app.SetTopWindow(frame)
         self.app.db_name = str(const.odbc_dsn)
-       # print self.app.db_name
-        #print "Loading updated modules"
-        #importCodeFirst()
-        #self.app.initScript()
+
         return True
 
     def OnExit(self, evt):
@@ -473,27 +380,49 @@ class LoadFromFileMDIChild(wx.MDIChildFrame):
         dlg.Destroy()
 
 
-        
-class VersionFrm(wx.Frame):
-    def __init__(self, new_version):
-        wx.Frame.__init__(self, None, id=-1, title='Version information', pos=wx.DefaultPosition,
-            size=(300,300), style=wx.DEFAULT_FRAME_STYLE)
-        p = VersionHtmlWindow(self, new_version)
-        
-        btn = wx.Button(self, wx.NewId(), 'Close')
-        btn.Bind(wx.EVT_BUTTON, self.OnClickBtn)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(p, 2, wx.EXPAND)
-        sizer.AddSpacer(2)
-        sizer.Add(btn)
-        self.SetSizer(sizer)
-        self.Centre(wx.BOTH)
-        
-    def OnClickBtn(self, event):
-        self.Close()
-        self.Destroy()
+class AppMenues(object):
+    def __init__(self):
+        self.idname = wx.NewId()
+        self.view_id = None
+        self.menutitle = None
+        self.tablename = None
+        self.sql = None
+        self.view_type = None
+        self.gui_menu = None
+        self.comment = None       
+        self.username = None
+        self.pivot = False
+        self.pivothead = None
+        self.pivotrow = None
+        self.pivotvalue = None
+        self.sorted = None
 
+
+        
+class AppSettings(object):
+    """Class that holds the application settings.
+    These are collected from the database."""
+    def __init__(self):
+        self.settings = {}  #event.Id and AppMenues() instance
+        self.dic_gui_menu = {}  #rec.gui_menu = wx.Menu()
+        
+
+    def __call__(self, eventId, atr):
+        """Returns the AppMenues attribute of that particular menu id"""
+        return getattr(self.settings[eventId], atr)
     
+    def loadMenu(self):
+        "loads the menu, step one."
+        
+        sql = """SELECT tbl_views.*, tbl_users.username
+FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
+INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
+WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
+
+        lst = loadFromDb(sql)
+        
+        for rec in lst:
+            self.dic_gui_menu[rec.gui_menu] = wx.Menu()
                       
 class MDIPFrame(wx.MDIParentFrame):
     def __init__(self, app, db_name, gui_version):
@@ -527,10 +456,6 @@ class MDIPFrame(wx.MDIParentFrame):
                          'Redirect print statements to a window', wx.ITEM_CHECK)
         
         self.addMenuItem('Load from File', self.OnFrmLoadFromFile, 'Load an csv or xls file.')
-        
-       
-        
-       # self.addMenuItem("Ship insert sql's", self.OnShipSQL, 'Insert into the ship tables.')
 
         self.addMenuItem('Scripts', self.OnLoadScripts, 'Load installed scripts')
         
@@ -543,24 +468,23 @@ class MDIPFrame(wx.MDIParentFrame):
         ## next menu
         self.menu2 = menu2 = wx.Menu()
                 
-        ## next menu
-# self.menu3 = menu3 = wx.Menu()
         self.menu4 = menu4 = wx.Menu()
         
-        #self.lst_db_views = []  #get the result table from db and store it in a list
-
-        self.dic_gui_menu = {}
+        self.dicCallSQL = AppSettings()
         
-        self.loadMenu()
+        #self.dic_gui_menu = {}
         
-        self.dicCallSQL = {} #dictionaries with the sql statements
+        self.dicCallSQL.loadMenu()
+        
+        #self.dicCallSQL = {} #dictionaries with the sql statements
+        
 
         self.loadMenuBarFromSQL()
         ## end the munes
         self.menuBar = wx.MenuBar()
         self.menuBar.Append(menu, "File")
 
-        for key, val in self.dic_gui_menu.items():
+        for key, val in self.dicCallSQL.dic_gui_menu.items():
             self.menuBar.Append(val, str(key))
         
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -569,25 +493,10 @@ class MDIPFrame(wx.MDIParentFrame):
         
         return self.menuBar
     
-    def loadMenu(self):
-        "loads the menu, step one."
-        
-        #first load a local record set 
-        
-        sql = """SELECT tbl_views.*, tbl_users.username
-FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
-INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
-WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
 
-        lst = loadFromDb(sql)
-        
-        for rec in lst:
-            self.dic_gui_menu[rec.gui_menu] = wx.Menu()
                     
     def loadMenuBarFromSQL(self):
-        #from menu_xml import XmlElement
-        class XmlElement(object): pass
-
+        
         sql = """SELECT tbl_views.*, tbl_users.username, tbl_users_view.view_id
 FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
 INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
@@ -596,9 +505,10 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         lst = loadFromDb(sql)
         
         for rec in lst:
-            mnuobj = XmlElement()
-            mnuobj.idname = wx.NewId()
-            mnuobj.view_id = rec.view_id
+            mnuobj = AppMenues()
+
+            #mnuobj.idname = wx.NewId()
+            mnuobj.view_id = rec.id
             mnuobj.menutitle = rec.menutitle
             mnuobj.sql = rec.sql
             mnuobj.tablename = rec.tablename
@@ -622,17 +532,76 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                 #print "selecting to execute"
                 mnuobj.pivot = False
                 self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=mnuobj.idname)
-# elif rec.view_type=='MODULE':
-# print "importing and setting a module in local scope"
-# importCode()
             else:
                 mnuobj.pivot = False
                 self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
-            self.dicCallSQL[mnuobj.idname] = mnuobj
-            self.dic_gui_menu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
+
+            self.dicCallSQL.settings[mnuobj.idname] = mnuobj
+            self.dicCallSQL.dic_gui_menu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
             
                    
         
+
+
+    def OnShowSqlData(self, event):
+        """Execute the sql stored in menu.xml and display
+the data grid Frm(). This method is attached to the
+the event method of the menu item."""
+
+        busy = wx.BusyInfo("Retrieving data...")
+        wx.BeginBusyCursor()
+                
+        sql = str( self.dicCallSQL(event.Id, 'sql') )
+        tbl = str( self.dicCallSQL(event.Id, 'tablename') )
+        pivot_bol = self.dicCallSQL(event.Id, 'pivot') 
+        menutitle = self.dicCallSQL(event.Id, 'menutitle')
+
+        lst = loadFromDb(sql, tbl)
+        if lst:
+            lst.view_id = self.dicCallSQL(event.Id, 'view_id')
+            
+            lst.loadExecCode()
+    
+            if pivot_bol:
+                pivot_head = self.dicCallSQL(event.Id, 'pivothead') 
+                pivot_row = self.dicCallSQL(event.Id, 'pivotrow') 
+                pivot_amount = self.dicCallSQL(event.Id, 'pivotvalue') 
+    
+                lst.pivot(pivot_row, pivot_head, pivot_amount)
+    
+            frame = Frm(self, lst, menutitle)
+        else:
+            frame = False
+            
+        wx.EndBusyCursor()
+
+        if frame:
+            frame.Show(True)
+            
+    def OnExecuteMenuCode(self, event):
+        "Executes the code that has been stored in the menu / views table."
+
+           
+        busy = wx.BusyInfo("Executing ...")
+        
+        wx.BeginBusyCursor()
+        
+        sql = str(getattr(self.dicCallSQL.settings[event.Id], 'sql'))
+        tbl = str(getattr(self.dicCallSQL.settings[event.Id], 'tablename'))
+        pivot_bol = getattr(self.dicCallSQL.settings[event.Id], 'pivot')
+        menutitle = getattr(self.dicCallSQL.settings[event.Id], 'menutitle')
+        
+        try:
+            exec( sql.strip() )
+
+        except:
+            #exec( sql.strip() )
+            print "Error while executing"
+        
+        finally:
+            wx.EndBusyCursor()
+
+
     def OnLoadDatevKontoBlatt(self, event):
         """Insert DATEV Kontoblatt file into the database."""
         default_dir = 'C:\Users\hetland\Documents'
@@ -666,88 +635,8 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                 prog_dial.Destroy()
             
         dialogue.Destroy()
-
-    def OnShowSqlData(self, event):
-        """Execute the sql stored in menu.xml and display
-the data grid Frm(). This method is attached to the
-the event method of the menu item."""
-
-        busy = wx.BusyInfo("Retrieving data...")
-        wx.BeginBusyCursor()
-                
-        sql = str(getattr(self.dicCallSQL[event.Id], 'sql'))
-        tbl = str(getattr(self.dicCallSQL[event.Id], 'tablename'))
-        pivot_bol = getattr(self.dicCallSQL[event.Id], 'pivot')
-        menutitle = getattr(self.dicCallSQL[event.Id], 'menutitle')
-
-
         
-# try:
-        lst = loadFromDb(sql, tbl)
-        if lst:
-            lst.view_id = getattr(self.dicCallSQL[event.Id], 'view_id')
-            
-            lst.loadExecCode()
-    
-            if pivot_bol:
-                pivot_head = getattr(self.dicCallSQL[event.Id], 'pivothead')
-                pivot_row = getattr(self.dicCallSQL[event.Id], 'pivotrow')
-                pivot_amount = getattr(self.dicCallSQL[event.Id], 'pivotvalue')
-    
-                lst.pivot(pivot_row, pivot_head, pivot_amount)
-    
-            frame = Frm(self, lst, menutitle)
-        else:
-            frame = False
-            
-# except psycopg2.ProgrammingError, e:
-# print 'ProgrammingError: ', str(e)
-# GenericMsgDlg(str(e), 'Database error', wx.OK | wx.ICON_INFORMATION)
-# frame = False
-# #return None
-# except psycopg2.InternalError:
-# initDatabaseSelection(None,'Postgres', const.user, const.gui_pwd )
-# frame = False
-# except sqlite3.OperationalError, e:
-# GenericMsgDlg(str(e), 'Database error', wx.OK | wx.ICON_INFORMATION)
-# frame = False
-# except:
-# print "Error in wx_piv_app.py line 574 - OnShowSqlData %s" % sql
-# print "%s" % sys.exc_info()[0]
-#
-# frame = False
-# finally:
-        wx.EndBusyCursor()
-
-        if frame:
-            frame.Show(True)
-            
-    def OnExecuteMenuCode(self, event):
-        "Executes the code that has been stored in the menu / views table."
-
-           
-        busy = wx.BusyInfo("Executing ...")
         
-        wx.BeginBusyCursor()
-        
-        sql = str(getattr(self.dicCallSQL[event.Id], 'sql'))
-        tbl = str(getattr(self.dicCallSQL[event.Id], 'tablename'))
-        pivot_bol = getattr(self.dicCallSQL[event.Id], 'pivot')
-        menutitle = getattr(self.dicCallSQL[event.Id], 'menutitle')
-        
-# print sql
-# print 'xxxxxxxxxxxxxxxxxxxxxx'
-        try:
-            exec( sql.strip() )
-
-        except:
-            #exec( sql.strip() )
-            print "Error while executing"
-        
-        finally:
-            wx.EndBusyCursor()
-
-
     def OnFrmLoadFromFile(self, event):
         frame = LoadFromFileMDIChild(self)
         frame.Show(True)
@@ -819,15 +708,7 @@ class App(wx.App):
         sys.setdefaultencoding('utf-8')
         print sys.getdefaultencoding()
             
-# try:
-# db_gui_version = session_rcl.query(GuiDbVersion).get(1)
-#
-# if __version__.version < db_gui_version.gui_version:
-# f = VersionFrm(db_gui_version.gui_version)
-# f.Show()
-# return True
-# except:
-# pass
+
             
         frame = DbSelectionFrm(self, None)
         frame.Show(True)
@@ -845,9 +726,6 @@ called from OnInit2 above after db has been selected."""
 # import pprint
 
         sys.path.append('%s\\scripts' % os.getcwd())
-        #sys.path.append('scripts')
-        
-# pprint.pprint (sys.path)
         
         name = 'init_%s' % self.db_name
         import scripts
@@ -857,14 +735,7 @@ called from OnInit2 above after db has been selected."""
         except:
             print "No module on start up imported"
         
-# try:
-# __import__('scripts', fromlist=[name])
-# print "initScript in App is loaded module %s" % name
-# except:
-# print "No module in scripts named %s.py" % name
-    
-
-    
+ 
     def OnExit(self):
         print "Exiting from App class"
 # if globals().has_key('Db'):
