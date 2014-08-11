@@ -518,7 +518,7 @@ class RecordList(object):
         self.pivot_top = None
 #        self.copyOfOrg = False
 #        self.dicSqlJumps = {}
-        self.dicExecCode = {}
+        self.dicExecCode = None
         self.view_id = None #this is the id of the views defined in the database
         
     def append(self, obj):
@@ -778,7 +778,9 @@ class RecordList(object):
 
 
     def loadExecCode(self):
+        "This should be refactored ..... "
         if self.view_id:
+            self.dicExecCode = {}
             sql = "select description, evalcode from tbl_eval where view_id=%d" % self.view_id
             Db.c.execute(sql)
             lst = Db.c.fetchall()
@@ -789,7 +791,7 @@ class RecordList(object):
             else:
                 self.dicExecCode = None
                 return False
-        else: return self.dicExecCode
+        else: pass #return self.dicExecCode
             
         
     def set(self, row, col, value):
@@ -1022,6 +1024,7 @@ class RecordList(object):
     
         new.xls()
         """
+        raise ("Likely not used any more, try the GUIDblClick method inherited in record instead.")
         newLst = RecordList()
         newLst.fieldnames = self.fieldnames
         newLst.field_types = self.field_types

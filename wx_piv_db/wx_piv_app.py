@@ -209,7 +209,6 @@ class DbSelectionFrm(wx.Frame):
         initDatabaseSelection(py_driver, odbc_dsn, user, pwd)
         self.emergencyExit = True
 
-
         self.OnInit2()
     
         self.Destroy()
