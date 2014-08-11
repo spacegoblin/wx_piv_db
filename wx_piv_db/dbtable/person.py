@@ -35,12 +35,12 @@ class Person(Base):
         
     def __str__(self):
         """Return string representation"""        
-        return "Class Person(): %s %s Code: %s" % (self.first_name, self.last_name, self.code)
+        return u"Class Person(): %s %s Code: %s" % (self.first_name, self.last_name, self.code)
     
 class PersonAlchemy(Person, RecordAlchemy):
     session = getSession()  #this gets the session only once!
     
-    fieldnames = ['name']
+    fieldnames = ['code', 'name']
     
     def __init__(self):
         super(RecordAlchemy, self).__init__()
@@ -48,6 +48,12 @@ class PersonAlchemy(Person, RecordAlchemy):
     def getName(self):
         return "%s - %s %s" % (self.code, self.first_name, self.last_name)
     name = property(getName)
+    
+    
+    def OnRecordDblClick(self):
+        import wx_time_v01
+        frame = wx_time_v01.FrmDev( None )
+        frame.Show()
 
 class PersonStdCost(Base):
     """Standard costing table for person"""

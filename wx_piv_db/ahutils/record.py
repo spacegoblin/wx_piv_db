@@ -32,6 +32,8 @@ from exceptions import Exception
 import datetime
 
 
+class GUICodeNotExisting(Exception):
+    pass
 
 
 #from wx_forms import GenericMsgDlg
@@ -456,7 +458,10 @@ class Record(object):
             self.__dict__.pop(att)
             
 
-
+    def OnRecordDblClick(self):
+        """This method can be used to call code to be executed when the object is double clicked.
+        An usage example could be to create a custom defined form for the object, or to define special jumps etc."""
+        raise GUICodeNotExisting("Must be overridden. This event can be used to overwrite the double click event in the GUI.")
 
           
 class RecordAlchemy(Record):

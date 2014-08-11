@@ -6,7 +6,7 @@ import wx
 import wx.aui
 from mygridtable_v2 import MyGridTable #, MyGridTableAlchemy
 import wx.lib.gridmovers as gridmovers
-from ahutils.record import loadFromDb
+from ahutils.record import loadFromDb, GUICodeNotExisting
 from ahconfig import const
 import datetime
 #from mx.DateTime.DateTime import DateTimeType
@@ -361,24 +361,35 @@ class MyGrid(wx.grid.Grid):
         lst = False
         
         
+        
         try:
             #if pvt_getNode does not throw error
             lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
+            
         except:
             
             obj = self.lst[row_num]
             
+            try:
+                obj.OnRecordDblClick()
+                print "There has been defined an own method for the double click."
+                wx.EndBusyCursor()
+                return True
+            except GUICodeNotExisting:
+                pass
+            
             print "Open single form instead"
             print self.parent.parent
-            print obj
+            print unicode ( obj )
             print self.lst.view_id
+            print "Fieldnames: ", self.lst.fieldnames
             print '-----'
             
             #frame = FrmSingle(self.parent.parent, obj, self.lst)
             if self.parent.__class__.__name__=='Frm2':
-                frame = FrmSingle2(self.parent.parent, obj, self.lst.view_id) #, self.lst)
+                frame = FrmSingle2(self.parent.parent, obj, self.lst.view_id, self.lst.fieldnames) #, self.lst)
             else:
-                frame = FrmSingle(self.parent.parent, obj, self.lst.view_id) #, self.lst)
+                frame = FrmSingle(self.parent.parent, obj, self.lst.view_id,  self.lst.fieldnames) #, self.lst)
                 
             frame.Show(True)
             wx.EndBusyCursor()
@@ -1195,12 +1206,12 @@ from ahutils.record import MetaRecord
 
 class ScrolledWindowSingle(wx.ScrolledWindow):
     
-    def __init__(self, parent, obj, view_id=None):
+    def __init__(self, parent, obj, view_id=None, fieldnames=None):
         self.parent = parent
         self.obj = obj
         self.view_id = view_id
         self.obj = obj
-        #self.fieldnames = lst.fieldnames
+        self.fieldnames = fieldnames
         self.meta = MetaRecord(self.obj)
 
         self.dicTxtID_Label = {} #the keys and values of the objects.__dict__
@@ -1261,10 +1272,19 @@ class ScrolledWindowSingle(wx.ScrolledWindow):
         self.hbox = wx.BoxSizer(wx.VERTICAL)
         cnt = 30
         #for key in self.fieldnames:
-        for key in self.obj.__dict__.keys():
+        if self.fieldnames:
+            l = self.fieldnames
+        else:
+            #this does probably not happen but sorting is also nice
+            l = [key for key in self.obj.__dict__.keys()]
+            l.sort()
+            
+        for key in l:
             vbox_inner = wx.BoxSizer(wx.HORIZONTAL)
             stat_txt = wx.StaticText(self, -1, key, (100, cnt), size=(100,22))
-            strng = "%s" % str(getattr(self.obj, key))
+            
+            strng = ("%s") % unicode(getattr(self.obj, key))
+
 
             ctr_id = wx.NewId()
             #associate the controls with the values
@@ -1316,7 +1336,8 @@ class ScrolledWindowSingle(wx.ScrolledWindow):
 
     def OnClickSave(self, event):
         for key, val in self.dicTxtID_NewText.items():
-            self.obj.__dict__[key] = val
+            #self.obj.__dict__[key] = val
+            setattr(self.obj, key, val.strip())
             if val=="":
                 msg = self.obj.setNull(key)
                 print msg
@@ -1415,14 +1436,14 @@ The data was NOT inserted.''',
 class FrmSingle(wx.MDIChildFrame):
     """Displays a record object."""
     #def __init__(self, parent, obj, lst):
-    def __init__(self, parent, obj, view_id=None):
+    def __init__(self, parent, obj, view_id=None, fieldnames=None):
         
         self.parent = parent
 
         wx.MDIChildFrame.__init__(self, parent, id=-1, title='Single Object Frame',
                           size=(950,600))
         
-        self.panel = ScrolledWindowSingle(self, obj, view_id) #wx.ScrolledWindow(self, -1)
+        self.panel = ScrolledWindowSingle(self, obj, view_id, fieldnames) #wx.ScrolledWindow(self, -1)
 
         self.panel.Fit()  
         
@@ -1444,14 +1465,14 @@ class FrmSingle(wx.MDIChildFrame):
 class FrmSingle2(wx.Frame):
     """Displays a record object."""
     #def __init__(self, parent, obj, lst):
-    def __init__(self, parent, obj, view_id=None):
+    def __init__(self, parent, obj, view_id=None, fieldnames=None):
         
         self.parent = parent
 
         wx.Frame.__init__(self, parent, id=-1, title='Single Object Frame',
                           size=(950,600))
         
-        self.panel = ScrolledWindowSingle(self, obj, view_id) #wx.ScrolledWindow(self, -1)
+        self.panel = ScrolledWindowSingle(self, obj, view_id, fieldnames) #wx.ScrolledWindow(self, -1)
 
         self.panel.Fit()  
         
