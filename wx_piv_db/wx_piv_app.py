@@ -377,10 +377,37 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         
         for rec in lst:
             self.dic_gui_headmenu[rec.gui_menu] = wx.Menu()
+
+            mnuobj = AppMenues()
+            mnuobj.view_id = rec.id
+            mnuobj.menutitle = rec.menutitle
+            mnuobj.sql = rec.sql
+            mnuobj.tablename = rec.tablename
+            mnuobj.gui_menu = rec.gui_menu
+            mnuobj.comment = rec.comment
+            
+            if rec.view_type=='PIVOT':
+                mnuobj.pivot = True
+                _pivothead = rec.pivothead.split(',')
+                #strip the field for space
+                mnuobj.pivothead = [r.strip() for r in _pivothead]
     
-    def x(self):
-        for key in self.settings.keys():
-            yield key
+                _pivotrow = rec.pivotrow.split(',')
+                #strip the field for space
+                mnuobj.pivotrow = [r.strip() for r in _pivotrow]
+                
+                mnuobj.pivotvalue = rec.pivotvalue
+                #use the id to find the sql to use
+                #self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
+            elif rec.view_type=='EXECUTE':
+                #print "selecting to execute"
+                mnuobj.pivot = False
+                #self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=mnuobj.idname)
+            else:
+                mnuobj.pivot = False
+                #self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
+
+            self.settings[mnuobj.idname] = mnuobj
                       
 class MDIPFrame(wx.MDIParentFrame):
     def __init__(self, app, db_name, gui_version):
@@ -428,21 +455,14 @@ class MDIPFrame(wx.MDIParentFrame):
                 
         self.menu4 = menu4 = wx.Menu()
         
-        self.dicCallSQL = AppSettings()
-        
-        #self.dic_gui_headmenu = {}
-        
-        #self.dicCallSQL.loadMenu()
-        
-        #self.dicCallSQL = {} #dictionaries with the sql statements
-        
+        self.MenuSetting = AppSettings()
 
-        self.loadMenuBarFromSQL()
+        self.setIDsInMenueBar()
         ## end the munes
         self.menuBar = wx.MenuBar()
         self.menuBar.Append(menu, "File")
 
-        for menue_title, wxMenueObj in self.dicCallSQL.dic_gui_headmenu.items():
+        for menue_title, wxMenueObj in self.MenuSetting.dic_gui_headmenu.items():
             self.menuBar.Append(wxMenueObj, str(menue_title))
         
         self.statusbar = self.CreateStatusBar(2, wx.ST_SIZEGRIP)
@@ -452,54 +472,24 @@ class MDIPFrame(wx.MDIParentFrame):
         return self.menuBar
     
 
-                    
-    def loadMenuBarFromSQL(self):
-        
-        sql = """SELECT tbl_views.*, tbl_users.username, tbl_users_view.view_id
-FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
-INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
-WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
-                  
-        lst = loadFromDb(sql)
-        
+    def setIDsInMenueBar(self):
 
-        
-        for rec in lst:
-            mnuobj = AppMenues()
+        for wxID, MenuObj in self.MenuSetting.settings.items():
 
-            #mnuobj.idname = wx.NewId()
-            mnuobj.view_id = rec.id
-            mnuobj.menutitle = rec.menutitle
-            mnuobj.sql = rec.sql
-            mnuobj.tablename = rec.tablename
-            mnuobj.gui_menu = rec.gui_menu
-            mnuobj.comment = rec.comment
             
-            if rec.view_type=='PIVOT':
-                mnuobj.pivot = True
-                _pivothead = rec.pivothead.split(',')
-                #strip the field for space
-                mnuobj.pivothead = [r.strip() for r in _pivothead]
-    
-                _pivotrow = rec.pivotrow.split(',')
-                #strip the field for space
-                mnuobj.pivotrow = [r.strip() for r in _pivotrow]
+            if MenuObj.view_type=='PIVOT':
+   
+                self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=MenuObj.idname)
                 
-                mnuobj.pivotvalue = rec.pivotvalue
-                #use the id to find the sql to use
-                self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
-            elif rec.view_type=='EXECUTE':
-                #print "selecting to execute"
-                mnuobj.pivot = False
-                self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=mnuobj.idname)
+            elif MenuObj.view_type=='EXECUTE':
+
+                self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=MenuObj.idname)
             else:
-                mnuobj.pivot = False
-                self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
 
-            self.dicCallSQL.settings[mnuobj.idname] = mnuobj
-            self.dicCallSQL.dic_gui_headmenu[mnuobj.gui_menu].Append(mnuobj.idname, mnuobj.menutitle)
-            
+                self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=MenuObj.idname)
 
+            self.MenuSetting.dic_gui_headmenu[MenuObj.gui_menu].Append(MenuObj.idname, MenuObj.menutitle)
+                    
 
     def OnShowSqlData(self, event):
         """Execute the sql stored in menu.xml and display
@@ -509,21 +499,21 @@ the event method of the menu item."""
         busy = wx.BusyInfo("Retrieving data...")
         wx.BeginBusyCursor()
                 
-        sql = str( self.dicCallSQL(event.Id, 'sql') )
-        tbl = str( self.dicCallSQL(event.Id, 'tablename') )
-        pivot_bol = self.dicCallSQL(event.Id, 'pivot') 
-        menutitle = self.dicCallSQL(event.Id, 'menutitle')
+        sql = str( self.MenuSetting(event.Id, 'sql') )
+        tbl = str( self.MenuSetting(event.Id, 'tablename') )
+        pivot_bol = self.MenuSetting(event.Id, 'pivot') 
+        menutitle = self.MenuSetting(event.Id, 'menutitle')
 
         lst = loadFromDb(sql, tbl)
         if lst:
-            lst.view_id = self.dicCallSQL(event.Id, 'view_id')
+            lst.view_id = self.MenuSetting(event.Id, 'view_id')
             
             lst.loadExecCode()
     
             if pivot_bol:
-                pivot_head = self.dicCallSQL(event.Id, 'pivothead') 
-                pivot_row = self.dicCallSQL(event.Id, 'pivotrow') 
-                pivot_amount = self.dicCallSQL(event.Id, 'pivotvalue') 
+                pivot_head = self.MenuSetting(event.Id, 'pivothead') 
+                pivot_row = self.MenuSetting(event.Id, 'pivotrow') 
+                pivot_amount = self.MenuSetting(event.Id, 'pivotvalue') 
     
                 lst.pivot(pivot_row, pivot_head, pivot_amount)
     
@@ -544,10 +534,10 @@ the event method of the menu item."""
         
         wx.BeginBusyCursor()
         
-        sql = str(getattr(self.dicCallSQL.settings[event.Id], 'sql'))
-        tbl = str(getattr(self.dicCallSQL.settings[event.Id], 'tablename'))
-        pivot_bol = getattr(self.dicCallSQL.settings[event.Id], 'pivot')
-        menutitle = getattr(self.dicCallSQL.settings[event.Id], 'menutitle')
+        sql = str(getattr(self.MenuSetting.settings[event.Id], 'sql'))
+        tbl = str(getattr(self.MenuSetting.settings[event.Id], 'tablename'))
+        pivot_bol = getattr(self.MenuSetting.settings[event.Id], 'pivot')
+        menutitle = getattr(self.MenuSetting.settings[event.Id], 'menutitle')
         
         try:
             exec( sql.strip() )
