@@ -17,7 +17,7 @@ from sqlalchemy.orm import relationship
 
 from dbtable import Base, getSession
 from ahutils.record import RecordAlchemy, loadFromAlchemy
-
+from coa import Account
 
 class Person(Base):
     """Base class for a person standing data."""
@@ -31,16 +31,20 @@ class Person(Base):
     comment = Column(Unicode(255),)
     run_update = Column(Boolean,)
 
-    fieldnames = ['code', 'first_name', 'last_name', 'comment', 'run_update']
+    def getFullName(self):
+        if self.id>1:
+            return "%s %s" % (self.first_name, self.last_name)
+        else: return False
+    full_name = property(getFullName)
+    
+    fieldnames = ['code', 'full_name', 'first_name', 'last_name', 'comment', 'run_update']
         
     def __str__(self):
         """Return string representation"""        
         return u"Class Person(): %s %s Code: %s" % (self.first_name, self.last_name, self.code)
     
 class PersonAlchemy(Person, RecordAlchemy):
-    session = getSession()  #this gets the session only once!
-    
-    fieldnames = ['code', 'name']
+    session = getSession()
     
     def __init__(self):
         super(RecordAlchemy, self).__init__()
@@ -50,10 +54,12 @@ class PersonAlchemy(Person, RecordAlchemy):
     name = property(getName)
     
     
-    def OnRecordDblClick(self):
+    def OnRecordDblClick(self, field_name, obj):
         import wx_time_v01
         frame = wx_time_v01.FrmDev( None )
         frame.Show()
+
+
 
 class PersonStdCost(Base):
     """Standard costing table for person"""
@@ -62,20 +68,28 @@ class PersonStdCost(Base):
     
     id = Column(Integer, primary_key=True)
     code = Column(Unicode(255), ForeignKey('tbl_person_stand.code'), nullable=False)
-    account_datev = Column(Unicode(255),)
+    account_datev = Column(Unicode(255), ForeignKey('tbl_chart_of_accounts.account_datev'), nullable=False)
     amount = Column(NUMERIC(20,2),)
     comment = Column(Unicode(255),)
     p_code_weight = Column(Unicode(255), )
     project_code = Column(Unicode(255),)
-
-    fieldnames = ['id', 'code', 'account_datev', 'amount']
-        
+    
+    person = relationship("Person", lazy='joined')
+    account = relationship("Account", lazy='joined') 
+    
+    fieldnames = ['code', 'full_name', 'account_datev', 'amount']
+    
+    def getFullName(self):
+        return self.person.full_name
+    full_name = property(getFullName)
+    
+    def getAccount(self):
+        return "%s %s" % (self.account.account_datev, self.account.name_datev)
+    datev_full = property(getAccount)        
+            
     def __str__(self):
         """Return string representation"""        
         return "Code: %s Acc.: %s Project: %s %s" % (self.code, self.account_datev, self.project_code, self.amount)
-    
-    def dict(self):
-        return "{'pers_code': %s, 'account_datev': %s, 'soll': %f, 'project_code': %s}" % ( self.code, self.account_datev, self.amount, self.project_code)
     
 
 class PersonAndStdCost(Person):
@@ -103,6 +117,7 @@ def testMixInn():
     session = PersonAlchemy.session
     qry = session.query(PersonAlchemy)
 
+
     o = qry.get('159')
     print o
     
@@ -111,7 +126,7 @@ def testMixInn():
     import wx
     from wx_forms import Frm2
        
-    app = wx.PySimpleApp()
+    app = wx.App()
         
     frame = Frm2(None, lst)
     frame.Show()

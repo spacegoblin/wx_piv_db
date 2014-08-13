@@ -371,8 +371,10 @@ class MyGrid(wx.grid.Grid):
             obj = self.lst[row_num]
             
             try:
-                obj.OnRecordDblClick()
+                field_name = self.lst.fieldnames[col_num]
+                obj.OnRecordDblClick(field_name, obj)
                 print "There has been defined an own method for the double click."
+ 
                 wx.EndBusyCursor()
                 return True
             except GUICodeNotExisting:
@@ -503,6 +505,8 @@ Would you like to set the table in update mode?""",
             val = dlg.ShowModal()
             
             dlg.Destroy()
+            
+            self.parent.Raise() #the bug that Alex had I also received with upgrade to version 3.0 ... this should solve it.
             
             wx.BeginBusyCursor()
             if val==wx.ID_YES:
@@ -1116,8 +1120,7 @@ f.Show()
 
         FrmMixInn.__init__(self, parent, lst, aTitle)
         
-        wx.MDIChildFrame.__init__(self, parent, id=-1, title='%s' % aTitle,
-                          size=(950,600))
+        wx.MDIChildFrame.__init__(self, parent, id=-1, title='%s' % aTitle, size=(950,600))
         
         wx.MDIChildFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
         
@@ -1251,9 +1254,6 @@ class ScrolledWindowSingle(wx.ScrolledWindow):
 
         self.Bind(wx.EVT_BUTTON, self.OnShell, btnShell)
 
-
-
-
         
         if obj.__dict__.has_key('pivothead'):
             btnView = wx.Button(self, -1, "Pivot", pos=(800, 60))
@@ -1327,8 +1327,7 @@ class ScrolledWindowSingle(wx.ScrolledWindow):
         menutitle = getattr(self.obj, 'menutitle')
         #print pivot_row, pivot_head, pivot_amount
         lst.pivot(pivot_row, pivot_head, pivot_amount)
-
-        frame = Frm(self.parent, lst, menutitle)
+        frame = Frm(self.parent.parent, lst, menutitle)
         frame.Show(True)
         wx.EndBusyCursor()
         #event.Skip()

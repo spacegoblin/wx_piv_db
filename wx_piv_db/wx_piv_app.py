@@ -31,6 +31,7 @@ import pprint
 #from flask.ext.sqlalchemy import SQLAlchemy
 #try:
 # from sqlalchemy import *
+from sqlalchemy import or_
 # from sqlalchemy import orm
 #except: pass
 import contextlib #did this as I dropped sqlalchemy in the dist folder and needed this import
@@ -350,6 +351,9 @@ class AppMenues(object):
         self.pivotvalue = None
         self.sorted = None
 
+        self.alc_record = None
+        self.alc_import = None
+        self.alc_qry = None
 
         
 class AppSettings(object):
@@ -384,7 +388,13 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
             mnuobj.tablename = rec.tablename
             mnuobj.gui_menu = rec.gui_menu
             mnuobj.comment = rec.comment
+            mnuobj.view_type = rec.view_type
             
+            mnuobj.alc_record = None
+            mnuobj.alc_import = None
+            mnuobj.alc_qry = None
+            
+        
             if rec.view_type=='PIVOT':
                 mnuobj.pivot = True
                 _pivothead = rec.pivothead.split(',')
@@ -402,6 +412,22 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                 #print "selecting to execute"
                 mnuobj.pivot = False
                 #self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=mnuobj.idname)
+            elif rec.view_type=='ALCHEMY_F' or rec.view_type=='ALCHEMY_P':
+                print "Loading an Alchemy object by execution of code"
+                mnuobj.alc_record = rec.alc_record
+                mnuobj.alc_import = rec.alc_import
+                mnuobj.alc_qry = rec.alc_qry
+                mnuobj.pivot = False  
+                if rec.view_type=='ALCHEMY_P':
+                    mnuobj.pivot = True
+                    _pivothead = rec.pivothead.split(',')
+                    #strip the field for space
+                    mnuobj.pivothead = [r.strip() for r in _pivothead]
+                    _pivotrow = rec.pivotrow.split(',')
+                    #strip the field for space
+                    mnuobj.pivotrow = [r.strip() for r in _pivotrow]
+                    
+                    mnuobj.pivotvalue = rec.pivotvalue    
             else:
                 mnuobj.pivot = False
                 #self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
@@ -483,8 +509,13 @@ class MDIPFrame(wx.MDIParentFrame):
             elif MenuObj.view_type=='EXECUTE':
 
                 self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=MenuObj.idname)
-            else:
+                
+            elif MenuObj.view_type=='ALCHEMY_F' or MenuObj.view_type=='ALCHEMY_P':
 
+                self.Bind(wx.EVT_MENU, self.OnAlchemyFlatMenuCode, id=MenuObj.idname)
+                                
+            else:
+                
                 self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=MenuObj.idname)
 
             self.MenuSetting.dic_gui_headmenu[MenuObj.gui_menu].Append(MenuObj.idname, MenuObj.menutitle)
@@ -494,7 +525,7 @@ class MDIPFrame(wx.MDIParentFrame):
         """Execute the sql stored in menu.xml and display
 the data grid Frm(). This method is attached to the
 the event method of the menu item."""
-
+        print "OnShowSqlData"
         busy = wx.BusyInfo("Retrieving data...")
         wx.BeginBusyCursor()
                 
@@ -513,7 +544,6 @@ the event method of the menu item."""
                 pivot_head = self.MenuSetting(event.Id, 'pivothead') 
                 pivot_row = self.MenuSetting(event.Id, 'pivotrow') 
                 pivot_amount = self.MenuSetting(event.Id, 'pivotvalue') 
-    
                 lst.pivot(pivot_row, pivot_head, pivot_amount)
     
             frame = Frm(self, lst, menutitle)
@@ -528,7 +558,7 @@ the event method of the menu item."""
     def OnExecuteMenuCode(self, event):
         "Executes the code that has been stored in the menu / views table."
 
-           
+        raise ("This code seem not to be used")
         busy = wx.BusyInfo("Executing ...")
         
         wx.BeginBusyCursor()
@@ -547,6 +577,50 @@ the event method of the menu item."""
         
         finally:
             wx.EndBusyCursor()
+            
+    def OnAlchemyFlatMenuCode(self, event):
+        print "OnAlchemyFlatMenuCode"
+        busy = wx.BusyInfo("Executing ...")
+        
+        wx.BeginBusyCursor()
+        
+        sql = str(getattr(self.MenuSetting.settings[event.Id], 'sql'))
+        tbl = str(getattr(self.MenuSetting.settings[event.Id], 'tablename'))
+        pivot_bol = getattr(self.MenuSetting.settings[event.Id], 'pivot')
+        menutitle = getattr(self.MenuSetting.settings[event.Id], 'menutitle')
+        
+        alc_record = getattr(self.MenuSetting.settings[event.Id], 'alc_record')
+        alc_import = getattr(self.MenuSetting.settings[event.Id], 'alc_import')
+        alc_qry = getattr(self.MenuSetting.settings[event.Id], 'alc_qry') 
+        
+#         try:
+        print alc_import
+        exec( alc_import )
+        exec( alc_record )
+        session = alc_obj.session   #the session must be defined before executing query against session
+        exec( alc_qry )
+        
+        print "alc_obj has been set as ", alc_obj
+        print "alc_qry has been set as ", qry
+        
+        lst = loadFromAlchemy(qry, alc_obj)
+
+        if pivot_bol:
+            pivot_head = self.MenuSetting(event.Id, 'pivothead') 
+            pivot_row = self.MenuSetting(event.Id, 'pivotrow') 
+            pivot_amount = self.MenuSetting(event.Id, 'pivotvalue') 
+            
+            print pivot_amount, pivot_head, pivot_row
+            
+            lst.pivot(pivot_row, pivot_head, pivot_amount)
+        
+#         except:
+#             raise("MS Error 124097890asd4547888")
+#      
+#         finally:
+        frame = Frm(self, lst, menutitle)
+        frame.Show(True)
+        wx.EndBusyCursor()        
 
 
     def OnLoadDatevKontoBlatt(self, event):
@@ -705,11 +779,11 @@ def main(argv):
 
     from ahconfig import const
         
-    from ahutils.record import loadFromDb, WhichDb_v3
+    from ahutils.record import loadFromDb, WhichDb_v3, loadFromAlchemy
     
     from wx_forms import Frm, GenericMsgDlg
     
-    global const, loadFromDb, WhichDb_v3, Frm, GenericMsgDlg #, GuiDbVersion MyUser,
+    global const, loadFromDb, loadFromAlchemy, WhichDb_v3, Frm, GenericMsgDlg #, GuiDbVersion MyUser,
 
     app = App(False)
     #app = App(True, 'C:\\Users\\111625\\Desktop\\temp\\redirect_wx_rccl.txt')

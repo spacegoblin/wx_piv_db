@@ -11,14 +11,20 @@ if '..//' not in sys.path:
     
     
 from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
+from sqlalchemy.dialects.postgresql import NUMERIC
 from sqlalchemy.orm import relationship
-
+from sqlalchemy import or_
 
 from dbtable import Base, getSession
 from coa import Account
-from ahutils.record import loadFromAlchemy
+from person import Person
+from costcode import CostCode
 
-#Base = declarative_base()    I use the Base in the mapper below so we need to use the same base
+from ahutils.record import RecordAlchemy, loadFromAlchemy, GUICodeNotExisting
+
+from wx_datev_v02 import showForm
+
+
  
     
 class Datev(Base):
@@ -29,9 +35,9 @@ class Datev(Base):
     id = Column(Integer, primary_key=True)
     account_datev = Column(Unicode(255), ForeignKey('tbl_chart_of_accounts.account_datev'), nullable=False)
     kontobezeichnung_not_mdata = Column(Unicode(255),)
-    _soll = Column('soll', Float,)
-    haben = Column(Float,)
-    period = Column(Integer,)
+    _soll = Column('soll',  NUMERIC(20,2),)
+    _haben = Column('haben',  NUMERIC(20,2),)
+    period = Column(Integer, nullable=False)
     datum = Column(Date,)
     bu = Column(Unicode(255),)
     gegenkonto = Column(Unicode(255),)
@@ -43,7 +49,7 @@ class Datev(Base):
     stapel_nr = Column(Unicode(255),)
     bsnr = Column(Unicode(255),)
     hk = Column(Unicode(255),)
-    kost1 = Column(Unicode(255),)
+    kost1 = Column(Unicode(255), ForeignKey('tbl_cost_centers.costcenternr'))
     tmp = Column(Unicode(255),)
     id_parent = Column(Integer,)
     company = Column(Unicode(255), nullable=False)
@@ -54,12 +60,16 @@ class Datev(Base):
     comment_2 = Column(Unicode(255),)
     pers_code = Column(Unicode(255), ForeignKey('tbl_person_stand.code'), nullable=False, default=0)
     
-    fieldnames = ['id', 'fin_statement', 'account_datev', 'name_datev', 'amount', 'period', 'buchungstext']
+    fieldnames = ['id', 'fin_statement', 'hgb_acc_sort_code', 'account_datev', 'name_datev', 'amount', 'period', 'buchungstext', 'company', 'kost1', 'project_code', 'pers_code', 'full_name']
     
-    account = relationship("Account")
+    account = relationship("Account", lazy='joined') 
+    
+    person = relationship("Person", lazy='joined')
+    
+    costcenter = relationship("CostCode", lazy='joined')
 
     def __str__(self):
-        return "%s %.2f" % (self.account_datev, self.amount)
+        return "Datev() Account: %s %.2f" % (self.account_datev, self.amount)
     
     def getAmount(self):
         return self.soll - self.haben
@@ -67,13 +77,31 @@ class Datev(Base):
     
     ##
     def getAccName(self):
-        return self.account.name_datev
+        try:
+            return self.account.name_datev
+        except: return 'n.a.'
     name_datev = property(getAccName)
     ##
     def getFinStatement(self):
-        return self.account.zuordnung_bwa
+        try:
+            return self.account.zuordnung_bwa
+        except: return 'n.a.'
     fin_statement = property(getFinStatement)
+    ##
+    def getHGBSortSchema(self):
+        try:
+            return self.account.hgb_acc_sort_code
+        except: return 'n.a.'
+    hgb_acc_sort_code = property(getHGBSortSchema)
+    ##
     
+    def getPersonName(self):
+        try:
+            return self.person.full_name
+        except: return False
+    full_name = property(getPersonName)
+    ##
+        
     def getSoll(self):
         return self._soll
     def setSoll(self, v):
@@ -83,7 +111,25 @@ class Datev(Base):
         else: self._soll = v
     soll = property(getSoll, setSoll)
         
+    def getHaben(self):
+        return self._haben
+    def setHaben(self, v):
+        if type(v)==str:
+            val = v.replace(',', '')
+            self._haben = val
+        else: self._haben = v
+    haben = property(getHaben, setHaben)
     
+    ##
+    def getProjectCode(self):
+        if self.costcenter:
+            return self.costcenter.project_code
+        else: return 'n.a.'
+    project_code = property(getProjectCode)
+    
+
+
+
     def copy(self):
         "Returns a copy of itself as new instance."
         cp = Datev()
@@ -118,7 +164,27 @@ class Datev(Base):
         return cp
     
 
-                   
+class DatevAlchemy(Datev, RecordAlchemy):
+    session = getSession() 
+    
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()
+        
+    
+    def OnRecordDblClick(self, fieldname, obj):
+        print fieldname
+        if obj.pers_code>0:
+            print obj.pers_code
+        
+        else:
+            pass
+        
+        showForm(obj)
+           
+
+def getSampleObj(withID):
+    session = DatevAlchemy.session
+    return session.query(DatevAlchemy).get(withID)
 
 def test(persCode):
     session = getSession()
@@ -126,11 +192,13 @@ def test(persCode):
     from ahutils import record
     from wx_forms import Frm2
     
-    qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
-    lst = loadFromAlchemy(qry, Datev)
+    qry = session.query(DatevAlchemy).filter(DatevAlchemy.period>201400 ).filter( or_ (DatevAlchemy.company==u'LSE HGB',
+                                                                                       DatevAlchemy.company==u'LSE IFRS',
+                                                                                       DatevAlchemy.company==u'LSE Wages',) )
+    lst = loadFromAlchemy(qry, DatevAlchemy)
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
 
-    app = wx.PySimpleApp()
+    app = wx.App()
         
     frame = Frm2(None, lst)
     frame.Show()
@@ -154,6 +222,7 @@ def showFrm2(persCode):
     return frame
 
 def returnPivotedPerson(persCode):
+    raise
     session = getSession()    
     qry = session.query(Datev).filter(Datev.pers_code==unicode( persCode) )
     lst = loadFromAlchemy(qry, Datev)
@@ -162,13 +231,13 @@ def returnPivotedPerson(persCode):
     
 def showPerson(persCode):
     """Show the person within the GUI"""
-    session = getSession()
+    session = DatevAlchemy.session
     import wx
     from ahutils import record
     from wx_forms import Frm
     
-    qry = session.query(Datev).filter(Datev.pers_code==unicode(persCode))
-    lst = loadFromAlchemy(qry, Datev)
+    qry = session.query(DatevAlchemy).filter(DatevAlchemy.pers_code==unicode(persCode))
+    lst = loadFromAlchemy(qry, DatevAlchemy)
     lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
     
     app = wx.GetApp()
@@ -179,6 +248,7 @@ def showPerson(persCode):
 def showPersonGrid(wxParent, persCode):
     """Show the person but return a grid.
     This is to be used in within a call in a wx Form"""
+    raise
     session = getSession()
 
     from wx_forms import MyGrid

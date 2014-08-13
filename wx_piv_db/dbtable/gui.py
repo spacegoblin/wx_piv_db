@@ -72,6 +72,8 @@ class GuiEval(Base):
     view_id = Column(Integer,)
     id_parent = Column(Integer,)
     
+    incl_dblclick = Column(Boolean,)
+    
     fieldnames = ['id', 'evalcode', 'description']
  
         
@@ -96,6 +98,10 @@ class GuiView(Base):
     comment  = Column(Text)
     sorted = Column(Integer,)
     id_parent = Column(Integer,)
+    
+    alc_record = Column(String(250))
+    alc_import = Column(String(250))
+    alc_qry = Column(Text)
     
     fieldnames = ['id', 'menutitle', 'tablename']
  
