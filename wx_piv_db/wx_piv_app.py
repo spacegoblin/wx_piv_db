@@ -354,7 +354,24 @@ class AppMenues(object):
         self.alc_record = None
         self.alc_import = None
         self.alc_qry = None
+        self.incl_dblclick = None
+        self.dblClickCode = None
+        
+        #moved to here 
+        self.dicExecCode = {}
+        #sql = "select description, evalcode from tbl_eval where view_id=%d" % self.view_id
+                    #self.dicExecCode[rec[0]] = rec[1].strip()
+        self.dicExecCodeById = {} #the table id and the code
+        
+    def getDblClickId(self):
+        if self.incl_dblclick:
+            return self.incl_dblclick
+        else: return False
 
+    def getDblClickCode(self):
+        print self.dicExecCodeById
+        return self.dicExecCodeById[self.incl_dblclick]
+        
         
 class AppSettings(object):
     """Class that holds the application settings.
@@ -362,6 +379,7 @@ class AppSettings(object):
     def __init__(self):
         self.settings = {}  #event.Id and AppMenues() instance
         self.dic_gui_headmenu = {}  #rec.gui_menu = wx.Menu()
+        self.dic_view_ids = {} #the ids = AppMenues()
         self.loadMenu()
 
     def __call__(self, eventId, atr):
@@ -375,6 +393,7 @@ class AppSettings(object):
 FROM tbl_views INNER JOIN tbl_users_view ON tbl_views.id = tbl_users_view.view_id
 INNER JOIN tbl_users ON tbl_users_view.user_id = tbl_users.id
 WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
+
 
         lst = loadFromDb(sql)
         
@@ -393,6 +412,8 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
             mnuobj.alc_record = None
             mnuobj.alc_import = None
             mnuobj.alc_qry = None
+            mnuobj.incl_dblclick = rec.incl_dblclick #should the code stored in eval be executed by double click
+            
             
         
             if rec.view_type=='PIVOT':
@@ -413,7 +434,7 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
                 mnuobj.pivot = False
                 #self.Bind(wx.EVT_MENU, self.OnExecuteMenuCode, id=mnuobj.idname)
             elif rec.view_type=='ALCHEMY_F' or rec.view_type=='ALCHEMY_P':
-                print "Loading an Alchemy object by execution of code"
+                #print "Loading an Alchemy object by execution of code"
                 mnuobj.alc_record = rec.alc_record
                 mnuobj.alc_import = rec.alc_import
                 mnuobj.alc_qry = rec.alc_qry
@@ -431,15 +452,45 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
             else:
                 mnuobj.pivot = False
                 #self.Bind(wx.EVT_MENU, self.OnShowSqlData, id=mnuobj.idname)
-
+            #self.idname = wx.NewId() in AppMenues()
             self.settings[mnuobj.idname] = mnuobj
+            self.dic_view_ids[rec.id] = mnuobj
+            
+
+        #refactoring of the dicExecCode
+        sql = "select id, description, evalcode, view_id from tbl_eval"
+        lst_eval = loadFromDb(sql)
+        
+        tmp_dic={}
+        for rec in lst_eval:
+            tmp_dic[rec.id] = rec.evalcode.strip()
+            
+        for rec in lst:
+            appMenues = self.dic_view_ids[rec.id]
+            if appMenues.getDblClickId():
+                appMenues.dblClickCode = tmp_dic[appMenues.getDblClickId()]
+                
+
+            #appMenues.dicExecCode[rec.description] = rec.evalcode.strip()
+            #appMenues.dicExecCodeById[rec.id] = rec.evalcode.strip()
+        #we also have the problem that the dicExecCode can be used in several definitions
+        #this if the double click was set therefore we loop on the dblclicks and set these as well
+
+
+            
+    def getAppMenu(self, view_id):
+        "Returns the AppMenu object"
+        return self.dic_view_ids[view_id]
                       
 class MDIPFrame(wx.MDIParentFrame):
     def __init__(self, app, db_name, gui_version):
         wx.MDIParentFrame.__init__(self, None, -1, "SSC - LSE Space - %s %s" % (db_name, gui_version),
                                    size=(780,500))
         self.app = app
-
+        
+        self.app.MenuSetting = AppSettings()
+        self.MenuSetting = self.app.MenuSetting
+        
         mb = self.MakeMenuBar()
         self.SetMenuBar(mb)
         self.Centre(wx.BOTH)
@@ -480,7 +531,7 @@ class MDIPFrame(wx.MDIParentFrame):
                 
         self.menu4 = menu4 = wx.Menu()
         
-        self.MenuSetting = AppSettings()
+        #moved to init self.MenuSetting = AppSettings()
 
         self.setIDsInMenueBar()
         ## end the munes
@@ -533,8 +584,11 @@ the event method of the menu item."""
         tbl = str( self.MenuSetting(event.Id, 'tablename') )
         pivot_bol = self.MenuSetting(event.Id, 'pivot') 
         menutitle = self.MenuSetting(event.Id, 'menutitle')
-
-        lst = loadFromDb(sql, tbl)
+        
+        view_id = self.MenuSetting(event.Id, 'view_id')
+        
+        lst = loadFromDb(sql, tbl, app_menu=self.MenuSetting.getAppMenu( view_id ) )
+        
         if lst:
             lst.view_id = self.MenuSetting(event.Id, 'view_id')
             

@@ -360,11 +360,19 @@ class MyGrid(wx.grid.Grid):
         wx.BeginBusyCursor()
         lst = False
         
-        
+        print self.lst.view_id
+        app = wx.GetApp()
+        print app.mdi_parent_frame.MenuSetting.dic_view_ids
         
         try:
             #if pvt_getNode does not throw error
+            print "00 calling pvt_getNode"
             lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
+            print "01 lst was collected in first try"
+            #lst.appMenu = self.parent.pivot_lst.appMenu
+            
+            print "02 appMenu", lst.appMenu
+            print "02 view_id", lst.view_id
             
         except:
             
@@ -382,8 +390,10 @@ class MyGrid(wx.grid.Grid):
             
             print "Open single form instead"
             print self.parent.parent
-            print unicode ( obj )
-            print self.lst.view_id
+            
+
+           # print unicode ( obj )
+            #print self.lst.view_id
             print "Fieldnames: ", self.lst.fieldnames
             print '-----'
             
@@ -393,6 +403,17 @@ class MyGrid(wx.grid.Grid):
             else:
                 frame = FrmSingle(self.parent.parent, obj, self.lst.view_id,  self.lst.fieldnames) #, self.lst)
                 
+                
+                
+                if self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id).incl_dblclick:
+                    appM = self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id)
+                    print appM.dicExecCode
+
+                    #self.OnEvalCodeNoEvent(appM.dicExecCode['Alchemy Form'], obj)
+                    self.OnEvalCodeNoEvent(appM.dblClickCode, obj)
+                    
+                
+                
             frame.Show(True)
             wx.EndBusyCursor()
             return False
@@ -401,12 +422,21 @@ class MyGrid(wx.grid.Grid):
 
             #lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
             #was moved upwards in the code
+            print "03 in next try loop"
             
+            #these hacks are done because lst is now NOT
+            #ListRecord class but only a list
+            #self.pvt_data
             lst.view_id = self.parent.pivot_lst.view_id
             lst.dicExecCode = self.parent.pivot_lst.dicExecCode
-            lst.loadExecCode()
-            #print "after lst.loadExecCode() line 365"
-            #print lst.view_id
+            lst.appMenu = self.parent.pivot_lst.appMenu
+            
+            #lst.loadExecCode()
+            
+            print "03 view_id is: %s" % lst.view_id
+            
+#             print "after lst.loadExecCode() line 365"
+#             print lst.view_id
             
             #helper hack so that we can double click
             #when using a form without being a child of app
@@ -482,7 +512,7 @@ for all records in this set. The changes are in reversable. Would you like to pr
         query = loadFromDb(sql, obj.base_table)
         query.view_id = self.parent.pivot_lst.view_id
         query.value_field = self.parent.pivot_lst.value_field
-        query.loadExecCode()
+        #query.loadExecCode()
         frm = Frm(self.parent.parent, query)
         frm.Show()
 # else: pass
@@ -636,7 +666,7 @@ Would you like to set the table in update mode?""",
 
         new_table = self.lst.filterGrid(row_num, col_num)
         
-        new_table.loadExecCode()
+        #new_table.loadExecCode()
         app = wx.GetApp()
         if self.parent.__class__.__name__=='Frm2':
             app = wx.GetApp()
@@ -659,7 +689,7 @@ Would you like to set the table in update mode?""",
 
 
     def OnEvalCode(self, event):
-
+        print "wx_forms MyGrid() OnEvalCode"
         col_num = self.GetGridCursorCol()
         row_num = self.GetGridCursorRow()
         e_id = event.GetId()
@@ -674,7 +704,14 @@ Would you like to set the table in update mode?""",
         except TypeError:
             apply( self.lst.dicExecCode [ self.dicCodeExecIds[e_id] ] )
             
-    
+    def OnEvalCodeNoEvent(self, codeStr, here_obj):
+        print "wx_forms MyGrid() OnEvalCodeNoEvent"
+
+        try:
+            exec( codeStr )
+        except TypeError:
+            apply( codeStr )
+            
     def doingSomeMath(self, event, operate):
         "Helper method for OnAddNumber and others"
         col_num = self.GetGridCursorCol()

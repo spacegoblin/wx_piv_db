@@ -502,7 +502,19 @@ class RecordAlchemy(Record):
         self.session.commit()
         return True
     
-                        
+
+class MyList(list):
+    """The list pvt_data used in RecordList 
+    has caused extreeme headache, it should have been an instance of itself
+    but is not, I try to do a patch here with a user defined list.
+    This way I will be able to set some of the class attributes I need for my 
+    code to work."""
+    def __init__(self, *args):
+        list.__init__(self, *args)
+        raise("refactoring not successful")
+
+
+                  
 class RecordList(object):
     """A list of objects of class Record."""
     def __init__(self, valuefield=None):
@@ -520,6 +532,7 @@ class RecordList(object):
 #        self.dicSqlJumps = {}
         self.dicExecCode = None
         self.view_id = None #this is the id of the views defined in the database
+        self.appMenu = False
         
     def append(self, obj):
         obj.value_field = self.value_field
@@ -777,8 +790,8 @@ class RecordList(object):
        
 
 
-    def loadExecCode(self):
-        "This should be refactored ..... "
+    def loadExecCode_Old(self):
+        print "This should be refactored ..... loadExecCode "
         if self.view_id:
             self.dicExecCode = {}
             sql = "select description, evalcode from tbl_eval where view_id=%d" % self.view_id
@@ -792,7 +805,19 @@ class RecordList(object):
                 self.dicExecCode = None
                 return False
         else: pass #return self.dicExecCode
-            
+
+    def loadExecCode(self):
+        print "This has been refactored ..... loadExecCode "
+        #if self.view_id:
+        self.dicExecCode = {}
+        #print self.appMenu
+        for menu_k, m_eval in self.appMenu.dicExecCode.items():
+            self.dicExecCode[menu_k] = m_eval
+                
+        print self.dicExecCode
+        
+        print "Returning True from loadExecCode"  
+        return True
         
     def set(self, row, col, value):
         """Sets the value of an attribute in an object, where
@@ -923,6 +948,7 @@ class RecordList(object):
         ret.field_types = copy.deepcopy(self.field_types)
         ret.value_field = copy.deepcopy(self.value_field)
         ret.view_id = copy.deepcopy(self.view_id)
+        ret.appMenu = self.appMenu
         return ret
 
     def createNewListPivoted(self):
@@ -1266,9 +1292,11 @@ class RecordList(object):
         return self
 
     def pvt_getNode(self, row, col):
-        "in pvt_getNode with row col ", row, col
+        print "in pvt_getNode with row col ", row, col
+        #print "self.view_id", self.view_id
         newRecordList = RecordList()
-        
+
+        print "a"
         try:
             #Here we get the result of one "cell"
             if len(self.pivot_data[:-1]) == row:
@@ -1280,10 +1308,13 @@ class RecordList(object):
                                 newRecordList.fieldnames = copy.deepcopy(instances.fieldnames)
                                 newRecordList.field_types = copy.deepcopy(instances.field_types)
                                 newRecordList.sql = copy.deepcopy(instances.sql)
-#                                newRecordList.dicSqlJumps = copy.deepcopy(instances.dicSqlJumps)
+                                
+                                newRecordList.view_id = copy.deepcopy(instances.view_id)
+                                
                                 newRecordList.extend(instances)
+                    print "b"
                     return newRecordList
-                               
+            print "c"            
             return self.pvt_data[row][col]
         except IndexError:
             #print "Index error was there2", row, col
@@ -1301,9 +1332,11 @@ class RecordList(object):
                             newRecordList.fieldnames = copy.deepcopy(instances.fieldnames)
                             newRecordList.field_types = copy.deepcopy(instances.field_types)
                             newRecordList.sql = copy.deepcopy(instances.sql)
-#                            newRecordList.dicSqlJumps = copy.deepcopy(instances.dicSqlJumps)
+                            
+                            newRecordList.view_id = copy.deepcopy(instances.view_id)
+                            
                             newRecordList.extend(instances)
-
+                    print "d"
             except IndexError:
                 if len(self.pvt_data)<len(self.pivot_data):
                     #bottom column result
@@ -1315,9 +1348,15 @@ class RecordList(object):
                             newRecordList.fieldnames = copy.deepcopy(instances.fieldnames)
                             newRecordList.field_types = copy.deepcopy(instances.field_types)
                             newRecordList.sql = copy.deepcopy(instances.sql)
-#                            newRecordList.dicSqlJumps = copy.deepcopy(instances.dicSqlJumps)
+                            newRecordList.view_id = copy.deepcopy(instances.view_id)
                             newRecordList.extend(instances) 
-            
+                    print "e"
+                print "f"
+            print "I would like to set appMenu here!!!"
+#             
+#             newRecordList.appMenu = self.appMenu
+#             
+#             print self.appMenu
             return newRecordList
         
     def pvt_sum(self, sumationField=None):
@@ -1511,7 +1550,7 @@ class RecordList(object):
 
 
 
-def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_record=Record, base_lst=RecordList):
+def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_record=Record, base_lst=RecordList, app_menu=False):
     """Factory method to load database records into the models.
     sql: sql statement for the records to retrieve
     value_filed: field to be used in pivot and statistics
@@ -1535,6 +1574,7 @@ def loadFromDb(sql, table_name="<NO_UPDATE_TABLE>", value_filed=None, base_recor
     lst=base_lst()
     lst.value_field = value_filed
     lst.base_table = table_name
+    lst.appMenu = app_menu
     #lst.sql = sql
     try:
           

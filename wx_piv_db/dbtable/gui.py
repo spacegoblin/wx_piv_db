@@ -72,7 +72,7 @@ class GuiEval(Base):
     view_id = Column(Integer,)
     id_parent = Column(Integer,)
     
-    incl_dblclick = Column(Boolean,)
+
     
     fieldnames = ['id', 'evalcode', 'description']
  
