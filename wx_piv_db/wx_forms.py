@@ -413,9 +413,9 @@ class MyGrid(wx.grid.Grid):
                     self.OnEvalCodeNoEvent(appM.dblClickCode, obj)
                     
                 
-                
+            wx.EndBusyCursor()    
             frame.Show(True)
-            wx.EndBusyCursor()
+            
             return False
         
         try:

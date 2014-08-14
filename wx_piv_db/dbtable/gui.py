@@ -103,6 +103,8 @@ class GuiView(Base):
     alc_import = Column(String(250))
     alc_qry = Column(Text)
     
+    incl_dblclick = Column(Boolean)
+    
     fieldnames = ['id', 'menutitle', 'tablename']
  
         
