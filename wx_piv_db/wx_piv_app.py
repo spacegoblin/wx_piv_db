@@ -31,7 +31,10 @@ import pprint
 #from flask.ext.sqlalchemy import SQLAlchemy
 #try:
 # from sqlalchemy import *
-from sqlalchemy import or_
+import sqlalchemy
+from sqlalchemy import or_, and_
+print sqlalchemy.__version__
+
 # from sqlalchemy import orm
 #except: pass
 import contextlib #did this as I dropped sqlalchemy in the dist folder and needed this import
@@ -368,10 +371,8 @@ class AppMenues(object):
             return self.incl_dblclick
         else: return False
 
-    def getDblClickCode(self):
-        print self.dicExecCodeById
-        return self.dicExecCodeById[self.incl_dblclick]
-        
+
+
         
 class AppSettings(object):
     """Class that holds the application settings.
@@ -380,6 +381,7 @@ class AppSettings(object):
         self.settings = {}  #event.Id and AppMenues() instance
         self.dic_gui_headmenu = {}  #rec.gui_menu = wx.Menu()
         self.dic_view_ids = {} #the ids = AppMenues()
+        self.dicExecCodeAll = {} #contains all execuatble code in the table over the view_ids example: {'32':[('title 1':'exec code'), '1': etc...]
         self.loadMenu()
 
     def __call__(self, eventId, atr):
@@ -463,13 +465,30 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         
         tmp_dic={}
         for rec in lst_eval:
+            #print "loaded eval ", rec
             tmp_dic[rec.id] = rec.evalcode.strip()
-            
+            self.dicExecCodeAll.setdefault(rec.view_id, []).append((rec.description, rec.evalcode.strip() ))
+        
+        #so now we have all the code in tuples on the view ids
+        #print self.dicExecCodeAll
+        
         for rec in lst:
             appMenues = self.dic_view_ids[rec.id]
             if appMenues.getDblClickId():
                 appMenues.dblClickCode = tmp_dic[appMenues.getDblClickId()]
                 
+                
+                
+        for k, v in self.dicExecCodeAll.items():
+            
+            mn = self.dic_view_ids.get(k)
+            
+            for t, z in v:
+                mn.dicExecCode[t] = z
+            
+           # print mn.dicExecCode
+
+    
 
             #appMenues.dicExecCode[rec.description] = rec.evalcode.strip()
             #appMenues.dicExecCodeById[rec.id] = rec.evalcode.strip()
@@ -480,7 +499,10 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
             
     def getAppMenu(self, view_id):
         "Returns the AppMenu object"
-        return self.dic_view_ids[view_id]
+        try:
+            return self.dic_view_ids[view_id]
+        except KeyError:
+            return None
                       
 class MDIPFrame(wx.MDIParentFrame):
     def __init__(self, app, db_name, gui_version):

@@ -807,16 +807,26 @@ class RecordList(object):
         else: pass #return self.dicExecCode
 
     def loadExecCode(self):
-        print "This has been refactored ..... loadExecCode "
-        #if self.view_id:
+        print "loadExecCode "
+#         print "self.view_id", self.view_id
+#         print self.appMenu
+#         print "self.appMenu.dicExecCodeById ", self.appMenu.dicExecCodeById
+#         print "self.appMenu.dicExecCode", self.appMenu.dicExecCode
+        
+        app = wx.GetApp()
+#         print app.MenuSetting.getAppMenu(self.view_id)
+#         
+#         print self.appMenu.getDblClickId()
+
+        
+        #raise
         self.dicExecCode = {}
         #print self.appMenu
-        for menu_k, m_eval in self.appMenu.dicExecCode.items():
-            self.dicExecCode[menu_k] = m_eval
+        if self.appMenu:
+            for menu_k, m_eval in self.appMenu.dicExecCode.items():
+                self.dicExecCode[menu_k] = m_eval
                 
-        print self.dicExecCode
-        
-        print "Returning True from loadExecCode"  
+
         return True
         
     def set(self, row, col, value):

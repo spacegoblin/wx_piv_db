@@ -352,27 +352,27 @@ class MyGrid(wx.grid.Grid):
         
     def OnDoubleClickCellLeft(self, event):
         print "OnDoubleClickCellLeft"
-        print self.parent.__class__.__name__
-        print self.parent.pivot_lst.__class__.__name__
+       # print self.parent.__class__.__name__
+       # print self.parent.pivot_lst.__class__.__name__
         
         row_num = event.GetRow()
         col_num = event.GetCol()
         wx.BeginBusyCursor()
         lst = False
         
-        print self.lst.view_id
+        print "self.lst.view_id", self.lst.view_id
         app = wx.GetApp()
-        print app.mdi_parent_frame.MenuSetting.dic_view_ids
+        #print app.mdi_parent_frame.MenuSetting.dic_view_ids
         
         try:
             #if pvt_getNode does not throw error
-            print "00 calling pvt_getNode"
+#             print "00 calling pvt_getNode"
             lst = self.parent.pivot_lst.pvt_getNode(row_num, col_num)
-            print "01 lst was collected in first try"
-            #lst.appMenu = self.parent.pivot_lst.appMenu
-            
-            print "02 appMenu", lst.appMenu
-            print "02 view_id", lst.view_id
+#             print "01 lst was collected in first try"
+#             #lst.appMenu = self.parent.pivot_lst.appMenu
+#             
+#             print "02 appMenu", lst.appMenu
+#             print "02 view_id", lst.view_id
             
         except:
             
@@ -381,40 +381,46 @@ class MyGrid(wx.grid.Grid):
             try:
                 field_name = self.lst.fieldnames[col_num]
                 obj.OnRecordDblClick(field_name, obj)
-                print "There has been defined an own method for the double click."
+                #print "There has been defined an own method for the double click."
  
                 wx.EndBusyCursor()
                 return True
             except GUICodeNotExisting:
                 pass
             
-            print "Open single form instead"
-            print self.parent.parent
+#             print "Open single form instead"
+#             print self.parent.parent
             
 
            # print unicode ( obj )
             #print self.lst.view_id
-            print "Fieldnames: ", self.lst.fieldnames
-            print '-----'
+#             print "Fieldnames: ", self.lst.fieldnames
+#             print '-----'
             
             #frame = FrmSingle(self.parent.parent, obj, self.lst)
+            frame = False
+            
             if self.parent.__class__.__name__=='Frm2':
                 frame = FrmSingle2(self.parent.parent, obj, self.lst.view_id, self.lst.fieldnames) #, self.lst)
             else:
-                frame = FrmSingle(self.parent.parent, obj, self.lst.view_id,  self.lst.fieldnames) #, self.lst)
+                #frame = FrmSingle(self.parent.parent, obj, self.lst.view_id,  self.lst.fieldnames) #, self.lst)
                 
                 
-                
-                if self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id).incl_dblclick:
-                    appM = self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id)
-                    print appM.dicExecCode
-
-                    #self.OnEvalCodeNoEvent(appM.dicExecCode['Alchemy Form'], obj)
-                    self.OnEvalCodeNoEvent(appM.dblClickCode, obj)
+                if self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id):
+                    if self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id).incl_dblclick:
+                        
+                        appM = self.parent.parent.MenuSetting.getAppMenu(self.lst.view_id)
+                        #print appM.dicExecCode
+    
+                        #self.OnEvalCodeNoEvent(appM.dicExecCode['Alchemy Form'], obj)
+                        self.OnEvalCodeNoEvent(appM.dblClickCode, obj)
+                else:
+                    frame = FrmSingle(self.parent.parent, obj, self.lst.view_id,  self.lst.fieldnames)
                     
                 
-            wx.EndBusyCursor()    
-            frame.Show(True)
+            wx.EndBusyCursor()
+            if frame: 
+                frame.Show(True)
             
             return False
         

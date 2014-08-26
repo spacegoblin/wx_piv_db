@@ -11,11 +11,13 @@ if '..//' not in sys.path:
     
     
 from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float, Boolean, Text
+from sqlalchemy import and_, or_
 
 from sqlalchemy.orm import relationship
 
 from dbtable import Base, getSession
- 
+
+from ahutils.record import RecordAlchemy, loadFromAlchemy, GUICodeNotExisting
     
 class CRM(Base):
     """Class for a single CRM Record."""
@@ -87,6 +89,10 @@ class CRM(Base):
         except:
             self._delivery_start3 = None
     delivery_start3 = property(getdelivery_start3, setdelivery_start3)
+    
+    def getSek(self):
+        return self.z_amount * 0.0085
+    sek = property(getSek)
         
     def __str__(self):
         """Return string representation"""
@@ -97,6 +103,7 @@ class CRM(Base):
  
 # Create an engine that stores data in the local directory's
 # sqlalchemy.db file.
+
 
     def copy(self):
         """create a copy of self"""
@@ -132,7 +139,14 @@ class CRM(Base):
     
 
 
-session = getSession()
+class CRMAlchemy(CRM, RecordAlchemy):
+    session = getSession()
+    
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()
+        
+    fieldnames = ['project_id', 'sek', 'z_amount', 'stage', 'text']
+
 
     
 from ahutils.utils import randomString
@@ -141,7 +155,8 @@ import csv
 
 def loadCSVFile(PATH):
     """Load a CRM file"""
-
+    #session = getSession()
+    
     reader = csv.reader(open(PATH, "rb"), delimiter=",")
     i=0
     lst = []
@@ -208,11 +223,17 @@ def loadCSVFile(PATH):
                    
 
 def test():
-    qry = session.query(CRM)
+    raise "Z test raise"
+    qry = CRMAlchemy.session.query(CRMAlchemy).filter(and_(CRMAlchemy.z_history==u'Current',
+                                                CRMAlchemy.ssc_main_party==u'ES - LSE Space GmbH',
+                                                ))
     print qry.all()
 
 if __name__=='__main__':
     import doctest
     doctest.testmod()
     #loadCSVFile(PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\crm_20140801_1200Hour.csv')
-    test()
+    #test()
+    
+    from wx_piv_app import main
+    main(None)

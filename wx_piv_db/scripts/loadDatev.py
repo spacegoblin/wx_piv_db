@@ -26,7 +26,7 @@ DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd.pwd('hetland'))
 
 #BL    Kontonummer    Datum    BU    Gegenkonto    Buchungstext    USt%    Belegfeld1    Umsatz Soll    Umsatz Haben    WKZ    Eingabebetrag    Kurs    Stapel-Nr.    BSNr.    HK    KOST1    KOST2    KOST-Menge    ZI
 
-CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1'] #, 'KOST2','KOST-Menge', 'ZI']
+CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1', 'KOST2','KOST-Menge', 'ZI']
         #   0         1            2      3          4              5           6          7             8               9          10          11          12          13        14       15    16
         
 
@@ -49,6 +49,7 @@ def run(FILE):
             dict_ = {}
             if i==0:
                 assert row==CSV_ROW, "%s" % row
+                i+=1
             else:
                 dict_['account_datev'] = row[1]
                 dict_['datum'] = helper( row[2] )
@@ -57,13 +58,13 @@ def run(FILE):
 
                 dict_['buchungstext'] = unicode(row[5], errors='ignore')  #.decode('utf-8').encode('utf-8')
                 dict_['ust'] = row[6]
-                dict_['belegfeld1'] = row[7]
+                dict_['belegfeld1'] = row[7].strip()
                 dict_['soll'] = row[8].replace(',', '')
                 dict_['haben'] = row[9].replace(',', '')
                 dict_['wkz'] = row[10]
                 #dict_['xx'] = row[11]
-                dict_['kurs'] = row[12]
-                dict_['stapel_nr'] = row[13]
+                dict_['kurs'] = row[12].strip()
+                dict_['stapel_nr'] = row[13].strip()
                 dict_['bsnr'] = row[14]
                 dict_['hk'] = row[15]
                 dict_['kost1'] = row[16]
@@ -76,25 +77,25 @@ def run(FILE):
                 
                 sql = db.dictToInsert(dict_, 'tbl_susa')
 
+                print sql
                 
                 DB.c.execute(sql)
                 DB.cnn.commit()
                 
-            i+=1         
+                i+=1        
 
     except:
         print 'line %d: %s' % (reader.line_num, sys.exc_info()[0] )
     
     finally:
-        print "DONE! %d records inserted" % i
+        print "DONE! %d records inserted" % (i-1)
 
 
 
 if __name__ == '__main__':
-    
-   # Z:\Reporting\2014\03-Mar\LSE
-   #Z:\Reporting\2014\05-May\LSE\v02\imp.csv
-    PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\v02\\imp.csv'
+   
+   #T:\Reporting\2014\07-Jul\LSE\v03
+    PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\v03\\imp.csv'
 
     run(PATH)
 

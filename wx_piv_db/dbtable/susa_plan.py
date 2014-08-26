@@ -98,11 +98,11 @@ class PlanSusa(Base):
 def getNewPlanPersonRecord():
     "One record for a plan person."
     new = PlanSusa()
-    new.account_datev = u'Plan record created Jul14'
-    new.kontobezeichnung_not_mdata = None
+    new.account_datev = u'Plan record 2015 created Sep14'
+    new.kontobezeichnung_not_mdata = u'Plan record 2015 created Sep14'
     new.soll = 0
     new.haben = 0
-    new.period = 201407
+    new.period = 201500
     new.datum = None
     new.bu = None
     new.gegenkonto = None
@@ -118,9 +118,9 @@ def getNewPlanPersonRecord():
     new.tmp = None
     new.id_parent = 0
     new.project_code = 0
-    new.comment = u'Person plan'
-    new.comment_2 = u'Person plan'
-    new.z_type = u'FC_F14v1'
+    new.comment = u'Plan 2015 people'
+    new.comment_2 = u'Plan 2015 people'
+    new.z_type = u'FC_P15v1'
     new.company = u'LSE IFRS'
     new.foreign_amount = 0
     new.pers_code = 0
