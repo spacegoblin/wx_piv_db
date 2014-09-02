@@ -482,9 +482,10 @@ WHERE tbl_users.username='%s' order by tbl_views.sorted""" % const.user
         for k, v in self.dicExecCodeAll.items():
             
             mn = self.dic_view_ids.get(k)
-            
-            for t, z in v:
-                mn.dicExecCode[t] = z
+            #print "dic_view_ids", mn
+            if mn:
+                for t, z in v:
+                    mn.dicExecCode[t] = z
             
            # print mn.dicExecCode
 
