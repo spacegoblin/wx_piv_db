@@ -13,7 +13,7 @@ if '..//' not in sys.path:
 from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
 from sqlalchemy.dialects.postgresql import NUMERIC
 from sqlalchemy.orm import relationship
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 from dbtable import Base, getSession
 from coa import Account
@@ -259,9 +259,28 @@ def showPersonGrid(wxParent, persCode):
     
     return MyGrid(wxParent, lst)
 
+def getDatevByBelegNr(belegnr):
+    print "getDatevByBelegNr"
+    
+    session = DatevAlchemy.session
+
+    import wx
+    from ahutils import record
+    from wx_forms import Frm
+    
+    qry = session.query(DatevAlchemy).filter(and_(DatevAlchemy.belegfeld1==unicode(belegnr),
+                                                  DatevAlchemy.company==unicode('LSE HGB')))
+    
+    lst = loadFromAlchemy(qry, DatevAlchemy)
+    lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
+    
+    app = wx.GetApp()
+    frame = Frm(app.mdi_parent_frame, lst)
+    frame.Show()
+    
 
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-
-    test('00159')
+    getDatevByBelegNr('I-2014-055')
+    #test('00159')
