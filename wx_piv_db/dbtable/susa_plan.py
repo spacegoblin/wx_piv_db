@@ -15,6 +15,7 @@ from sqlalchemy.dialects.postgresql import NUMERIC
 
 from sqlalchemy.orm import relationship
 from dbtable import Base, getSession
+from ahutils.record import RecordAlchemy, loadFromAlchemy
  
     
 class PlanSusa(Base):
@@ -50,11 +51,12 @@ class PlanSusa(Base):
     foreign_amount = Column(NUMERIC(20,2),)
     pers_code = Column(Unicode(255),)
     
-    fieldnames = ['id', 'account_datev', 'amount', 'period']
-        
+    fieldnames = ['id', 'account_datev', 'amount', 'period', 'buchungstext', 'project_code', 'z_type', 'company', 'pers_code']
+    
+
 
     def __str__(self):
-        return "%s %.2f" % (self.account_datev, self.amount)
+        return "Account: %s for %d %.2f" % (self.account_datev, self.period, self.amount)
     
     def getAmount(self):
         return self.soll - self.haben
@@ -94,7 +96,13 @@ class PlanSusa(Base):
         return cp
     
     
-
+class PlanSusaAlchemy(PlanSusa, RecordAlchemy):
+    session = getSession()
+    
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()
+           
+    
 def getNewPlanPersonRecord():
     "One record for a plan person."
     new = PlanSusa()
@@ -120,17 +128,56 @@ def getNewPlanPersonRecord():
     new.project_code = 0
     new.comment = u'Plan 2015 people'
     new.comment_2 = u'Plan 2015 people'
-    new.z_type = u'FC_P15v1'
+    new.z_type = u'PB_15v1'
     new.company = u'LSE IFRS'
     new.foreign_amount = 0
     new.pers_code = 0
     return new
         
-                   
+def copyRecordToPlanBase(obj):
+    print "copyRecordToPlanBase"
+    new = PlanSusa()
+
+    new.account_datev = obj.account_datev
+    new.kontobezeichnung_not_mdata = obj.kontobezeichnung_not_mdata
+    new.soll = obj.soll
+    new.haben = obj.haben
+    new.period = 201500
+    new.datum = None
+    new.bu = None
+    new.gegenkonto = obj.gegenkonto
+    new.buchungstext = obj.buchungstext
+    new.ust = None
+    new.belegfeld1 = None
+    new.wkz = None
+    new.kurs = None
+    new.stapel_nr = None
+    new.bsnr = None
+    new.hk = None
+    new.kost1 = None
+    new.tmp = None
+    new.id_parent = 0
+    new.project_code = obj.project_code
+    new.comment = obj.comment
+    new.comment_2 = obj.comment_2
+    new.z_type = u'PB_15_Base'
+    new.company = u'LSE IFRS'
+    new.foreign_amount = 0
+    new.pers_code = obj.pers_code
+    
+    session = getSession()
+    session.add(new)
+    session.commit()
+    
+    return new
+
+ 
+                 
 
 def test():
-    session = getSession()
-    qry = session.query(PlanSusa)
+
+    session = PlanSusaAlchemy.session
+    qry = session.query(PlanSusaAlchemy)
     print qry.first()
 
 if __name__=='__main__':

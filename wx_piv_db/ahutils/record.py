@@ -1306,8 +1306,9 @@ class RecordList(object):
         #print "self.view_id", self.view_id
         newRecordList = RecordList()
 
-        print "a"
+
         try:
+            print "by"
             #Here we get the result of one "cell"
             if len(self.pivot_data[:-1]) == row:
                 if len(self.pvt_data[row-1])==col:
@@ -1322,15 +1323,25 @@ class RecordList(object):
                                 newRecordList.view_id = copy.deepcopy(instances.view_id)
                                 
                                 newRecordList.extend(instances)
+                                print "by"
+                        
+                            print "bx"
+                        print "bxx"
                     print "b"
                     return newRecordList
-            print "c"            
+                print "bb"
+           
+            else:
+                print "pass in else"
+                pass
             return self.pvt_data[row][col]
+
         except IndexError:
             #print "Index error was there2", row, col
             #newRecordList = RecordList()
-
+            print "ex"
             try:
+                print "e"
                 #here is the right column result
                 if len(self.pvt_data[row])<len(self.pivot_data[row]):
                     #print "here is the right column result"
@@ -1346,8 +1357,12 @@ class RecordList(object):
                             newRecordList.view_id = copy.deepcopy(instances.view_id)
                             
                             newRecordList.extend(instances)
+                            print "d"
+                        print "d"
                     print "d"
+                print "d"
             except IndexError:
+                print "e"
                 if len(self.pvt_data)<len(self.pivot_data):
                     #bottom column result
                     #print "len(self.pvt_data)<len(self.data)"
@@ -1360,6 +1375,8 @@ class RecordList(object):
                             newRecordList.sql = copy.deepcopy(instances.sql)
                             newRecordList.view_id = copy.deepcopy(instances.view_id)
                             newRecordList.extend(instances) 
+                            print "e"
+                        print "e"
                     print "e"
                 print "f"
             print "I would like to set appMenu here!!!"

@@ -3,6 +3,7 @@
 
 
 import wx
+print wx.version() 
 import wx.aui
 from mygridtable_v2 import MyGridTable #, MyGridTableAlchemy
 import wx.lib.gridmovers as gridmovers
@@ -693,6 +694,8 @@ Would you like to set the table in update mode?""",
         frame = FrmSingle(self.parent.parent, obj, self.lst.view_id) #, self.lst)
         frame.Show(True)
 
+
+        
 
     def OnEvalCode(self, event):
         print "wx_forms MyGrid() OnEvalCode"
@@ -1474,7 +1477,13 @@ The data was NOT inserted.''',
         event.Skip()
         
 
-                  
+
+def showSingleFormObj(obj):
+    print "showSingleFormObj"
+    app = wx.GetApp()
+    frame = FrmSingle2(None, obj, None) #, self.lst)
+    frame.Show(True)
+                          
 class FrmSingle(wx.MDIChildFrame):
     """Displays a record object."""
     #def __init__(self, parent, obj, lst):

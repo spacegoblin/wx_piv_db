@@ -94,8 +94,8 @@ def run(FILE):
 
 if __name__ == '__main__':
    
-   #T:\Reporting\2014\07-Jul\LSE\v03
-    PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\v03\\imp.csv'
+   #T:\Reporting\2014\08-Aug\LSE
+    PATH='T:\\Reporting\\2014\\08-Aug\\LSE\\imp2.csv'
 
     run(PATH)
 
