@@ -979,7 +979,7 @@ class FrmMixInn(object):
         
     def OnXlsExport(self, event):
         """Export the contents of the grid into an xls sheet."""
-
+        print "OnXlsExport in wx_forms"
         
         rightCol = len(self.grid.lst.fieldnames)
 # try:
@@ -1016,6 +1016,9 @@ class FrmMixInn(object):
             dlg = wx.MessageDialog(self, "An exception with following message was generated:\n %s" % str(e),
                                'Application message.',
                                wx.OK | wx.ICON_INFORMATION)
+            print """Hint! If the xls sheet name in config is wrong you could end up here in the code.
+            For example if you have German settings and a new xls sheet is named Tabelle1 but Sheet1 is in the
+            config definitions you will have this error."""
             dlg.ShowModal()
             dlg.Destroy()
         finally:
@@ -1077,6 +1080,7 @@ class FrmMixInn(object):
         
         #self.SetTopWindow(self.frame)
         
+
                        
 class FrmMathCalcHlp(wx.MDIChildFrame, CtrWCloseUtil):
     """Form that collects information on what operations to do on a list of record objects."""

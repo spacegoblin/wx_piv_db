@@ -520,6 +520,15 @@ class MDIPFrame(wx.MDIParentFrame):
         self.Bind(wx.EVT_CLOSE, self.OnExit)
         Db.db_name = const.odbc_dsn
         wx.MDIParentFrame.SetIcon(self, ssc_logo_2.getssc_logo_Icon())
+
+        #Set a choice for how you would like to open
+        #a form in the GUI. Either inside the main frame or outside of it
+        #use F8 to make the choice
+        self.FRM_CHOICE = True
+        ID_FRMCHOICE = wx.NewId()
+        wx.EVT_MENU(self, ID_FRMCHOICE, self.setFormChoice)
+        self.acceltbl = wx.AcceleratorTable( [(wx.ACCEL_NORMAL, wx.WXK_F8, ID_FRMCHOICE)] ) 
+        self.SetAcceleratorTable(self.acceltbl)
         
     def addMenuItem(self, title, method, helpText='', options=None):
         id_ = wx.NewId()
@@ -622,8 +631,13 @@ the event method of the menu item."""
                 pivot_row = self.MenuSetting(event.Id, 'pivotrow') 
                 pivot_amount = self.MenuSetting(event.Id, 'pivotvalue') 
                 lst.pivot(pivot_row, pivot_head, pivot_amount)
-    
-            frame = Frm(self, lst, menutitle)
+            
+            if not self.FRM_CHOICE:
+                print "not from coice"
+                frame = Frm(self, lst, menutitle)
+            else:
+                
+                frame = Frm2(self, lst, menutitle)
         else:
             frame = False
             
@@ -773,7 +787,11 @@ the event method of the menu item."""
         frame.Show()
         evt.Skip()
 
-
+    def setFormChoice(self, event):
+        if self.FRM_CHOICE:
+            self.FRM_CHOICE = False
+        else:
+            self.FRM_CHOICE = True
        
 class App(wx.App):
     
@@ -858,9 +876,9 @@ def main(argv):
         
     from ahutils.record import loadFromDb, WhichDb_v3, loadFromAlchemy
     
-    from wx_forms import Frm, GenericMsgDlg
+    from wx_forms import Frm, Frm2, GenericMsgDlg
     
-    global const, loadFromDb, loadFromAlchemy, WhichDb_v3, Frm, GenericMsgDlg #, GuiDbVersion MyUser,
+    global const, loadFromDb, loadFromAlchemy, WhichDb_v3, Frm, Frm2, GenericMsgDlg #, GuiDbVersion MyUser,
 
     app = App(False)
     #app = App(True, 'C:\\Users\\111625\\Desktop\\temp\\redirect_wx_rccl.txt')
