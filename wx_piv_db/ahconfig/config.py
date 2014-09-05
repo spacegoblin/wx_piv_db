@@ -11,38 +11,7 @@ if '..//' not in sys.path:
 from ahutils import pwd
 
 
-# cfg = ConfigParser()
-# 
-# try:
-#     cfg.read('./config.cfg')
-# except IOError:
-#     print "IOError"
-#     cfg.read('../ahconfig/config.cfg')
-#  
-# finally:
-#     const.host=cfg.get('host', 'host')
-#     const.db_lst_dsn=cfg.get('database', 'database')
-#     const.gui_user=cfg.get('user', 'user')
-#     
-
-#loading the menues from config
-
-#id    menutitle    tablename    sql    view_type    pivothead    pivotrow    pivotvalue    gui_menu    comment    sorted    id_parent    username, , tbl_users_view.view_id
-# const.gui_menues_tpl = [(1, 'menutitle', 'tablename', 'SQL', 'PIVOT', 'pivothead',  'pivotrow', 'pivotvalue', 'gui_menu', 'comment', 0, 0, 'ahetland', 0),
-#                         
-#                         ]
-
-# const.db_lst_dsn=cfg.get('active_database', 'db_lst_dsn')
-# 
-# const.gui_user=cfg.get('user', 'gui_user')
-# const.gui_pwd=decrypt(cfg.get('user', 'gui_pwd'), 'rccl')
-# 
-# const.conpath = cfg.get('path', 'conpath')
-# 
-# 
-# const.alchemy_engine_rcldb = 'postgres://%s:%s@%s:5432/rcl_db' % (const.gui_user, const.gui_pwd, const.host)
-
-const.SHEET_NAME = 'Sheet1'
+const.SHEET_NAME = 'Sheet1'     #'Tabelle1' this can cause annoying error 
 
 const.host='192.168.1.91'
 #const.host='localhost'

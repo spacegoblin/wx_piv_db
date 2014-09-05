@@ -153,6 +153,8 @@ from ahutils.utils import randomString
 random_str = randomString()
 import csv
 
+session = getSession()
+
 def loadCSVFile(PATH):
     """Load a CRM file"""
     #session = getSession()
@@ -232,7 +234,7 @@ def test():
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    #loadCSVFile(PATH='T:\\Reporting\\2014\\07-Jul\\LSE\\crm_20140801_1200Hour.csv')
+    loadCSVFile(PATH='C:\\ocra_export\\ocra_07-08_2014\\crm_20140904_1500Hour.csv')
     #test()
     
     from wx_piv_app import main

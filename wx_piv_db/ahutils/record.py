@@ -703,6 +703,7 @@ class RecordList(object):
     def getXlsTable(self):
         """The table returns the data, as self returns
         object records."""
+        print "method getXlsTable in RecordList"
         tmp = []
         tmp.append(tuple(self.fieldnames))
         for obj in self.data:
@@ -730,6 +731,8 @@ class RecordList(object):
     
     def xls(self):
         """Export the contents of the grid into an xls sheet."""
+        print "method xls in RecordList"
+        raise("not in use?")
         assert len(self.fieldnames) > 1 #or else we get a bad list 
         from win32com.client import Dispatch
         xlApp = Dispatch('Excel.Application')
@@ -1308,7 +1311,7 @@ class RecordList(object):
 
 
         try:
-            print "by"
+            #print "by"
             #Here we get the result of one "cell"
             if len(self.pivot_data[:-1]) == row:
                 if len(self.pvt_data[row-1])==col:
@@ -1323,13 +1326,13 @@ class RecordList(object):
                                 newRecordList.view_id = copy.deepcopy(instances.view_id)
                                 
                                 newRecordList.extend(instances)
-                                print "by"
+                                #print "by"
                         
-                            print "bx"
-                        print "bxx"
-                    print "b"
+                            #print "bx"
+                        #print "bxx"
+                    #print "b"
                     return newRecordList
-                print "bb"
+                #print "bb"
            
             else:
                 print "pass in else"
@@ -1341,7 +1344,7 @@ class RecordList(object):
             #newRecordList = RecordList()
             print "ex"
             try:
-                print "e"
+                print "ex"
                 #here is the right column result
                 if len(self.pvt_data[row])<len(self.pivot_data[row]):
                     #print "here is the right column result"
@@ -1357,12 +1360,12 @@ class RecordList(object):
                             newRecordList.view_id = copy.deepcopy(instances.view_id)
                             
                             newRecordList.extend(instances)
-                            print "d"
-                        print "d"
-                    print "d"
-                print "d"
+                            #print "d"
+                        #print "d"
+                    #print "d"
+                #print "d"
             except IndexError:
-                print "e"
+                #print "e"
                 if len(self.pvt_data)<len(self.pivot_data):
                     #bottom column result
                     #print "len(self.pvt_data)<len(self.data)"
@@ -1375,11 +1378,11 @@ class RecordList(object):
                             newRecordList.sql = copy.deepcopy(instances.sql)
                             newRecordList.view_id = copy.deepcopy(instances.view_id)
                             newRecordList.extend(instances) 
-                            print "e"
-                        print "e"
-                    print "e"
-                print "f"
-            print "I would like to set appMenu here!!!"
+                            #print "e"
+                        #print "e"
+                    #print "e"
+                #print "f"
+            #print "I would like to set appMenu here!!!"
 #             
 #             newRecordList.appMenu = self.appMenu
 #             
