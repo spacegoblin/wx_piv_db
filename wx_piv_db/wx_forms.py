@@ -520,7 +520,10 @@ for all records in this set. The changes are in reversable. Would you like to pr
         query.view_id = self.parent.pivot_lst.view_id
         query.value_field = self.parent.pivot_lst.value_field
         #query.loadExecCode()
-        frm = Frm(self.parent.parent, query)
+        try:
+            frm = Frm(self.parent.parent, query)
+        except TypeError:
+            frm = Frm2(self.parent, query)
         frm.Show()
 # else: pass
 # event.Skip()

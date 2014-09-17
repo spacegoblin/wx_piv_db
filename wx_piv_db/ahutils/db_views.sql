@@ -517,12 +517,12 @@ CREATE OR REPLACE VIEW public.qry_crm (
     z_amount,
     z_comment,
     zz_type,
-    base_table)
+    base_table,
+    )
 AS
 SELECT tbl_ssccrm.id, tbl_ssccrm.project_id, tbl_ssccrm.stage, tbl_ssccrm.text,
     tbl_ssccrm.z_partner_adj, tbl_ssccrm.ssc_main_party, tbl_ssccrm.z_year, tbl_ssccrm.z_amount, tbl_ssccrm.z_comment, 'CRM'::text AS zz_type, 'tbl_ssccrm'::text AS base_table
 FROM tbl_ssccrm tbl_ssccrm
-WHERE tbl_ssccrm.z_year = 2014 AND tbl_ssccrm.z_history::text = 'Current'::text
 UNION
 SELECT qry_susa_fcst_c.id, qry_susa_fcst_c.project_code AS project_id,
     qry_susa_fcst_c.z_type AS stage, ''::character varying AS text, qry_susa_fcst_c.partner_name AS z_partner_adj, 'ES - LSE Space GmbH'::character varying AS ssc_main_party, 

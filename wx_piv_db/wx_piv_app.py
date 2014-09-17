@@ -524,7 +524,7 @@ class MDIPFrame(wx.MDIParentFrame):
         #Set a choice for how you would like to open
         #a form in the GUI. Either inside the main frame or outside of it
         #use F8 to make the choice
-        self.FRM_CHOICE = True
+        self.FRM_CHOICE = False
         ID_FRMCHOICE = wx.NewId()
         wx.EVT_MENU(self, ID_FRMCHOICE, self.setFormChoice)
         self.acceltbl = wx.AcceleratorTable( [(wx.ACCEL_NORMAL, wx.WXK_F8, ID_FRMCHOICE)] ) 
