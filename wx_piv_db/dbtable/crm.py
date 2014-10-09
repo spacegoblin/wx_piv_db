@@ -55,11 +55,15 @@ class CRM(Base):
     def getdate(self):
         return self._date
     def setdate(self, val):
-        try:
+        
+
+        if type(val)==datetime.datetime:
+            self._date = val
+        elif type(val)==str:
             self._date = datetime.datetime.strptime(val, '%d/%m/%Y')
-        except:
-            print val, "did not enter as date"
-            self._date = None
+        else:
+            raise
+
     date = property(getdate, setdate)
     
           
@@ -99,12 +103,6 @@ class CRM(Base):
         
         return "%s Project: %s" % (self.z_type, self.project_id) 
     
-
- 
-# Create an engine that stores data in the local directory's
-# sqlalchemy.db file.
-
-
     def copy(self):
         """create a copy of self"""
         obj = CRM()
@@ -144,7 +142,39 @@ class CRMAlchemy(CRM, RecordAlchemy):
     
     def __init__(self):
         super(RecordAlchemy, self).__init__()
+
+    def copy(self):
+        """create a copy of self"""
+        obj = CRMAlchemy()
+        # obj.id = None since it has not been inserted into db 
+        obj.sale_id  =  self.sale_id
+        obj.project_id  =  self.project_id
+        obj.date  =  self.date
+        obj.stage  =  self.stage
+        obj.text  =  self.text
+        obj.organization  =  self.organization
+        obj.user_id  =  self.user_id
+        obj.status  =  self.status
+        obj._delivery_start  =  self.delivery_start
+        obj.amount  =  self.amount
+        obj.delivery_start2  =  self.delivery_start2
+        obj.amount2  =  self.amount2
+        obj.delivery_start3  =  self.delivery_start3
+        obj.amount3  =  self.amount3
+        obj.ssc_main_party  =  self.ssc_main_party
+        obj.z_random_str  =  self.z_random_str
+        obj.z_type  =  None
+        obj.z_year = None
+        obj.z_amount = None
+        obj.z_history = self.z_history
+        obj.z_comment = self.z_comment
+        obj.include_in_revenue_plan = self.include_in_revenue_plan
         
+        obj.sale_type = self.sale_type
+        obj.currency_desc = self.currency_desc
+    
+        return obj
+            
     fieldnames = ['project_id', 'sek', 'z_amount', 'stage', 'text']
 
 
@@ -204,6 +234,7 @@ def loadCSVFile(PATH):
                 cp.z_amount = crm.amount
                 cp.z_type = 'Generated'
                 session.add(cp)
+                print cp.date
 
             if crm.delivery_start2:
                 cp = crm.copy()
@@ -211,14 +242,15 @@ def loadCSVFile(PATH):
                 cp.z_amount = crm.amount2
                 cp.z_type = 'Generated'
                 session.add(cp)
-
+                print cp.date
+                
             if crm.delivery_start3:
                 cp = crm.copy()
                 cp.z_year = crm.delivery_start3.year
                 cp.z_amount = crm.amount3
                 cp.z_type = 'Generated'
                 session.add(cp)
-                                                        
+                print cp.date                                     
         i+=1
 
     session.commit()
@@ -234,7 +266,7 @@ def test():
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    loadCSVFile(PATH='C:\\ocra_export\\ocra_07-08_2014\\crm_20140904_1500Hour.csv')
+    loadCSVFile(PATH='T:\\Reporting\\2014\\09-Sep\\LSE\\crm_20141007.csv')
     #test()
     
     from wx_piv_app import main

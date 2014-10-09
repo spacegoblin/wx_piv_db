@@ -30,6 +30,7 @@ class Person(Base):
     last_name = Column(Unicode(255),)
     comment = Column(Unicode(255),)
     run_update = Column(Boolean,)
+    start_stop = Column(Unicode(255),)
 
     def getFullName(self):
         if self.id>1:
@@ -77,7 +78,9 @@ class PersonStdCost(Base):
     person = relationship("Person", lazy='joined')
     account = relationship("Account", lazy='joined') 
     
-    fieldnames = ['code', 'full_name', 'account_datev', 'amount']
+    fieldnames = ["id", "code", "account_datev", "amount", "comment", "p_code_weight", "project_code", "full_name"]
+    
+
     
     def getFullName(self):
         return self.person.full_name
@@ -96,21 +99,44 @@ class PersonAndStdCost(Person):
     related = relationship(PersonStdCost)
     
     def __str__(self):
-        return "PersonAndStdCost object: %s %s %s" % (self.code, self.first_name, self.last_name) 
+        return "PersonAndStdCost() object: %s %s %s\n____________________" % (self.code, self.first_name, self.last_name) 
     
     def __iter__(self):
         for x in self.related:
             yield x
-               
+    
+class PersonStdCostAlchemy(PersonStdCost, RecordAlchemy):
+    session = getSession()
+    
+    def __init__(self):
+        super(RecordAlchemy, self).__init__()   
+    
+    def OnRecordDblClick(self, field_name, obj):
+        raise         
 
 def test():
     session = getSession()
-    qry = session.query(PersonAndStdCost)
+    qry = session.query(PersonStdCostAlchemy)
     #print qry.all()
     o = qry.get('159')
     print o
     for cost in o:
-        print cost.dict()
+        print cost
+        
+def showPersonStdCost(persCode):
+    """Show the person within the GUI"""
+    session = PersonStdCostAlchemy.session
+    import wx
+
+    from wx_forms import Frm
+    
+    qry = session.query(PersonStdCostAlchemy).filter(PersonStdCostAlchemy.code==unicode(persCode))
+    lst = loadFromAlchemy(qry, PersonStdCostAlchemy)
+    #lst.pivot(['fin_statement', 'account_datev', 'name_datev'], ['period'], 'amount')
+    
+    app = wx.GetApp()
+    frame = Frm(app.mdi_parent_frame, lst)
+    frame.Show()
         
 def testMixInn():
     "Testing the alchemy mix inn class"
@@ -136,5 +162,5 @@ def testMixInn():
 if __name__=='__main__':
     import doctest
     doctest.testmod()
-    testMixInn()
+    test()
     

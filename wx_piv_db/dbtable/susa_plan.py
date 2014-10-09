@@ -100,7 +100,7 @@ class PlanSusaAlchemy(PlanSusa, RecordAlchemy):
     session = getSession()
     
     def __init__(self):
-        super(RecordAlchemy, self).__init__()
+        super(PlanSusaAlchemy, self).__init__()
            
     
 def getNewPlanPersonRecord():

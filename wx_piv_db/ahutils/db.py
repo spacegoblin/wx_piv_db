@@ -3,6 +3,7 @@
 import psycopg2
 from psycopg2.extensions import QuotedString
 import datetime
+import pywintypes
 from string import join, replace
 import decimal
 
@@ -151,7 +152,11 @@ def _quoteNone(string):
     """
 
     if string:
-        return string.replace("'", "''")
+        try:
+            return string.replace("'", "''")
+        except AttributeError:
+            print "AttributeError:-", string, "-printed"
+            raise AttributeError
     else:
         return string
             
@@ -187,7 +192,9 @@ def dictToInsert(dict, tablename):
         elif typ == datetime.date:
             db_values.append("'" + value.strftime('%Y-%m-%d') + "'")
         elif typ == datetime.datetime:
-            db_values.append("'" + value.strftime('%Y-%m-%d') + "'") 
+            db_values.append("'" + value.strftime('%Y-%m-%d') + "'")
+        elif (typ == pywintypes.TimeType):
+            db_values.append( "'%s-%s-%s'" % (value.year, value.month, value.day) )
         elif typ == int:
             db_values.append(repr(value))
         elif typ == float:
@@ -299,9 +306,18 @@ def test():
     for r in Db.selectSQL(sql).all():
         print r
              
+
+def run():
+    "Run the main program from here."
+    import sys
+    from wx_piv_app import main
+    main(sys.argv)
+
+
+    
 if __name__=='__main__':
     
-    test()
+    run()
 
     
     

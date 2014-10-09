@@ -14,7 +14,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Unicode, Date, Float
 from sqlalchemy.orm import relationship
 from dbtable import Base, getSession
  
- 
+from ahutils.record import RecordAlchemy
     
 class CostCode(Base):
     """Base class for a cost codes and project standing data."""
@@ -41,16 +41,22 @@ class CostCode(Base):
     payment_terms = Column(Unicode(255),)
     cc_ssc_function = Column(Unicode(255),)
     p_mgr = Column(Unicode(255),)
-
-    
-    fieldnames = ['id', 'costcenternr', 'project_code', 'description']
+    default_datev_acc = Column(Unicode(255),)
+    default_datev_ggkonto = Column(Unicode(255),)
         
     def __str__(self):
-        """Return string representation"""        
-        return "Code: %s Nr.: %s \n%s\n-------------------------" % (self.project_code, self.costcenternr, self.description) 
+        """class CostCode():"""        
+        return "CostCode(): %s Nr.: %s \n%s\n-------------------------" % (self.project_code, self.costcenternr, self.description) 
 
 
-
+class CostCodeAlchemy(CostCode, RecordAlchemy):
+    
+    session = getSession()
+    
+    fieldnames = ['id', 'costcenternr', 'project_code', 'description']
+    
+    def __init__(self):
+        super(CostCodeAlchemy, self).__init__()
        
 def show():
     session = getSession()
@@ -73,7 +79,7 @@ def test():
     from ahutils import record
     from wx_forms import Frm2
     
-    lst = record.loadFromAlchemy(qry, CostCode)
+    lst = record.loadFromAlchemy(qry, CostCodeAlchemy)
     
     import wx
 

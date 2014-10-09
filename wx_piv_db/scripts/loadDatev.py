@@ -26,7 +26,8 @@ DB = db.This_Db(const.db_lst_dsn, 'ahetland', pwd.pwd('hetland'))
 
 #BL    Kontonummer    Datum    BU    Gegenkonto    Buchungstext    USt%    Belegfeld1    Umsatz Soll    Umsatz Haben    WKZ    Eingabebetrag    Kurs    Stapel-Nr.    BSNr.    HK    KOST1    KOST2    KOST-Menge    ZI
 
-CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 'KOST1', 'KOST2','KOST-Menge', 'ZI']
+CSV_ROW = ['BL', 'Kontonummer', 'Datum', 'BU', 'Gegenkonto', 'Buchungstext', 'USt%', 'Belegfeld1', 'Umsatz Soll', 'Umsatz Haben', 'WKZ', 'Eingabebetrag', 'Kurs', 'Stapel-Nr.', 'BSNr.', 'HK', 
+                                'KOST1', 'KOST2','KOST-Menge', 'ZI']
         #   0         1            2      3          4              5           6          7             8               9          10          11          12          13        14       15    16
         
 
@@ -48,7 +49,11 @@ def run(FILE):
         for row in reader:
             dict_ = {}
             if i==0:
-                assert row==CSV_ROW, "%s" % row
+                try:
+                    assert row==CSV_ROW, "%s" % row
+                except AssertionError:
+                    print row
+                    raise
                 i+=1
             else:
                 dict_['account_datev'] = row[1]
@@ -95,7 +100,7 @@ def run(FILE):
 if __name__ == '__main__':
    
    #T:\Reporting\2014\08-Aug\LSE
-    PATH='T:\\Reporting\\2014\\08-Aug\\LSE\\v02\\imp.csv'
+    PATH='T:\\Reporting\\2014\\09-Sep\\LSE\\v02\\imp.csv'
 
     run(PATH)
 

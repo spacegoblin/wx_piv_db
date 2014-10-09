@@ -603,10 +603,14 @@ class RecordList(object):
     def __getitem__(self, index):
         "Returns object by index in self.data"
         if self.isPivoted:
-            print "isPivoted"
-            raise ("Why would I want to use this, gets ugly with SQLAlchemy ... ")
+            print """This is not used often, only when I want to have a Record() object when this class has been pivoted
+            this does begg for a better solution and would be good to get rid of.... if the exception is used more often 
+            then I might have to reconsider.
+            Is this only used when i get CRUST? I use this to put the record in scope.
+            """
             return self.pivot_data[index]
         else:
+            #print ("See comment above, is this used only when I call CRUST?")
             return self.data[index]
     
     def __len__(self):

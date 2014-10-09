@@ -91,7 +91,7 @@ class DatevPanel(wx.Panel):
         
         datum_txt = wx.StaticText(self, -1, 'Date: %s' % (self.obj.datum), size=(TXT_SIZE_LNGTH, TXT_SIZE_HIGH))
         stapel_txt = wx.StaticText(self, -1, 'Stapel nr.: %s' % (self.obj.stapel_nr), size=(TXT_SIZE_LNGTH, TXT_SIZE_HIGH))
-        beleg_txt = wx.StaticText(self, -1, 'Belegfeld: %s' % (self.obj.belegfeld1), size=(TXT_SIZE_LNGTH, TXT_SIZE_HIGH))
+        beleg_txt = wx.TextCtrl(self, -1, 'Belegfeld: %s' % (self.obj.belegfeld1), size=(TXT_SIZE_LNGTH, TXT_SIZE_HIGH))
         
        # bsizer_2.Add(buchungstext_2, 0, wx.TOP|wx.LEFT, 0)
 

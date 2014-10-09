@@ -3,6 +3,7 @@
 
 
 import wx
+import wx.lib.agw.genericmessagedialog as GMD
 print wx.version() 
 import wx.aui
 from mygridtable_v2 import MyGridTable #, MyGridTableAlchemy
@@ -141,7 +142,7 @@ class MyGrid(wx.grid.Grid):
         
         self.Bind(wx.grid.EVT_GRID_CMD_LABEL_LEFT_CLICK, self.OnClickCol)
         self.Bind(wx.grid.EVT_GRID_CELL_RIGHT_CLICK, self.OnRightClick)
-        self.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self.OnUpdate_v02)
+        self.Bind(wx.grid.EVT_GRID_CELL_CHANGE, self.OnUpdate_v03)
         self.Bind(wx.grid.EVT_GRID_LABEL_RIGHT_CLICK, self.OnRightClickCol)
         
         self.Bind(wx.grid.EVT_GRID_LABEL_LEFT_DCLICK, self.OnLblLeftDbClick)
@@ -158,7 +159,7 @@ class MyGrid(wx.grid.Grid):
         #a = m.Append(-1, "Data")
         b = m.Append(-1, "Search data")
         c = m.Append(-1, "Append copy")
-        d = m.Append(-1, "Reduce data")
+        d = m.Append(-1, "Set filter")
         #e = m.Append(-1, "Insert")
         f = m.Append(-1, "SQL query")
         g = m.Append(-1, "Single view")
@@ -206,7 +207,7 @@ class MyGrid(wx.grid.Grid):
         #self.Bind(wx.EVT_MENU, self.OnDoSmth, a)
         self.Bind(wx.EVT_MENU, self.OnSearch, b)
         self.Bind(wx.EVT_MENU, self.OnAppendCopy, c)
-        self.Bind(wx.EVT_MENU, self.OnReduceData, d)
+        self.Bind(wx.EVT_MENU, self.OnSetFilterTo, d)
         #self.Bind(wx.EVT_MENU, self.OnInsert, e)
         self.Bind(wx.EVT_MENU, self.OnSQLQuery, f)
         self.Bind(wx.EVT_MENU, self.OnSingleForm, g)
@@ -282,7 +283,8 @@ class MyGrid(wx.grid.Grid):
         self.hasFocus = False
         event.Skip()
         
-
+    def debugTest(self, event):
+        print "Event debug fired %s" % event
     
     def OnSelectCell(self, evt):
        # print "OnSelectCell"
@@ -519,7 +521,7 @@ for all records in this set. The changes are in reversable. Would you like to pr
         query = loadFromDb(sql, obj.base_table)
         query.view_id = self.parent.pivot_lst.view_id
         query.value_field = self.parent.pivot_lst.value_field
-        #query.loadExecCode()
+        query.loadExecCode()
         try:
             frm = Frm(self.parent.parent, query)
         except TypeError:
@@ -529,32 +531,38 @@ for all records in this set. The changes are in reversable. Would you like to pr
 # event.Skip()
                 
     def OnUpdate_v02(self, event):
+        print "OnUpdate_v02"
         row_num = self.GetGridCursorRow()
         col_num = self.GetGridCursorCol()
         label = self.GetColLabelValue(col_num)
         obj = self.lst[row_num]
         app = wx.GetApp()
-
+        
         if not self.UPDATE_ALLOWED:
-
+            print "if not self.UPDATE_ALLOWED: %s" % self.UPDATE_ALLOWED
+            
             dlg = wx.MessageDialog(self, """You are about to make an update.
 Would you like to set the table in update mode?""",
                                'Database message.',
                                wx.YES_NO | wx.YES_DEFAULT |
                         wx.ICON_QUESTION)
+            
             val = dlg.ShowModal()
             
             dlg.Destroy()
             
-            self.parent.Raise() #the bug that Alex had I also received with upgrade to version 3.0 ... this should solve it.
+            #self.parent.Raise() #the bug that Alex had I also received with upgrade to version 3.0 ... this should solve it.
             
             wx.BeginBusyCursor()
             if val==wx.ID_YES:
+                print "if val==wx.ID_YES:"
                 busy = wx.BusyInfo("Inserting data ...")
                 
                 self.UPDATE_ALLOWED = True
 
                 upd = obj.update(str(label))
+                
+                print "upd = obj.update(str(label)): %s" % upd
                 
                 if upd:
                     #helper hack so that we can double click
@@ -571,12 +579,15 @@ Would you like to set the table in update mode?""",
                 
                 #event.Skip()
             else:
+                print "self.UPDATE_ALLOWED = False"
                 self.UPDATE_ALLOWED = False
         else:
+            print "ELSE self.UPDATE_ALLOWED: %s" % self.UPDATE_ALLOWED
             busy = wx.BusyInfo("Inserting data ...")
             wx.BeginBusyCursor()
             upd = obj.update(label)
             if upd:
+                print "if upd"
                 try:
                     app.mdi_parent_frame.statusbar.SetStatusText('Record id: %d was successfully updated.' % obj.id)
                 except: pass
@@ -587,7 +598,67 @@ Would you like to set the table in update mode?""",
                 
         wx.EndBusyCursor()
         #event.Skip()
+
+    def setUpdateStatus(self):   
+        dlg = wx.MessageDialog(self, """You are about to make an update.
+Would you like to set the table in update mode?""",
+                           'Database message.',
+                           wx.YES_NO | wx.YES_DEFAULT |
+                    wx.ICON_QUESTION)
+
+        self.UPDATE_ALLOWED = dlg.ShowModal()
+
+        dlg.Destroy()
+
+    def setUpdateStatus_TEST(self):
         
+        _msg = """You are about to make an update.
+Would you like to set the table in update mode?"""
+        
+        dlg = GMD.GenericMessageDialog(self, _msg,
+                                       "Database message.",
+                                       wx.YES_NO | wx.ICON_QUESTION)
+        
+        dlg.ShowModal()
+        dlg.Destroy()
+        if dlg==wx.ID_YES:
+            self.UPDATE_ALLOWED = True
+            return True
+                
+    def OnUpdate_v03(self, event):
+        print "OnUpdate_v03"
+        
+        if not self.UPDATE_ALLOWED:
+            self.setUpdateStatus()
+
+        if self.UPDATE_ALLOWED:
+            wx.BeginBusyCursor()
+            
+            row_num = self.GetGridCursorRow()
+            col_num = self.GetGridCursorCol()
+            label = self.GetColLabelValue(col_num)
+            obj = self.lst[row_num]
+            app = wx.GetApp()
+
+            busy = wx.BusyInfo("Inserting data ...")
+
+            upd = obj.update(label)
+            
+            if upd:
+                print upd
+                try:
+                    app.mdi_parent_frame.statusbar.SetStatusText('Record id: %d was successfully updated.' % obj.id)
+                except: pass
+            else:
+                try:
+                    app.mdi_parent_frame.statusbar.SetStatusText('NO UPDATE MADE!!!')
+                except: pass
+                
+            wx.EndBusyCursor()
+            
+        event.Skip()
+
+                
     def OnSearch(self, event):
         
        # wx.SetDefaultPyEncoding('utf-8') #trying to fix the decode problem when searching
@@ -670,13 +741,14 @@ Would you like to set the table in update mode?""",
         
         #event.Skip()
                
-    def OnReduceData(self, event):
+    def OnSetFilterTo(self, event):
+        "set filter"
         col_num = self.GetGridCursorCol()
         row_num = self.GetGridCursorRow()
 
         new_table = self.lst.filterGrid(row_num, col_num)
         
-        #new_table.loadExecCode()
+        new_table.loadExecCode()
         app = wx.GetApp()
         if self.parent.__class__.__name__=='Frm2':
             app = wx.GetApp()
