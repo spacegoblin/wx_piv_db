@@ -52,3 +52,19 @@ You should install the 32 bit version even if we are running on 64 machines, thi
 our machines. Then you should go and call the odbc manager from the C:\Windows\SysWOW64 folder odbcad32.exe
 
 see also http://stackoverflow.com/questions/6796252/setting-up-postgresql-odbc-on-windows
+
+Initiating a databse
+--------------------
+There is a script in ahutils folder to setup an empty database with example data. To use this first
+install postgres and create an empty database with the following parameters:
+
+CREATE DATABASE new_db2
+  WITH OWNER = postgres
+    ENCODING = 'UTF8'
+    TABLESPACE = pg_default
+    TEMPLATE = postgres;
+    
+Go to the config folder and adjust the const.host='localhost' and const.db_lst_dsn='the db' parameters
+run db_setup.py
+
+The script will create the needed tables and an example table, enter some data and then open the GUI. You can now start using the database.
