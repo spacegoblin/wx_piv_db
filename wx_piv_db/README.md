@@ -53,8 +53,8 @@ our machines. Then you should go and call the odbc manager from the C:\Windows\S
 
 see also http://stackoverflow.com/questions/6796252/setting-up-postgresql-odbc-on-windows
 
-Initiating a databse
---------------------
+Initiating a database
+---------------------
 There is a script in ahutils folder to setup an empty database with example data. To use this first
 install postgres and create an empty database with the following parameters:
 
@@ -68,3 +68,11 @@ Go to the config folder and adjust the const.host='localhost' and const.db_lst_d
 run db_setup.py
 
 The script will create the needed tables and an example table, enter some data and then open the GUI. You can now start using the database.
+
+Useful Tools
+------------
+In addition to Python and Postgres I use and have found following tools to be very useful:
+Eclipse with the PyDev plugin
+Access and Excel via the ODBC driver
+EMS Database Manager (I use the freeware light version)
+ 
