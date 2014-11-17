@@ -14,6 +14,9 @@ class MsgConfirmFrame(wx.Frame):
         
         panel = wx.Panel(self, -1)
         
+        self.decisssion = False
+        self.close_me = True
+        
         self.btn_yes = wx.Button(panel, -1, "Yes", pos=(20, 60))
         self.btn_no = wx.Button(panel, -1, "No", pos=(120, 60))
         
@@ -26,11 +29,17 @@ class MsgConfirmFrame(wx.Frame):
         
     def OnClickBtnYes(self, event):
         print "yes"
+        self.decisssion = True
         return True
+        self.Close()
+        
     
     def OnClickBtnNo(self, event):
         print "no"
+        self.decisssion = False
         return False
+        self.Close()
+        
 
 #----------------------------------------------------------------------
 if __name__ == "__main__":

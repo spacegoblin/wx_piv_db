@@ -78,7 +78,12 @@ class PersonStdCost(Base):
     person = relationship("Person", lazy='joined')
     account = relationship("Account", lazy='joined') 
     
-    fieldnames = ["id", "code", "account_datev", "amount", "comment", "p_code_weight", "project_code", "full_name"]
+    def getDatevAccount(self):
+        return "%s" % self.account.name_datev
+    
+    name_datev = property( getDatevAccount )
+    
+    fieldnames = ["id", "code", "account_datev", "name_datev", "amount", "comment", "p_code_weight", "project_code", "full_name"]
     
 
     

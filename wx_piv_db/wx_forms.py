@@ -628,8 +628,21 @@ Would you like to set the table in update mode?"""
     def OnUpdate_v03(self, event):
         print "OnUpdate_v03"
         
-        if not self.UPDATE_ALLOWED:
-            self.setUpdateStatus()
+#         from wx_frm_confirm import MsgConfirmFrame
+#          
+#         if not self.UPDATE_ALLOWED:
+#             msg = MsgConfirmFrame()
+#             msg.Show()
+            
+            
+        self.UPDATE_ALLOWED = True # msg.decisssion
+#             
+#             while msg.close_me:
+#                 self.UPDATE_ALLOWED = msg.decisssion
+#                 msg.close_me = False
+#                 break
+            #self.setUpdateStatus()
+        #self.UPDATE_ALLOWED = True
 
         if self.UPDATE_ALLOWED:
             wx.BeginBusyCursor()

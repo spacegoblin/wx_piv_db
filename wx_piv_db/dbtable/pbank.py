@@ -24,6 +24,7 @@ from dbtable import Base, getLocalSession
 
 def fixNumber(str_amnt):
     "Helper method to fix the amount string into float."
+    print "fixNumber ", str_amnt
     if str_amnt:
         str_amnt = str_amnt.strip()
         str_amnt = str_amnt.replace(',', '')
@@ -93,14 +94,22 @@ class Bank(Base):
     
     period = property(getPeriod, setPeriod)
     
-    fieldnames = ['id', 'account', 'debit', 'credit', 'amount']
+    fieldnames = ['id', 'account_grp', 'account', 'period', 'amount', 'value_date', 'booking_date', 'payment_details']
  
         
     def __str__(self):
         """Return string representation"""        
         return "%s %s %s Amount: %s for %s" % (self.id, self.debit, self.credit, self.amount, self.period)  
+    
+    def OnRecordDblClick(self, event, fild):
+        pass
+    
+    def update(self):
+        raise
  
 str="""Voucher date;Date of receipt;Reason for payment;Foreign currency;Amount;Exchange rate;Amount;Currency
+
+['Booking date', 'Value date', 'Transaction Type', 'Beneficiary / Originator', 'Payment Details', 'IBAN', 'BIC', 'Customer Reference', 'Mandate Reference', 'Creditor ID', 'Compensation amount', 'Original Amount', 'Ultimate creditor', 'Debit', 'Credit', 'Currency']
 
 """
 def importCreditFile(period, FILE):
@@ -145,56 +154,7 @@ def importCreditFile(period, FILE):
        
        session.commit()
 
-def importFile(FILE):
-    session = getLocalSession()
-    
-    reader = csv.reader(open(FILE, "rb"), delimiter=";")
-    i=0
-    lst = list(reader)
-    lngt = len(lst)
 
-    
-    for row in lst:
-       if i==0:
-           #assert row==CSV_ROW, "%s" % row
-           i+=1
-           pass
-       if i==lngt:
-           #last row
-           continue
-       if i<=5:
-           i+=1
-           continue
-       
-       else:
-           
-           b = Bank()
-           b.booking_date = dateFromStr( row[0] )
-           b.value_date = dateFromStr( row[1] )
-           b.transaction_type = unicode(row[2], errors='ignore')
-           b.beneficiary = unicode(row[3], errors='ignore')
-           b.payment_details = unicode(row[4], errors='ignore')
-           b.iban = unicode(row[5], errors='ignore')
-           b.bic = unicode(row[6], errors='ignore')
-           b.customer_reference = unicode(row[7], errors='ignore')
-           b.mandate_reference = unicode(row[8], errors='ignore')
-           b.creditor_id = unicode(row[9], errors='ignore')
-           b.compensation_amount = unicode(row[10], errors='ignore')
-           b.original_amount = unicode(row[11], errors='ignore')
-           b.ultimate_creditor = unicode(row[12], errors='ignore')
-           b.debit = fixNumber(row[13])
-           b.credit = fixNumber(row[14])
-           #print "14", fixNumber(row[14]), b.credit
-           b.currency = unicode(row[15], errors='ignore')
-           b.period = "%d%02d" % (b.value_date.year, b.value_date.month)
-           b.amount = 0
-           b.account_grp = 'Bank'
-        
-           session.add(b)
-
-           i+=1
-       
-       session.commit()
 
 
 def importFile_v02(FILE):
@@ -211,6 +171,7 @@ def importFile_v02(FILE):
 
     
     for row in lst:
+       print row
        if i==0:
            #assert row==CSV_ROW, "%s" % row
            i+=1
@@ -229,7 +190,7 @@ def importFile_v02(FILE):
            b.value_date = dateFromStr( row[1] )
            #b.transaction_type = unicode(row[2], errors='ignore')
           # b.beneficiary = unicode(row[3], errors='ignore')
-           b.payment_details = unicode(row[2], errors='ignore')
+           b.payment_details = unicode(row[4], errors='ignore')
            #b.iban = unicode(row[5], errors='ignore')
            #b.bic = unicode(row[6], errors='ignore')
            #b.customer_reference = unicode(row[7], errors='ignore')
@@ -238,10 +199,10 @@ def importFile_v02(FILE):
            #b.compensation_amount = unicode(row[10], errors='ignore')
            #b.original_amount = unicode(row[11], errors='ignore')
            #b.ultimate_creditor = unicode(row[12], errors='ignore')
-           b.debit = fixNumber(row[3])
-           b.credit = fixNumber(row[4])
+           b.debit = fixNumber(row[13])
+           b.credit = fixNumber(row[14])
            #print "14", fixNumber(row[14]), b.credit
-           b.currency = unicode(row[5], errors='ignore')
+           b.currency = unicode(row[15], errors='ignore')
            b.period = "%d%02d" % (b.value_date.year, b.value_date.month)
            b.amount = 0
            b.account_grp = 'Bank'
@@ -252,7 +213,7 @@ def importFile_v02(FILE):
        
        session.commit()
                   
-def test():
+def show():
     session = getLocalSession()
     
     qry = session.query(Bank)
@@ -261,10 +222,13 @@ def test():
     
     lst = record.loadFromAlchemy(qry, Bank)
     
+    lst.pivot(['account_grp', 'account'], ['period'], 'amount')
+    
     import wx
 
     wx.SetDefaultPyEncoding('utf-8')
-    app = wx.PySimpleApp()
+    app = wx.App()
+    app.MY_DATE_FORMAT = '%d.%m.%Y'
     frame = Frm2(None, lst)
     frame.Show()
 
@@ -279,6 +243,6 @@ if __name__=='__main__':
     import doctest
 
     doctest.testmod()
-    #test()
-    importFile_v02('C:\\Users\\hetland\\Documents\\Office\\MyOffice\\Bank\\Transactions_111_400798500_20140529_180241.csv')
+    show()
+    #importFile_v02('C:\\Users\\hetland\\Documents\\Office\\MyOffice\\Bank\\Transactions_111_400798500_20140916_103247.csv')
     #importCreditFile(201407, 'C:\\Users\\hetland\\Documents\\Office\\MyOffice\\Bank\\visa\\CreditCardTransactions4779131110003542_2014_07(6).csv')
