@@ -1707,8 +1707,12 @@ def loadFromFileCsv(file, basetable='No db table - csv'):
 
 def setDbConst():
     #Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.gui_pwd)
-    Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.gui_pwd)
-    
+    Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.pwd)
+
+def setDbConst_v02(user, pwd):
+    #Db=WhichDb_v3('Postgress', 'lse_fin_db', const.gui_user, const.gui_pwd)
+    Db=WhichDb_v3('Postgress', 'lse_fin_db', user, pwd)
+        
 def insertIntoUserView(viewid, username='ahetland'):
     sql = """insert into tbl_users_view ("user", view_id) values ('%s', %d)""" % (username, viewid)
     Db.c.execute(sql)

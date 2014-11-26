@@ -239,16 +239,26 @@ def addView():
     n.gui_menu = 'Master data'
     session.add(n)
     
-    n = GuiViewAlchemy()
-    n.menutitle  =  'tbl_example'
-    n.tablename  =  'tbl_example'
-    n.sql =u'select * from tbl_example'
-    n.view_type ='PIVOT'    
-    n.gui_menu = 'Data example'
-    n.pivothead = 'period'
-    n.pivotrow = 'costcenter, account'
-    n.pivotvalue = 'amount'
-    session.add(n)
+    nn = GuiViewAlchemy()
+    nn.menutitle  =  'tbl_example'
+    nn.tablename  =  'tbl_example'
+    nn.sql =u'select * from tbl_example'
+    nn.view_type ='PIVOT'    
+    nn.gui_menu = 'Data example'
+    nn.pivothead = 'period'
+    nn.pivotrow = 'costcenter, account'
+    nn.pivotvalue = 'amount'
+    session.add(nn)
+    
+    session.commit()
+    
+    m = GuiEval()
+    
+    m.evalcode = 'print "test"'
+    m.description = 'some description'
+    m.view_id = nn.id
+    
+    session.add(m)
     
     session.commit()
     
