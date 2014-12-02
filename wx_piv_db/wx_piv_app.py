@@ -142,36 +142,34 @@ class DbSelectionFrm(wx.Frame):
         self.nb = wx.aui.AuiNotebook(self)
         
         panel = wx.Panel(self.nb, -1)
-        LEFT_POS_A = 2
-        LEFT_POS_B = 50
-        ROW_BLINE = 50
+
         self.connectionList = ['Postgress', 'Access', 'sqlite']
         txt_1 = wx.StaticText(panel, -1, 'Db driver')
         self.cb = wx.ComboBox(
-            panel, -1, "Select DB type.", (0, 0),
+            panel, -1, "Select DB type.", wx.DefaultPosition,
             (150, -1), self.connectionList, wx.CB_DROPDOWN
             )
         self.cb.SetSelection(0)
         
-        txt_2 = wx.StaticText(panel, -1, 'Db name', (LEFT_POS_A, ROW_BLINE+30))
+        txt_2 = wx.StaticText(panel, -1, 'Db name')
 
         lst = const.db_lst_dsn.split(',')
         self.lst_dbname = [r.strip() for r in lst]
         self.cb2 = wx.ComboBox(
-            panel, -1, "Select name.", (LEFT_POS_B, ROW_BLINE+30),
+            panel, -1, "Select name.", wx.DefaultPosition,
             (150, -1), self.lst_dbname, wx.CB_DROPDOWN
             )
         self.cb2.SetSelection(0)
         
-        txt_3 = wx.StaticText(panel, -1, 'User', (LEFT_POS_A, ROW_BLINE+60))
-        self.txt_usr = wx.TextCtrl(panel, -1, "user", pos=(LEFT_POS_B, ROW_BLINE+60), size=(125, -1))
+        txt_3 = wx.StaticText(panel, -1, 'User')
+        self.txt_usr = wx.TextCtrl(panel, -1, "user", size=(125, -1))
         self.txt_usr.SetValue(const.gui_user)
-        txt_4 = wx.StaticText(panel, -1, 'Password', (LEFT_POS_A, ROW_BLINE+90))
-        self.txt_pwd = wx.TextCtrl(panel, -1, "password", pos=(LEFT_POS_B, ROW_BLINE+90), size=(125, -1),style=wx.TE_PASSWORD)
+        txt_4 = wx.StaticText(panel, -1, 'Password')
+        self.txt_pwd = wx.TextCtrl(panel, -1, "password", size=(125, -1),style=wx.TE_PASSWORD)
 
 
         
-        self.button = wx.Button(panel, wx.NewId(), "Open database", pos=(LEFT_POS_B, ROW_BLINE+120))
+        self.button = wx.Button(panel, wx.NewId(), "Open database")
         self.Bind(wx.EVT_BUTTON, self.OnSelectDb, self.button)
         
         outerbox =  wx.BoxSizer(wx.VERTICAL)
@@ -208,9 +206,23 @@ class DbSelectionFrm(wx.Frame):
         
         self.Centre(wx.BOTH)
         
+        ###
         panel_edit = wx.Panel(self.nb, -1)
-        self.editButton = wx.Button(panel_edit, wx.NewId(), "Edit config.",
-                                    pos=(LEFT_POS_B, ROW_BLINE+20))
+        
+        #get the config text
+        self.conf_file = open('./ahconfig/config.py', 'r')
+        self.conf_txt = self.conf_file.read()
+        self.conf_file.close()
+        
+        self.txt_conf = wx.TextCtrl(panel_edit, -1, self.conf_txt, size=(400, -1),style=wx.TE_MULTILINE)
+        
+        self.editButton = wx.Button(panel_edit, wx.NewId(), "Save changes")
+        
+        editBox = wx.BoxSizer(wx.VERTICAL)
+        editBox.Add(self.txt_conf, 1, wx.EXPAND | wx.ALL, 1)
+        editBox.Add(self.editButton, 0, wx.EXPAND | wx.ALL, 0)
+        panel_edit.SetSizer(editBox)
+        
         self.Bind(wx.EVT_BUTTON, self.OnEditConfig, self.editButton)
         
         self.nb.AddPage(panel, 'Database')
@@ -219,12 +231,9 @@ class DbSelectionFrm(wx.Frame):
         panel.Fit()
         
     def OnEditConfig(self, event):
-        print "Attempting: import editConfig"
-        #from xconfig import editConfig
-        import editConfig
-        #app.mdi_parent_frame = None
-        frame = editConfig.FrmTest(None)
-        frame.Show(True)
+        self.conf_file = open('./ahconfig/config.py', 'w')
+        self.conf_file.write( self.txt_conf.GetValue() )
+        self.conf_file.close()
                 
     def OnSelectDb(self, event):
         busy = wx.BusyInfo("Establishing database connection...")
@@ -920,5 +929,5 @@ def main(argv):
 
 if __name__=='__main__':
     
-    
     main(None)
+
