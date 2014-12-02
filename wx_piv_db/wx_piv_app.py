@@ -146,14 +146,15 @@ class DbSelectionFrm(wx.Frame):
         LEFT_POS_B = 50
         ROW_BLINE = 50
         self.connectionList = ['Postgress', 'Access', 'sqlite']
-        wx.StaticText(panel, -1, 'Db driver', (LEFT_POS_A, ROW_BLINE))
+        txt_1 = wx.StaticText(panel, -1, 'Db driver')
         self.cb = wx.ComboBox(
-            panel, -1, "Select DB type.", (LEFT_POS_B, ROW_BLINE),
+            panel, -1, "Select DB type.", (0, 0),
             (150, -1), self.connectionList, wx.CB_DROPDOWN
             )
         self.cb.SetSelection(0)
-        wx.StaticText(panel, -1, 'Db name', (LEFT_POS_A, ROW_BLINE+30))
-        #self.t1 = wx.TextCtrl(panel, -1, xconfig.config.const.db_lst_dsn, pos=(LEFT_POS_B, ROW_BLINE+30), size=(125, -1))
+        
+        txt_2 = wx.StaticText(panel, -1, 'Db name', (LEFT_POS_A, ROW_BLINE+30))
+
         lst = const.db_lst_dsn.split(',')
         self.lst_dbname = [r.strip() for r in lst]
         self.cb2 = wx.ComboBox(
@@ -161,17 +162,49 @@ class DbSelectionFrm(wx.Frame):
             (150, -1), self.lst_dbname, wx.CB_DROPDOWN
             )
         self.cb2.SetSelection(0)
-        wx.StaticText(panel, -1, 'User', (LEFT_POS_A, ROW_BLINE+60))
+        
+        txt_3 = wx.StaticText(panel, -1, 'User', (LEFT_POS_A, ROW_BLINE+60))
         self.txt_usr = wx.TextCtrl(panel, -1, "user", pos=(LEFT_POS_B, ROW_BLINE+60), size=(125, -1))
         self.txt_usr.SetValue(const.gui_user)
-        wx.StaticText(panel, -1, 'Password', (LEFT_POS_A, ROW_BLINE+90))
+        txt_4 = wx.StaticText(panel, -1, 'Password', (LEFT_POS_A, ROW_BLINE+90))
         self.txt_pwd = wx.TextCtrl(panel, -1, "password", pos=(LEFT_POS_B, ROW_BLINE+90), size=(125, -1),style=wx.TE_PASSWORD)
-#         try:
-#             self.txt_pwd.SetValue(const.gui_pwd)
-#         except: pass
+
+
         
         self.button = wx.Button(panel, wx.NewId(), "Open database", pos=(LEFT_POS_B, ROW_BLINE+120))
         self.Bind(wx.EVT_BUTTON, self.OnSelectDb, self.button)
+        
+        outerbox =  wx.BoxSizer(wx.VERTICAL)
+        
+        rowbox1 = wx.BoxSizer(wx.HORIZONTAL)
+        rowbox1.Add(txt_1, 1, wx.EXPAND | wx.ALL, 1)
+        rowbox1.Add(self.cb, 1, wx.EXPAND | wx.ALL, 1)
+        outerbox.AddSizer(rowbox1)
+     
+        rowbox2 = wx.BoxSizer(wx.HORIZONTAL)
+        rowbox2.Add(txt_2, 1, wx.EXPAND | wx.ALL, 1)
+        rowbox2.Add(self.cb2, 1, wx.EXPAND | wx.ALL, 1)
+        outerbox.AddSizer(rowbox2)
+
+        rowbox3 = wx.BoxSizer(wx.HORIZONTAL)
+        rowbox3.Add(txt_3, 1, wx.EXPAND | wx.ALL, 1)
+        rowbox3.Add(self.txt_usr, 1, wx.EXPAND | wx.ALL, 1)
+        outerbox.AddSizer(rowbox3)
+
+        rowbox4 = wx.BoxSizer(wx.HORIZONTAL)
+        rowbox4.Add(txt_4, 1, wx.EXPAND | wx.ALL, 1)
+        rowbox4.Add(self.txt_pwd, 1, wx.EXPAND | wx.ALL, 1)
+        outerbox.AddSizer(rowbox4)
+        
+        outerbox.AddSpacer(20)
+        
+        rowbox5 = wx.BoxSizer(wx.HORIZONTAL)
+        txt_empty = wx.StaticText(panel, -1, '')
+        rowbox5.Add(txt_empty, 1, wx.EXPAND | wx.ALL, 1)
+        rowbox5.Add(self.button, 1, wx.EXPAND | wx.ALL, 1)
+        outerbox.AddSizer(rowbox5)
+                                  
+        panel.SetSizer(outerbox)
         
         self.Centre(wx.BOTH)
         
@@ -889,4 +922,3 @@ if __name__=='__main__':
     
     
     main(None)
-
