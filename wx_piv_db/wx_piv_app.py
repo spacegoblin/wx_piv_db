@@ -210,9 +210,14 @@ class DbSelectionFrm(wx.Frame):
         panel_edit = wx.Panel(self.nb, -1)
         
         #get the config text
-        self.conf_file = open('./ahconfig/config.py', 'r')
-        self.conf_txt = self.conf_file.read()
-        self.conf_file.close()
+
+        try:
+            self.conf_file = open('./ahconfig/config.py', 'r')
+        
+            self.conf_txt = self.conf_file.read()
+            self.conf_file.close()
+        except:
+            self.conf_txt = 'The conf file path could not be found.'
         
         self.txt_conf = wx.TextCtrl(panel_edit, -1, self.conf_txt, size=(400, -1),style=wx.TE_MULTILINE)
         
@@ -928,6 +933,7 @@ def main(argv):
     app.MainLoop()
 
 if __name__=='__main__':
+    
     
     main(None)
 
